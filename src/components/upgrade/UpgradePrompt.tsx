@@ -9,6 +9,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@/components/ui/dialog'
+import { useCheckout } from '@/hooks/useCheckout'
 
 interface Props {
   open: boolean
@@ -18,6 +19,8 @@ interface Props {
 }
 
 export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
+  const { startCheckout, loading } = useCheckout()
+
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
       <DialogContent className="max-w-md">
@@ -45,13 +48,12 @@ export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
               <li>✓ Priority support</li>
             </ul>
             <Button
-              asChild
               size="sm"
               className="w-full"
+              disabled={loading !== null}
+              onClick={() => startCheckout('monthly')}
             >
-              <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_MONTHLY_URL ?? '/pricing'}>
-                Upgrade Now
-              </a>
+              {loading === 'monthly' ? 'Redirecting…' : 'Upgrade Now'}
             </Button>
           </div>
 
@@ -70,13 +72,12 @@ export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
               <li>✓ Invoice analytics</li>
             </ul>
             <Button
-              asChild
               size="sm"
               className="w-full"
+              disabled={loading !== null}
+              onClick={() => startCheckout('annual')}
             >
-              <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_ANNUAL_URL ?? '/pricing'}>
-                Get Annual
-              </a>
+              {loading === 'annual' ? 'Redirecting…' : 'Get Annual'}
             </Button>
           </div>
         </div>

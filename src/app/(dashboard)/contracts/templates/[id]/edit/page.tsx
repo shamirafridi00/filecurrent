@@ -1,11 +1,11 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { getContractTemplate } from '@/lib/db/sqlite'
+import { getContractTemplate } from '@/lib/db/supabase'
 import { ContractTemplateFormPage } from '@/components/contracts/ContractTemplateFormPage'
 
-export default function EditContractTemplatePage({ params }: { params: { id: string } }) {
-  const template = getContractTemplate(params.id)
+export default async function EditContractTemplatePage({ params }: { params: { id: string } }) {
+  const template = await getContractTemplate(params.id)
   if (!template) notFound()
 
   return (

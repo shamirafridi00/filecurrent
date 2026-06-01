@@ -7,11 +7,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader, ContractBadge, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getContracts } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getContracts } from '@/lib/db/supabase'
 
-export default function ContractsPage() {
-  const profile = getCurrentProfile()
-  const contracts = getContracts(profile.id)
+export default async function ContractsPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const contracts = await getContracts(user.id)
 
   return (
     <div>

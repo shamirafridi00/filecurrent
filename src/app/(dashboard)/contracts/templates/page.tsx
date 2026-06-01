@@ -8,12 +8,18 @@ import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader, EmptyState, GlobalBadge } from '@/components/ui'
 import { truncate, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getContractTemplates } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile, getContractTemplates } from '@/lib/db/supabase'
 import { TemplatePreviewDialog } from '@/components/contracts/TemplatePreviewDialog'
 
-export default function ContractTemplatesPage() {
-  const profile = getCurrentProfile()
-  const { my, global } = getContractTemplates(profile.id, profile.profession)
+export default async function ContractTemplatesPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const profile = await getCurrentProfile(user.id)
+  const { my, global } = await getContractTemplates(user.id, profile.profession)
 
   return (
     <div>

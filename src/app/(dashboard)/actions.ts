@@ -1,10 +1,15 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { completeOnboarding, type OnboardingInput } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { completeOnboarding, type OnboardingInput } from '@/lib/db/supabase'
 
 export async function completeOnboardingAction(input: OnboardingInput) {
-  completeOnboarding(input)
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) throw new Error('Unauthorized')
+
+  await completeOnboarding(user.id, input)
   revalidatePath('/dashboard')
 
   return {

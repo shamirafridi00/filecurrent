@@ -3,17 +3,24 @@ export const dynamic = 'force-dynamic'
 import { Activity } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
-import { getCurrentProfile, getContracts, getInvoices, getClients } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getContracts, getInvoices, getClients } from '@/lib/db/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import Link from 'next/link'
 import { ContractBadge, InvoiceBadge } from '@/components/ui'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
-export default function ClientActivityPage() {
-  const profile = getCurrentProfile()
-  const clients = getClients(profile.id)
-  const allContracts = getContracts(profile.id)
-  const allInvoices = getInvoices(profile.id)
+export default async function ClientActivityPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const [clients, allContracts, allInvoices] = await Promise.all([
+    getClients(user.id),
+    getContracts(user.id),
+    getInvoices(user.id),
+  ])
 
   const clientActivity = clients.map((client) => ({
     client,

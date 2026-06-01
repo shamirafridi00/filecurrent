@@ -11,7 +11,7 @@ import { Switch } from '@/components/ui/switch'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
 import { toast } from 'sonner'
-import type { InvoiceTemplateRow } from '@/lib/db/sqlite'
+import type { InvoiceTemplateRow } from '@/lib/db/supabase'
 
 const THEMES = [
   { id: 'summit', label: 'Summit', desc: 'Clean & minimal' },

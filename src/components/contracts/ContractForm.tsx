@@ -20,7 +20,7 @@ import { PageHeader } from '@/components/ui'
 import { UpgradePrompt } from '@/components/upgrade/UpgradePrompt'
 import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
-import type { ClientRow, ContractTemplateRow } from '@/lib/db/sqlite'
+import type { ClientRow, ContractTemplateRow } from '@/lib/db/supabase'
 
 interface Props {
   clients: ClientRow[]

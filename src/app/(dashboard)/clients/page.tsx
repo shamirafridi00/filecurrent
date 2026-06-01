@@ -1,15 +1,20 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import { Plus, Users, Building, Mail } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, EmptyState } from '@/components/ui'
-import { getCurrentProfile, getClients } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getClients } from '@/lib/db/supabase'
 
-export default function ClientsPage() {
-  const profile = getCurrentProfile()
-  const clients = getClients(profile.id)
+export default async function ClientsPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const clients = await getClients(user.id)
 
   return (
     <div>

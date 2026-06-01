@@ -7,11 +7,16 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader, EmptyState } from '@/components/ui'
 import { formatDate } from '@/lib/utils'
-import { getCurrentProfile, getReminderLogs } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getReminderLogs } from '@/lib/db/supabase'
 
-export default function RemindersPage() {
-  const profile = getCurrentProfile()
-  const logs = getReminderLogs(profile.id)
+export default async function RemindersPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const logs = await getReminderLogs(user.id)
 
   return (
     <div>

@@ -34,7 +34,7 @@ import { UpgradePrompt } from '@/components/upgrade/UpgradePrompt'
 import { toast } from 'sonner'
 import { formatCurrency, generateInvoiceNumber, calculateInvoiceTotals } from '@/lib/utils'
 import { CURRENCIES, PAYMENT_METHODS } from '@/types'
-import type { ClientRow, InvoiceTemplateRow, LineItemPreset } from '@/lib/db/sqlite'
+import type { ClientRow, InvoiceTemplateRow, LineItemPreset } from '@/lib/db/supabase'
 
 interface ItemRow {
   _id: string

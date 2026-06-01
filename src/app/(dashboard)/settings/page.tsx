@@ -1,10 +1,16 @@
 export const dynamic = 'force-dynamic'
 
-import { getFullProfile } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getFullProfile } from '@/lib/db/supabase'
 import { SettingsTabs } from '@/components/settings/SettingsTabs'
 
-export default function SettingsPage() {
-  const profile = getFullProfile('local-user')
+export default async function SettingsPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const profile = await getFullProfile(user.id)
   if (!profile) return null
 
   const notificationPrefs = JSON.parse(profile.notification_prefs || '{}') as Record<string, boolean>

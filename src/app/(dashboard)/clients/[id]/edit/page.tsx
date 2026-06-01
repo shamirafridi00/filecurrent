@@ -1,12 +1,16 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { getCurrentProfile, getClientById } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getClientById } from '@/lib/db/supabase'
 import { ClientFormPage } from '@/components/clients/ClientFormPage'
 
-export default function EditClientPage({ params }: { params: { id: string } }) {
-  const profile = getCurrentProfile()
-  const client = getClientById(params.id, profile.id)
+export default async function EditClientPage({ params }: { params: { id: string } }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { notFound(); return null }
+
+  const client = await getClientById(params.id, user.id)
   if (!client) notFound()
 
   return (

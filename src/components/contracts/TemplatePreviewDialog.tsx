@@ -9,7 +9,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import type { ContractTemplateRow } from '@/lib/db/sqlite'
+import type { ContractTemplateRow } from '@/lib/db/supabase'
 
 interface Props {
   template: ContractTemplateRow

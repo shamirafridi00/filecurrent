@@ -95,7 +95,7 @@ export default function LandingPage() {
           </p>
           <div className="flex items-center justify-center gap-4 flex-wrap">
             <Button asChild size="lg" className="text-base px-8">
-              <Link href="/dashboard">Start Free — No card needed</Link>
+              <Link href="/signup">Start Free — No card needed</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="text-base">
               <a href="#features">See how it works ↓</a>
@@ -191,7 +191,7 @@ export default function LandingPage() {
                 ))}
               </ul>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/dashboard">Get started free</Link>
+                <Link href="/signup">Get started free</Link>
               </Button>
             </div>
 

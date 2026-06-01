@@ -7,17 +7,25 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getClientById, getContracts, getInvoices } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getClientById, getContracts, getInvoices } from '@/lib/db/supabase'
 import { DeleteClientButton } from '@/components/clients/DeleteClientButton'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
-export default function ClientDetailPage({ params }: { params: { id: string } }) {
-  const profile = getCurrentProfile()
-  const client = getClientById(params.id, profile.id)
+export default async function ClientDetailPage({ params }: { params: { id: string } }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { notFound(); return null }
+
+  const [client, allContracts, allInvoices] = await Promise.all([
+    getClientById(params.id, user.id),
+    getContracts(user.id),
+    getInvoices(user.id),
+  ])
   if (!client) notFound()
 
-  const allContracts = getContracts(profile.id).filter((c) => c.clientId === params.id)
-  const allInvoices = getInvoices(profile.id).filter((i) => i.clientId === params.id)
+  const contracts = allContracts.filter((c) => c.clientId === params.id)
+  const invoices = allInvoices.filter((i) => i.clientId === params.id)
 
   return (
     <div>
@@ -112,11 +120,11 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
               </Button>
             </CardHeader>
             <CardContent className="pt-0">
-              {allContracts.length === 0 ? (
+              {contracts.length === 0 ? (
                 <EmptyState title="No contracts" description="Create your first contract for this client." />
               ) : (
                 <div className="space-y-2">
-                  {allContracts.map((c) => (
+                  {contracts.map((c) => (
                     <div key={c.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <Link href={`/contracts/${c.id}`} className="font-medium text-sm hover:text-primary">
@@ -147,11 +155,11 @@ export default function ClientDetailPage({ params }: { params: { id: string } })
               </Button>
             </CardHeader>
             <CardContent className="pt-0">
-              {allInvoices.length === 0 ? (
+              {invoices.length === 0 ? (
                 <EmptyState title="No invoices" description="Create your first invoice for this client." />
               ) : (
                 <div className="space-y-2">
-                  {allInvoices.map((inv) => (
+                  {invoices.map((inv) => (
                     <div key={inv.id} className="flex items-center justify-between rounded-lg border p-3">
                       <div>
                         <Link href={`/invoices/${inv.id}`} className="font-medium text-sm text-primary hover:underline">

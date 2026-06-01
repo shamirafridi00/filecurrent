@@ -1,10 +1,15 @@
 export const dynamic = 'force-dynamic'
 
-import { getCurrentProfile, getReminderSettings } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getReminderSettings } from '@/lib/db/supabase'
 import { ReminderSettingsForm } from '@/components/reminders/ReminderSettingsForm'
 
-export default function ReminderSettingsPage() {
-  const profile = getCurrentProfile()
-  const settings = getReminderSettings(profile.id)
+export default async function ReminderSettingsPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const settings = await getReminderSettings(user.id)
   return <ReminderSettingsForm initial={settings} />
 }

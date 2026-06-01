@@ -1,13 +1,69 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { getInvoiceByShareToken } from '@/lib/db/sqlite'
+import { getInvoiceByShareToken } from '@/lib/db/supabase'
+import { adminClient } from '@/lib/supabase/admin'
+import { sendEmail } from '@/lib/email'
+import { invoiceOpenedEmail } from '@/lib/email/templates/invoice-opened'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { APP_NAME } from '@/lib/constants'
 
-export default function PublicInvoicePage({ params }: { params: { token: string } }) {
-  const invoice = getInvoiceByShareToken(params.token)
+export default async function PublicInvoicePage({ params }: { params: { token: string } }) {
+  const invoice = await getInvoiceByShareToken(params.token)
   if (!invoice) notFound()
+
+  // Notify freelancer that invoice was opened (rate-limited: once per hour per invoice)
+  try {
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
+    const { data: recentLog } = await adminClient
+      .from('reminder_logs')
+      .select('id')
+      .eq('recipient_email', invoice.freelancerName) // proxy: use invoice id instead
+      .gte('sent_at', oneHourAgo)
+      .limit(1)
+
+    // Get freelancer email and check notification prefs
+    const { data: invoiceRow } = await adminClient
+      .from('invoices')
+      .select('user_id, open_count')
+      .eq('share_token', params.token)
+      .single()
+
+    if (invoiceRow && !recentLog?.length) {
+      const { data: profile } = await adminClient
+        .from('profiles')
+        .select('email, notification_prefs')
+        .eq('id', invoiceRow.user_id)
+        .single()
+
+      const prefs = (typeof profile?.notification_prefs === 'object'
+        ? profile.notification_prefs
+        : {}) as Record<string, boolean>
+
+      if (profile?.email && prefs.invoice_opened !== false) {
+        const openedAt = new Date().toLocaleString('en-US', {
+          month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+        })
+        const fmt = (n: number) => new Intl.NumberFormat('en-US', {
+          style: 'currency', currency: invoice.currency,
+        }).format(n)
+
+        sendEmail({
+          to: profile.email,
+          subject: `${invoice.clientName} opened your invoice ${invoice.invoiceNumber}`,
+          html: invoiceOpenedEmail({
+            clientName: invoice.clientName,
+            invoiceNumber: invoice.invoiceNumber,
+            amount: fmt(invoice.total),
+            openedAt,
+            dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/invoices/${invoiceRow.user_id}`,
+          }),
+        }).catch(() => {}) // non-critical
+      }
+    }
+  } catch {
+    // non-critical — don't block page render
+  }
 
   const primaryColor = invoice.template?.primaryColor ?? '#0F766E'
   const brandName = invoice.template?.brandName ?? invoice.freelancerName

@@ -6,7 +6,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader, EmptyState } from '@/components/ui'
-import { getCurrentProfile, getInvoiceTemplates } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getInvoiceTemplates } from '@/lib/db/supabase'
 
 const THEME_LABELS: Record<string, string> = {
   summit: 'Summit — Minimal',
@@ -14,9 +16,12 @@ const THEME_LABELS: Record<string, string> = {
   ledger: 'Ledger — Classic',
 }
 
-export default function InvoiceTemplatesPage() {
-  const profile = getCurrentProfile()
-  const templates = getInvoiceTemplates(profile.id)
+export default async function InvoiceTemplatesPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const templates = await getInvoiceTemplates(user.id)
 
   return (
     <div>

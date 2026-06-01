@@ -2,13 +2,13 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import { CheckCircle2 } from 'lucide-react'
-import { getContractForSigning } from '@/lib/db/sqlite'
+import { getContractForSigning } from '@/lib/db/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
 import { APP_NAME } from '@/lib/constants'
 
-export default function SignPage({ params }: { params: { token: string } }) {
-  const session = getContractForSigning(params.token)
+export default async function SignPage({ params }: { params: { token: string } }) {
+  const session = await getContractForSigning(params.token)
   if (!session) notFound()
 
   if (session.status === 'signed') {

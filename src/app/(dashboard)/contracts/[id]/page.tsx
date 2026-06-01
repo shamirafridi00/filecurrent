@@ -2,17 +2,24 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { FileText, Send } from 'lucide-react'
+import { FileText, Send, Download } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getContract } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile, getContract } from '@/lib/db/supabase'
 import { SendForSignatureButton } from '@/components/contracts/SendForSignatureButton'
 
-export default function ContractDetailPage({ params }: { params: { id: string } }) {
-  const profile = getCurrentProfile()
-  const contract = getContract(params.id, profile.id)
+export default async function ContractDetailPage({ params }: { params: { id: string } }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { notFound(); return null }
+
+  const [profile, contract] = await Promise.all([
+    getCurrentProfile(user.id),
+    getContract(params.id, user.id),
+  ])
   if (!contract) notFound()
 
   const resolvedContent = contract.templateContent
@@ -47,6 +54,14 @@ export default function ContractDetailPage({ params }: { params: { id: string } 
                 clientEmail={contract.clientEmail ?? ''}
                 clientName={contract.clientName}
               />
+            )}
+            {contract.status === 'signed' && (
+              <Button asChild variant="outline" size="sm">
+                <a href={`/api/contracts/${contract.id}/pdf`} target="_blank" rel="noreferrer">
+                  <Download className="mr-1.5 h-3.5 w-3.5" />
+                  Download Signed PDF
+                </a>
+              </Button>
             )}
           </div>
         }

@@ -1,16 +1,22 @@
 export const dynamic = 'force-dynamic'
 
+import { redirect } from 'next/navigation'
 import { DashboardShell } from '@/components/layout/DashboardShell'
 import { OnboardingModal } from '@/components/onboarding/OnboardingModal'
 import { completeOnboardingAction } from './actions'
-import { getCurrentProfile } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile } from '@/lib/db/supabase'
 
 export default async function DashboardLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
-  const profile = getCurrentProfile()
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const profile = await getCurrentProfile(user.id)
 
   return (
     <DashboardShell

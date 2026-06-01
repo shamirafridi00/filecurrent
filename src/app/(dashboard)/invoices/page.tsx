@@ -6,12 +6,17 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, InvoiceBadge, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getInvoices } from '@/lib/db/sqlite'
+import { redirect } from 'next/navigation'
+import { createClient } from '@/lib/supabase/server'
+import { getInvoices } from '@/lib/db/supabase'
 import type { InvoiceStatus } from '@/types'
 
-export default function InvoicesPage() {
-  const profile = getCurrentProfile()
-  const invoices = getInvoices(profile.id)
+export default async function InvoicesPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const invoices = await getInvoices(user.id)
 
   return (
     <div>

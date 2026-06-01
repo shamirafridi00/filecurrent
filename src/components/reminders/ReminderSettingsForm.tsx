@@ -11,7 +11,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { PageHeader } from '@/components/ui'
 import { toast } from 'sonner'
 import { useRouter } from 'next/navigation'
-import type { ReminderSettingsRow } from '@/lib/db/sqlite'
+import type { ReminderSettingsRow } from '@/lib/db/supabase'
 
 const BEFORE_DUE_OPTIONS = [7, 3, 1]
 const AFTER_OVERDUE_OPTIONS = [3, 7, 14, 30]

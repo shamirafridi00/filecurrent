@@ -2,22 +2,30 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Receipt, Copy, CheckCircle, ExternalLink } from 'lucide-react'
+import { Receipt, Copy, CheckCircle, ExternalLink, Download } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, InvoiceBadge } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getInvoice, getInvoicePayments } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile, getInvoice, getInvoicePayments } from '@/lib/db/supabase'
 import { RecordPaymentModal } from '@/components/invoices/RecordPaymentModal'
 import { InvoiceShareLink } from '@/components/invoices/InvoiceShareLink'
+import { InvoicePdfButton } from '@/components/invoices/InvoicePdfButton'
 import type { InvoiceStatus } from '@/types'
 
-export default function InvoiceDetailPage({ params }: { params: { id: string } }) {
-  const profile = getCurrentProfile()
-  const invoice = getInvoice(params.id, profile.id)
+export default async function InvoiceDetailPage({ params }: { params: { id: string } }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) { notFound(); return null }
+
+  const [profile, invoice, payments] = await Promise.all([
+    getCurrentProfile(user.id),
+    getInvoice(params.id, user.id),
+    getInvoicePayments(params.id),
+  ])
   if (!invoice) notFound()
 
-  const payments = getInvoicePayments(params.id)
   const template = invoice.template
   const primaryColor = template?.primaryColor ?? '#0F766E'
   const brandName = template?.brandName ?? profile.businessName ?? profile.fullName
@@ -31,6 +39,7 @@ export default function InvoiceDetailPage({ params }: { params: { id: string } }
         action={
           <div className="flex items-center gap-2">
             <InvoiceBadge status={invoice.status as InvoiceStatus} />
+            <InvoicePdfButton invoiceId={invoice.id} isPro={profile.plan !== 'free'} />
             <InvoiceShareLink shareToken={invoice.shareToken} />
           </div>
         }

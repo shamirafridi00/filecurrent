@@ -1,6 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
+import { redirect } from 'next/navigation'
 import {
   Zap,
   FileText,
@@ -18,12 +19,20 @@ import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { StatCard, InvoiceBadge, ContractBadge } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
-import { getCurrentProfile, getDashboardStats } from '@/lib/db/sqlite'
+import { createClient } from '@/lib/supabase/server'
+import { getCurrentProfile, getDashboardStats } from '@/lib/db/supabase'
+import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
 import type { InvoiceStatus, ContractStatus } from '@/types'
 
-export default function DashboardPage() {
-  const profile = getCurrentProfile()
-  const stats = getDashboardStats('local-user')
+export default async function DashboardPage() {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) redirect('/login')
+
+  const [profile, stats] = await Promise.all([
+    getCurrentProfile(user.id),
+    getDashboardStats(user.id),
+  ])
 
   const isFree = profile.plan === 'free'
   const docsUsed = profile.docsUsedThisMonth
@@ -32,6 +41,7 @@ export default function DashboardPage() {
 
   return (
     <div className="flex gap-6">
+      <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
         {isFree && (
           <Card className="border-l-4 border-l-primary">

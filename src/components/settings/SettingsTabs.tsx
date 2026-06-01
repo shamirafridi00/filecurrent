@@ -4,6 +4,7 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { Save, ExternalLink, Zap, Star, Shield } from 'lucide-react'
+import { useCheckout } from '@/hooks/useCheckout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -63,6 +64,7 @@ interface Props {
 
 export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs }: Props) {
   const router = useRouter()
+  const { startCheckout, loading: checkoutLoading } = useCheckout()
 
   // Profile state
   const [fullName, setFullName] = useState(initial.fullName)
@@ -280,16 +282,21 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                         {docsUsed} of {docLimit} documents used this month
                         {resetDate && ` · Resets ${resetDate}`}
                       </p>
-                      <div className="mt-3 space-y-2">
-                        <Button asChild className="w-full sm:w-auto">
-                          <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_MONTHLY_URL ?? '/pricing'}>
-                            Upgrade to Pro — $9/month
-                          </a>
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        <Button
+                          className="w-full sm:w-auto"
+                          disabled={checkoutLoading !== null}
+                          onClick={() => startCheckout('monthly')}
+                        >
+                          {checkoutLoading === 'monthly' ? 'Redirecting…' : 'Upgrade to Pro — $9/month'}
                         </Button>
-                        <Button asChild variant="outline" className="w-full sm:w-auto ml-0 sm:ml-2">
-                          <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_ANNUAL_URL ?? '/pricing'}>
-                            Get Annual — $79/year (save 27%)
-                          </a>
+                        <Button
+                          variant="outline"
+                          className="w-full sm:w-auto"
+                          disabled={checkoutLoading !== null}
+                          onClick={() => startCheckout('annual')}
+                        >
+                          {checkoutLoading === 'annual' ? 'Redirecting…' : 'Get Annual — $79/year (save 27%)'}
                         </Button>
                       </div>
                     </>
@@ -326,10 +333,11 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                 <p className="text-sm text-muted-foreground mb-3">
                   Pay once, use FileCurrent Pro forever. $49 one-time payment — limited to the first 90 days.
                 </p>
-                <Button asChild>
-                  <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_LIFETIME_URL ?? '/pricing'}>
-                    Get Lifetime Access — $49
-                  </a>
+                <Button
+                  disabled={checkoutLoading !== null}
+                  onClick={() => startCheckout('lifetime')}
+                >
+                  {checkoutLoading === 'lifetime' ? 'Redirecting…' : 'Get Lifetime Access — $49'}
                 </Button>
               </CardContent>
             </Card>
