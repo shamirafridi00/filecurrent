@@ -1,0 +1,371 @@
+'use client'
+
+import { useState } from 'react'
+import Link from 'next/link'
+import { useRouter } from 'next/navigation'
+import { Save, ExternalLink, Zap, Star, Shield } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Switch } from '@/components/ui/switch'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select'
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Badge } from '@/components/ui/badge'
+import { PageHeader } from '@/components/ui'
+import { toast } from 'sonner'
+import { CURRENCIES, TIMEZONES } from '@/types'
+import type { Plan, Profession } from '@/types'
+
+const PROFESSIONS: { value: Profession; label: string }[] = [
+  { value: 'web_developer', label: 'Web Developer' },
+  { value: 'photographer', label: 'Photographer' },
+  { value: 'consultant', label: 'Consultant' },
+  { value: 'designer', label: 'Designer' },
+  { value: 'copywriter', label: 'Copywriter' },
+  { value: 'marketer', label: 'Marketer' },
+  { value: 'other', label: 'Other' },
+]
+
+const NOTIFICATION_OPTIONS = [
+  { key: 'contract_opened', label: 'When a client opens my contract' },
+  { key: 'contract_signed', label: 'When a client signs my contract' },
+  { key: 'invoice_opened', label: 'When a client opens my invoice' },
+  { key: 'invoice_overdue', label: 'When an invoice becomes overdue' },
+  { key: 'daily_summary', label: 'Daily summary (overdue invoices + pending reminders)' },
+]
+
+const PLAN_LABELS: Record<Plan, string> = {
+  free: 'Free Plan',
+  pro_monthly: 'Pro Monthly',
+  pro_annual: 'Pro Annual',
+  lifetime: 'Lifetime',
+}
+
+interface Props {
+  profile: {
+    fullName: string; email: string; phone: string; businessName: string
+    address: string; city: string; state: string; postalCode: string
+    country: string; taxId: string; defaultCurrency: string
+    defaultTaxRate: number; timezone: string; profession: Profession | null
+    plan: Plan; docsUsedThisMonth: number; docsResetAt: string | null
+    planExpiresAt: string | null
+  }
+  notificationPrefs: Record<string, boolean>
+}
+
+export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs }: Props) {
+  const router = useRouter()
+
+  // Profile state
+  const [fullName, setFullName] = useState(initial.fullName)
+  const [phone, setPhone] = useState(initial.phone)
+  const [businessName, setBusinessName] = useState(initial.businessName)
+  const [address, setAddress] = useState(initial.address)
+  const [city, setCity] = useState(initial.city)
+  const [state, setState] = useState(initial.state)
+  const [postalCode, setPostalCode] = useState(initial.postalCode)
+  const [country, setCountry] = useState(initial.country)
+  const [taxId, setTaxId] = useState(initial.taxId)
+  const [defaultCurrency, setDefaultCurrency] = useState(initial.defaultCurrency)
+  const [defaultTaxRate, setDefaultTaxRate] = useState(String(initial.defaultTaxRate))
+  const [timezone, setTimezone] = useState(initial.timezone)
+  const [profession, setProfession] = useState<Profession | ''>(initial.profession ?? '')
+  const [savingProfile, setSavingProfile] = useState(false)
+
+  // Notification prefs
+  const [notifPrefs, setNotifPrefs] = useState<Record<string, boolean>>(() => {
+    const defaults: Record<string, boolean> = {}
+    NOTIFICATION_OPTIONS.forEach((o) => { defaults[o.key] = initialPrefs[o.key] ?? true })
+    return defaults
+  })
+  const [savingNotifs, setSavingNotifs] = useState(false)
+
+  const saveProfile = async () => {
+    setSavingProfile(true)
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName, phone, businessName, address, city, state, postalCode,
+          country, taxId, defaultCurrency,
+          defaultTaxRate: parseFloat(defaultTaxRate) || 0,
+          timezone, profession: profession || undefined,
+        }),
+      })
+      if (!res.ok) throw new Error()
+      toast.success('Profile saved')
+      router.refresh()
+    } catch {
+      toast.error('Failed to save profile')
+    } finally {
+      setSavingProfile(false)
+    }
+  }
+
+  const saveNotifications = async () => {
+    setSavingNotifs(true)
+    try {
+      const res = await fetch('/api/profile', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ notificationPrefs: notifPrefs }),
+      })
+      if (!res.ok) throw new Error()
+      toast.success('Notification preferences saved')
+    } catch {
+      toast.error('Failed to save preferences')
+    } finally {
+      setSavingNotifs(false)
+    }
+  }
+
+  const isFree = initial.plan === 'free'
+  const docsUsed = initial.docsUsedThisMonth
+  const docLimit = 3
+  const resetDate = initial.docsResetAt
+    ? new Date(new Date(initial.docsResetAt).setMonth(new Date(initial.docsResetAt).getMonth() + 1))
+        .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
+    : null
+
+  return (
+    <div>
+      <PageHeader title="Settings" />
+
+      <Tabs defaultValue="profile" className="space-y-5">
+        <TabsList>
+          <TabsTrigger value="profile">Profile</TabsTrigger>
+          <TabsTrigger value="billing">Plan &amp; Billing</TabsTrigger>
+          <TabsTrigger value="notifications">Notifications</TabsTrigger>
+        </TabsList>
+
+        {/* ── Profile Tab ── */}
+        <TabsContent value="profile" className="space-y-5 max-w-2xl">
+          <Card>
+            <CardHeader><CardTitle className="text-base">Personal Information</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Full Name</Label>
+                  <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Email</Label>
+                  <Input value={initial.email} disabled className="opacity-60" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Phone</Label>
+                  <Input value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Profession</Label>
+                  <Select value={profession} onValueChange={(v) => setProfession(v as Profession)}>
+                    <SelectTrigger><SelectValue placeholder="Select profession…" /></SelectTrigger>
+                    <SelectContent>
+                      {PROFESSIONS.map((p) => <SelectItem key={p.value} value={p.value}>{p.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle className="text-base">Business Information</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Business Name</Label>
+                  <Input value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Tax ID / VAT Number</Label>
+                  <Input value={taxId} onChange={(e) => setTaxId(e.target.value)} placeholder="Optional" />
+                </div>
+              </div>
+              <div className="space-y-1.5">
+                <Label>Address</Label>
+                <Textarea rows={2} value={address} onChange={(e) => setAddress(e.target.value)} />
+              </div>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="space-y-1.5">
+                  <Label>City</Label>
+                  <Input value={city} onChange={(e) => setCity(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>State</Label>
+                  <Input value={state} onChange={(e) => setState(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Postal Code</Label>
+                  <Input value={postalCode} onChange={(e) => setPostalCode(e.target.value)} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader><CardTitle className="text-base">Defaults</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="space-y-1.5">
+                  <Label>Default Currency</Label>
+                  <Select value={defaultCurrency} onValueChange={setDefaultCurrency}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {CURRENCIES.map((c) => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Default Tax Rate (%)</Label>
+                  <Input type="number" min="0" max="100" step="0.1" value={defaultTaxRate} onChange={(e) => setDefaultTaxRate(e.target.value)} />
+                </div>
+                <div className="space-y-1.5">
+                  <Label>Timezone</Label>
+                  <Select value={timezone} onValueChange={setTimezone}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      {TIMEZONES.map((t) => <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>)}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex justify-end">
+            <Button onClick={saveProfile} disabled={savingProfile}>
+              <Save className="mr-1 h-4 w-4" />
+              {savingProfile ? 'Saving…' : 'Save Profile'}
+            </Button>
+          </div>
+
+          <Card>
+            <CardContent className="flex items-start gap-3 p-4">
+              <div className="text-sm text-muted-foreground">
+                <p className="font-medium text-foreground">Invoice appearance moved</p>
+                Invoice templates (logo, colors, business info) are now managed under{' '}
+                <Link href="/invoices/templates" className="text-primary underline">
+                  Invoices → Templates →
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        {/* ── Plan & Billing Tab ── */}
+        <TabsContent value="billing" className="max-w-2xl space-y-5">
+          <Card>
+            <CardContent className="p-5">
+              <div className="flex items-start justify-between">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    {isFree
+                      ? <Zap className="h-5 w-5 text-muted-foreground" />
+                      : <Star className="h-5 w-5 text-primary" />}
+                    <p className="font-semibold text-lg">{PLAN_LABELS[initial.plan]}</p>
+                  </div>
+                  {isFree ? (
+                    <>
+                      <p className="text-sm text-muted-foreground">
+                        {docsUsed} of {docLimit} documents used this month
+                        {resetDate && ` · Resets ${resetDate}`}
+                      </p>
+                      <div className="mt-3 space-y-2">
+                        <Button asChild className="w-full sm:w-auto">
+                          <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_MONTHLY_URL ?? '/pricing'}>
+                            Upgrade to Pro — $9/month
+                          </a>
+                        </Button>
+                        <Button asChild variant="outline" className="w-full sm:w-auto ml-0 sm:ml-2">
+                          <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_ANNUAL_URL ?? '/pricing'}>
+                            Get Annual — $79/year (save 27%)
+                          </a>
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <>
+                      {initial.planExpiresAt && (
+                        <p className="text-sm text-muted-foreground">
+                          Renews: {new Date(initial.planExpiresAt).toLocaleDateString()}
+                        </p>
+                      )}
+                      <p className="text-sm text-muted-foreground">Unlimited documents · No FileCurrent branding</p>
+                      <Button variant="outline" size="sm" className="mt-3">
+                        Cancel subscription
+                      </Button>
+                    </>
+                  )}
+                </div>
+                <Badge variant={isFree ? 'secondary' : 'default'} className={!isFree ? 'bg-primary' : ''}>
+                  {PLAN_LABELS[initial.plan]}
+                </Badge>
+              </div>
+            </CardContent>
+          </Card>
+
+          {isFree && (
+            <Card className="border-primary/20 bg-accent/30">
+              <CardHeader>
+                <CardTitle className="text-base flex items-center gap-2">
+                  <Shield className="h-4 w-4 text-primary" /> Launch Lifetime Deal
+                </CardTitle>
+                <CardDescription>Available for a limited time</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground mb-3">
+                  Pay once, use FileCurrent Pro forever. $49 one-time payment — limited to the first 90 days.
+                </p>
+                <Button asChild>
+                  <a href={process.env.NEXT_PUBLIC_LEMONSQUEEZY_LIFETIME_URL ?? '/pricing'}>
+                    Get Lifetime Access — $49
+                  </a>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+        </TabsContent>
+
+        {/* ── Notifications Tab ── */}
+        <TabsContent value="notifications" className="max-w-2xl">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Email Notifications</CardTitle>
+              <CardDescription>Choose which events trigger an email to you</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {NOTIFICATION_OPTIONS.map((opt) => (
+                <div key={opt.key} className="flex items-center justify-between">
+                  <Label htmlFor={`notif-${opt.key}`} className="cursor-pointer text-sm font-normal">
+                    {opt.label}
+                  </Label>
+                  <Switch
+                    id={`notif-${opt.key}`}
+                    checked={notifPrefs[opt.key] ?? true}
+                    onCheckedChange={(v) => setNotifPrefs((p) => ({ ...p, [opt.key]: v }))}
+                  />
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+          <div className="mt-4 flex justify-end">
+            <Button onClick={saveNotifications} disabled={savingNotifs}>
+              <Save className="mr-1 h-4 w-4" />
+              {savingNotifs ? 'Saving…' : 'Save Preferences'}
+            </Button>
+          </div>
+        </TabsContent>
+      </Tabs>
+    </div>
+  )
+}
