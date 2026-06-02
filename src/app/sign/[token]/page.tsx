@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle } from '@/components/icons'
 import { getContractForSigning } from '@/lib/db/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
@@ -15,7 +15,7 @@ export default async function SignPage({ params }: { params: { token: string } }
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-sm">
-          <CheckCircle2 className="mx-auto mb-4 h-14 w-14 text-green-500" />
+          <CheckCircle className="mx-auto mb-4 h-14 w-14 text-green-500" />
           <h1 className="text-xl font-bold text-foreground">Document Already Signed</h1>
           <p className="mt-2 text-sm text-muted-foreground">
             This contract has been signed. Thank you!

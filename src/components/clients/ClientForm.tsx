@@ -7,7 +7,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { UserPlus, Save } from 'lucide-react'
+import { UserPlus, FloppyDisk } from '@phosphor-icons/react'
 import { Button, Input, Textarea, PageHeader } from '@/components/ui'
 import type { Client, ClientFormData } from '@/types'
 
@@ -111,7 +111,7 @@ export function ClientForm({ mode, initialData = {}, clientId }: ClientFormProps
             variant="primary"
             onClick={handleSubmit}
             loading={saving}
-            icon={mode === 'create' ? <UserPlus size={16} /> : <Save size={16} />}
+            icon={mode === 'create' ? <UserPlus size={16} /> : <FloppyDisk size={16} />}
           >
             {mode === 'create' ? 'Create Client' : 'Update Client'}
           </Button>

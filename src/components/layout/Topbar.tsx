@@ -1,10 +1,11 @@
 'use client'
 
 import { useState } from 'react'
-import { LogOut, Settings, User } from 'lucide-react'
-import { APP_NAME } from '@/lib/constants'
+import Link from 'next/link'
+import { SignOut, GearSix, User } from '@phosphor-icons/react'
 import { getInitials } from '@/lib/utils'
 import type { LayoutUser } from './AppLayout'
+import { LogoFull } from '@/components/logo/LogoMark'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -42,13 +43,10 @@ export function Topbar({ user, onLogout }: TopbarProps) {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b bg-card px-4">
-      <div className="flex items-center gap-2">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-primary text-xs font-bold text-primary-foreground">
-          FC
-        </div>
-        <span className="text-sm font-bold text-foreground">{APP_NAME}</span>
-      </div>
+    <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">
+      <Link href="/dashboard">
+        <LogoFull className="text-gray-900" />
+      </Link>
 
       <div className="flex items-center gap-3">
         <Badge variant={user.plan === 'free' ? 'secondary' : 'default'}>
@@ -66,13 +64,17 @@ export function Topbar({ user, onLogout }: TopbarProps) {
           <DropdownMenuContent align="end" className="w-48">
             <DropdownMenuLabel>{user.fullName}</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-              <User className="mr-2 h-4 w-4" />
-              Profile
+            <DropdownMenuItem asChild>
+              <Link href="/settings">
+                <User className="mr-2 h-4 w-4" />
+                Profile
+              </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem>
-              <Settings className="mr-2 h-4 w-4" />
-              Settings
+            <DropdownMenuItem asChild>
+              <Link href="/settings">
+                <GearSix className="mr-2 h-4 w-4" />
+                Settings
+              </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
@@ -82,7 +84,7 @@ export function Topbar({ user, onLogout }: TopbarProps) {
                 setConfirmLogoutOpen(true)
               }}
             >
-              <LogOut className="mr-2 h-4 w-4" />
+              <SignOut className="mr-2 h-4 w-4" />
               Log out
             </DropdownMenuItem>
           </DropdownMenuContent>

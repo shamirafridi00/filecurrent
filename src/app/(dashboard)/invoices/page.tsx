@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
-import { Plus, Receipt } from 'lucide-react'
+import { Plus, Receipt } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, InvoiceBadge, EmptyState } from '@/components/ui'

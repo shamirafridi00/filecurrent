@@ -3,7 +3,7 @@
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Trash2, FileText, Save, X, ChevronDown, Check } from 'lucide-react'
+import { Plus, Trash, FileText, FloppyDisk, X, CaretDown, Check } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -31,6 +31,7 @@ import {
 } from '@/components/ui/command'
 import { PageHeader } from '@/components/ui'
 import { UpgradePrompt } from '@/components/upgrade/UpgradePrompt'
+import { InvoicePreview } from '@/components/invoices/InvoicePreview'
 import { toast } from 'sonner'
 import { formatCurrency, generateInvoiceNumber, calculateInvoiceTotals } from '@/lib/utils'
 import { CURRENCIES, PAYMENT_METHODS } from '@/types'
@@ -143,7 +144,8 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
         backLabel={returnTo ? 'Back' : 'Back to Invoices'}
       />
 
-      <div className="max-w-3xl space-y-5">
+      <div className="grid grid-cols-1 xl:grid-cols-[1fr_360px] gap-8 items-start">
+      <div className="space-y-5">
         {/* Template selector */}
         <Card>
           <CardHeader className="pb-3">
@@ -275,7 +277,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                     onClick={() => removeItem(item._id)}
                     className="flex items-center justify-center text-muted-foreground hover:text-destructive transition-colors"
                   >
-                    <Trash2 size={15} />
+                    <Trash size={15} />
                   </button>
                 </div>
               ))}
@@ -368,10 +370,40 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
             {saving ? 'Saving…' : 'Save as Draft'}
           </Button>
           <Button onClick={() => handleSave(true)} disabled={saving}>
-            <Save className="mr-1 h-4 w-4" />
+            <FloppyDisk className="mr-1 h-4 w-4" />
             {saving ? 'Saving…' : 'Save & Mark as Sent'}
           </Button>
         </div>
+      </div>
+
+      {/* Live preview — desktop only */}
+      <div className="hidden xl:block">
+        <InvoicePreview
+          data={{
+            invoiceNumber: invoiceNumber || '',
+            invoiceDate: invoiceDate || '',
+            dueDate: dueDate || undefined,
+            clientName: clients.find(c => c.id === clientId)?.name || '',
+            items: items.map(item => ({
+              description: item.description || '',
+              quantity: Number(item.quantity) || 0,
+              unitPrice: Number(item.unitPrice) || 0,
+            })),
+            subtotal: Number(subtotal) || 0,
+            taxRate: Number(taxRate) || 0,
+            taxAmount: Number(taxAmount) || 0,
+            discountAmount: Number(discountAmount) || 0,
+            depositAmount: Number(depositAmount) || 0,
+            total: Number(total) || 0,
+            balanceDue: Math.max(0, (Number(total) || 0) - (Number(depositAmount) || 0)),
+            notes: notes || undefined,
+            paymentTerms: paymentTerms || undefined,
+            currency: currency || 'USD',
+          }}
+          template={templates.find(t => t.id === templateId) ?? null}
+        />
+      </div>
+
       </div>
     </div>
     </>

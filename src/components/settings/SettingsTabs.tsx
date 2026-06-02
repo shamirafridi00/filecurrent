@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { Save, ExternalLink, Zap, Star, Shield } from 'lucide-react'
+import { FloppyDisk, ArrowSquareOut, Lightning, Star, ShieldCheck } from '@phosphor-icons/react'
 import { useCheckout } from '@/hooks/useCheckout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -246,7 +246,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
 
           <div className="flex justify-end">
             <Button onClick={saveProfile} disabled={savingProfile}>
-              <Save className="mr-1 h-4 w-4" />
+              <FloppyDisk className="mr-1 h-4 w-4" />
               {savingProfile ? 'Saving…' : 'Save Profile'}
             </Button>
           </div>
@@ -272,7 +272,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
                     {isFree
-                      ? <Zap className="h-5 w-5 text-muted-foreground" />
+                      ? <Lightning className="h-5 w-5 text-muted-foreground" />
                       : <Star className="h-5 w-5 text-primary" />}
                     <p className="font-semibold text-lg">{PLAN_LABELS[initial.plan]}</p>
                   </div>
@@ -325,7 +325,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
             <Card className="border-primary/20 bg-accent/30">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">
-                  <Shield className="h-4 w-4 text-primary" /> Launch Lifetime Deal
+                  <ShieldCheck className="h-4 w-4 text-primary" /> Launch Lifetime Deal
                 </CardTitle>
                 <CardDescription>Available for a limited time</CardDescription>
               </CardHeader>
@@ -368,7 +368,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
           </Card>
           <div className="mt-4 flex justify-end">
             <Button onClick={saveNotifications} disabled={savingNotifs}>
-              <Save className="mr-1 h-4 w-4" />
+              <FloppyDisk className="mr-1 h-4 w-4" />
               {savingNotifs ? 'Saving…' : 'Save Preferences'}
             </Button>
           </div>

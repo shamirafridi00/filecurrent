@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Send } from 'lucide-react'
+import { PaperPlaneTilt } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -59,7 +59,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
   return (
     <>
       <Button onClick={() => setOpen(true)} size="sm">
-        <Send className="mr-1 h-4 w-4" />
+        <PaperPlaneTilt className="mr-1 h-4 w-4" />
         Send for Signature
       </Button>
       <Dialog open={open} onOpenChange={setOpen}>
@@ -91,7 +91,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-sm text-green-600 font-medium">Signing link created successfully!</p>
+              <p className="text-sm text-[#4F6AE6] font-medium">Signing link created successfully!</p>
               <div className="rounded-md border bg-muted p-3">
                 <p className="break-all text-sm font-mono">{signLink}</p>
               </div>

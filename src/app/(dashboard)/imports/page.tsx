@@ -1,6 +1,6 @@
 'use client'
 
-import { Upload } from 'lucide-react'
+import { UploadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { PageHeader, DropZone } from '@/components/ui'
 
@@ -10,7 +10,7 @@ export default function ImportsPage() {
       <PageHeader
         title="Import Clients"
         subtitle="Upload a CSV file to bulk-import clients"
-        icon={<Upload size={24} />}
+        icon={<UploadSimple size={24} />}
       />
 
       <Card className="max-w-lg">

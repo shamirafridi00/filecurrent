@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Sparkles, Save, X } from 'lucide-react'
+import { Sparkle, FloppyDisk, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -180,7 +180,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
                     className="h-7 text-xs text-muted-foreground"
                     onClick={() => toast.info('AI generation coming soon')}
                   >
-                    <Sparkles className="mr-1 h-3 w-3" /> Generate from AI
+                    <Sparkle className="mr-1 h-3 w-3" /> Generate from AI
                   </Button>
                 </div>
                 <Textarea
@@ -253,7 +253,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
               <X className="mr-1 h-4 w-4" /> Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={saving}>
-              <Save className="mr-1 h-4 w-4" />
+              <FloppyDisk className="mr-1 h-4 w-4" />
               {saving ? 'Creating…' : 'Create Contract'}
             </Button>
           </div>

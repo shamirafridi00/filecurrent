@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { MessageSquare, Send } from 'lucide-react'
+import { ChatCircle, PaperPlaneTilt } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Textarea } from '@/components/ui/textarea'
@@ -37,7 +37,7 @@ export default function FeedbackPage() {
       <PageHeader
         title="Feedback"
         subtitle="Help us make FileCurrent better"
-        icon={<MessageSquare size={24} />}
+        icon={<ChatCircle size={24} />}
       />
 
       <Card className="max-w-lg">
@@ -63,7 +63,7 @@ export default function FeedbackPage() {
             />
           </div>
           <Button onClick={handleSubmit} disabled={sending} className="w-full">
-            <Send className="mr-1 h-4 w-4" />
+            <PaperPlaneTilt className="mr-1 h-4 w-4" />
             {sending ? 'Sending…' : 'Send Feedback'}
           </Button>
           <p className="text-xs text-center text-muted-foreground">

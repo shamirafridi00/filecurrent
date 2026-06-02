@@ -3,36 +3,35 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import {
-  Activity,
+  ChartLine,
   Bell,
-  Download,
+  DownloadSimple,
   FileText,
-  LayoutDashboard,
-  MessageSquare,
+  SquaresFour,
+  ChatCircle,
   Receipt,
-  Settings,
-  Upload,
+  GearSix,
+  UploadSimple,
   Users,
-  LayoutTemplate,
-} from 'lucide-react'
-import { APP_NAME } from '@/lib/constants'
+  Rows,
+  Lightning,
+} from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import type { LayoutUser } from './AppLayout'
-import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
+import { LogoFullInverse } from '@/components/logo/LogoMark'
 
 const ICON_MAP = {
-  Activity,
+  Activity: ChartLine,
   Bell,
-  Download,
+  Download: DownloadSimple,
   FileText,
-  LayoutDashboard,
-  MessageSquare,
+  LayoutDashboard: SquaresFour,
+  MessageSquare: ChatCircle,
   Receipt,
-  Settings,
-  Upload,
+  Settings: GearSix,
+  Upload: UploadSimple,
   Users,
-  LayoutTemplate,
+  LayoutTemplate: Rows,
 }
 
 type NavEntry =
@@ -68,11 +67,11 @@ function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
         className={cn(
           'flex w-full items-center gap-2 rounded-md py-1.5 pl-9 pr-3 text-xs transition-colors',
           active
-            ? 'font-medium text-primary'
-            : 'text-muted-foreground hover:text-foreground'
+            ? 'bg-[#0F766E] text-white font-medium'
+            : 'text-[#a8c5c2] hover:bg-[#162b28] hover:text-white'
         )}
       >
-        <LayoutTemplate size={13} className="shrink-0" />
+        <Rows size={13} className="shrink-0" />
         <span>{entry.label}</span>
       </Link>
     )
@@ -86,11 +85,11 @@ function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
       className={cn(
         'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
         active
-          ? 'bg-accent font-medium text-primary'
-          : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+          ? 'bg-[#0F766E] text-white font-medium'
+          : 'text-[#a8c5c2] hover:bg-[#162b28] hover:text-white'
       )}
     >
-      <Icon size={18} className="shrink-0" />
+      <Icon size={18} weight={active ? 'fill' : 'regular'} className="shrink-0" />
       <span>{entry.label}</span>
     </Link>
   )
@@ -105,7 +104,7 @@ function NavSection({ title, items }: { title: string; items: NavEntry[] }) {
 
   return (
     <div>
-      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-[#4a7c78]">
         {title}
       </p>
       <nav className="space-y-0.5">
@@ -125,27 +124,34 @@ function FreeUsage({ user }: { user: LayoutUser }) {
   const progress = Math.min((used / limit) * 100, 100)
 
   return (
-    <div className="rounded-lg border bg-card p-3">
-      <div className="mb-2 flex items-center justify-between text-sm">
-        <span className="font-medium">Free Plan</span>
-        <span className="text-muted-foreground">
-          {used} / {limit}
-        </span>
+    <div className="rounded-lg border border-[#1a3330] bg-[#0a1917] p-3">
+      <div className="mb-2 flex items-center justify-between">
+        <span className="text-sm font-medium text-[#a8c5c2]">Free Plan</span>
+        <span className="text-xs text-white">{used} / {limit}</span>
       </div>
-      <Progress value={progress} className="mb-3 h-2" />
-      <Button asChild size="sm" className="w-full">
-        <Link href="/pricing">Upgrade to Pro</Link>
-      </Button>
+      <div className="mb-3 h-1.5 w-full rounded-full bg-[#1a3330]">
+        <div
+          className="h-1.5 rounded-full bg-[#0F766E] transition-all"
+          style={{ width: `${progress}%` }}
+        />
+      </div>
+      <Link
+        href="/pricing"
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#0F766E] py-2 text-sm font-medium text-white transition-colors hover:bg-[#0d6b64]"
+      >
+        <Lightning size={13} weight="fill" />
+        Upgrade to Pro
+      </Link>
     </div>
   )
 }
 
 export function Sidebar({ user }: { user: LayoutUser }) {
   return (
-    <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r bg-card">
-      <div className="flex-1 overflow-y-auto p-3">
-        <div className="mb-5 px-3 text-xs font-medium text-muted-foreground">
-          {APP_NAME} workspace
+    <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r border-[#1a3330] bg-[#0D1F1E]">
+      <div className="sidebar-scroll flex-1 overflow-y-auto p-3">
+        <div className="mb-5 px-1">
+          <LogoFullInverse />
         </div>
         <div className="space-y-6">
           <NavSection title="Main Menu" items={MAIN_NAV} />
@@ -153,7 +159,7 @@ export function Sidebar({ user }: { user: LayoutUser }) {
           <NavSection title="Account" items={ACCOUNT_NAV} />
         </div>
       </div>
-      <div className="p-3">
+      <div className="border-t border-[#1a3330] p-3">
         <FreeUsage user={user} />
       </div>
     </aside>

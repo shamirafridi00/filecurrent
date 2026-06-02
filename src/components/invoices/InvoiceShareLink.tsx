@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Copy, Check, ExternalLink } from 'lucide-react'
+import { Copy, Check, ArrowSquareOut } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
@@ -30,7 +30,7 @@ export function InvoiceShareLink({ shareToken }: { shareToken: string }) {
         </Button>
         <Button size="sm" variant="ghost" asChild>
           <a href={`/i/${shareToken}`} target="_blank" rel="noopener noreferrer">
-            <ExternalLink className="h-3.5 w-3.5" />
+            <ArrowSquareOut className="h-3.5 w-3.5" />
           </a>
         </Button>
       </div>

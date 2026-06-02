@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle2 } from 'lucide-react'
+import { CheckCircle } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -23,7 +23,7 @@ export function SignaturePanel({ token, signerEmail }: Props) {
     return (
       <div className="fixed inset-x-0 bottom-0 z-20 border-t bg-card shadow-xl">
         <div className="mx-auto max-w-2xl px-4 py-6 text-center">
-          <CheckCircle2 className="mx-auto mb-2 h-10 w-10 text-green-500" />
+          <CheckCircle className="mx-auto mb-2 h-10 w-10 text-green-500" />
           <p className="font-semibold text-foreground">Document Signed Successfully</p>
           <p className="mt-1 text-sm text-muted-foreground">
             Your signed copy has been recorded. Thank you, {signerName}!

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Users, Plus, FileText, Receipt, Edit, Mail, Building, Phone, MapPin } from 'lucide-react'
+import { Users, Plus, FileText, Receipt, PencilSimple, Envelope, Buildings, Phone, MapPin } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/components/ui'
@@ -38,7 +38,7 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
           <div className="flex items-center gap-2">
             <Button asChild variant="outline" size="sm">
               <Link href={`/clients/${params.id}/edit`}>
-                <Edit className="mr-1 h-3.5 w-3.5" /> Edit
+                <PencilSimple className="mr-1 h-3.5 w-3.5" /> Edit
               </Link>
             </Button>
             <Button asChild size="sm">
@@ -63,12 +63,12 @@ export default async function ClientDetailPage({ params }: { params: { id: strin
             <CardContent className="space-y-2 text-sm">
               {client.company && (
                 <div className="flex items-center gap-2 text-muted-foreground">
-                  <Building size={14} /> {client.company}
+                  <Buildings size={14} /> {client.company}
                 </div>
               )}
               {client.email && (
                 <div className="flex items-center gap-2">
-                  <Mail size={14} className="text-muted-foreground shrink-0" />
+                  <Envelope size={14} className="text-muted-foreground shrink-0" />
                   <a href={`mailto:${client.email}`} className="text-primary hover:underline truncate">{client.email}</a>
                 </div>
               )}

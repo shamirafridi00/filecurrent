@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
-import { Plus, LayoutTemplate, Globe, Star } from 'lucide-react'
+import { Plus, Rows, Globe, Star } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -26,7 +26,7 @@ export default async function ContractTemplatesPage() {
       <PageHeader
         title="Contract Templates"
         subtitle="Browse profession-matched templates or create your own"
-        icon={<LayoutTemplate size={24} />}
+        icon={<Rows size={24} />}
         action={
           <Button asChild>
             <Link href="/contracts/templates/new">
@@ -92,7 +92,7 @@ export default async function ContractTemplatesPage() {
             <Card>
               <CardContent className="p-8">
                 <EmptyState
-                  icon={<LayoutTemplate size={40} />}
+                  icon={<Rows size={40} />}
                   title="No custom templates yet"
                   description="Create your own template with custom clauses and branding."
                   action={

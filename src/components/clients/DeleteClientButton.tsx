@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Trash2 } from 'lucide-react'
+import { Trash } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -35,7 +35,7 @@ export function DeleteClientButton({ clientId, clientName }: { clientId: string;
   return (
     <>
       <Button variant="outline" size="sm" className="w-full text-destructive hover:text-destructive" onClick={() => setOpen(true)}>
-        <Trash2 className="mr-1 h-3.5 w-3.5" /> Delete Client
+        <Trash className="mr-1 h-3.5 w-3.5" /> Delete Client
       </Button>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>

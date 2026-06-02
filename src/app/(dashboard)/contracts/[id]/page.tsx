@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { FileText, Send, Download } from 'lucide-react'
+import { FileText, PaperPlaneTilt, DownloadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge } from '@/components/ui'
@@ -58,7 +58,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
             {contract.status === 'signed' && (
               <Button asChild variant="outline" size="sm">
                 <a href={`/api/contracts/${contract.id}/pdf`} target="_blank" rel="noreferrer">
-                  <Download className="mr-1.5 h-3.5 w-3.5" />
+                  <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
                   Download Signed PDF
                 </a>
               </Button>

@@ -3,17 +3,13 @@ export const dynamic = 'force-dynamic'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
 import {
-  Zap,
+  Lightning,
   FileText,
-  DollarSign,
-  Clock,
-  Users,
-  Receipt,
-  Hourglass,
   Plus,
   Bell,
-  Calendar,
-} from 'lucide-react'
+  CalendarBlank,
+  Receipt,
+} from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
@@ -44,22 +40,21 @@ export default async function DashboardPage() {
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
         {isFree && (
-          <Card className="border-l-4 border-l-primary">
-            <CardContent className="flex items-center justify-between p-4">
-              <div className="flex items-center gap-3">
-                <Zap className="h-5 w-5 shrink-0 text-primary" />
-                <div>
-                  <p className="font-semibold text-foreground">
-                    You&apos;re on the Free plan — {docsUsed} of {docLimit} documents used this month
-                  </p>
-                  <Progress value={progress} className="mt-1.5 h-1.5 w-48" />
-                </div>
+          <div className="flex items-center justify-between rounded-r-xl border-l-4 border-l-teal-600 bg-teal-50 p-4">
+            <div className="flex items-center gap-3">
+              <Lightning className="h-5 w-5 shrink-0 text-teal-600" />
+              <div>
+                <p className="font-semibold text-teal-900">
+                  You&apos;re on the Free plan — {docsUsed} of {docLimit} documents used this month
+                </p>
+                <p className="text-sm text-teal-700 mt-0.5">Upgrade for unlimited documents and no branding.</p>
+                <Progress value={progress} className="mt-1.5 h-1.5 w-48" />
               </div>
-              <Button asChild size="sm" className="ml-4 shrink-0">
-                <Link href="/pricing">Upgrade to Pro — $9/month →</Link>
-              </Button>
-            </CardContent>
-          </Card>
+            </div>
+            <Button asChild size="sm" className="ml-4 shrink-0 bg-teal-700 hover:bg-teal-800 text-white">
+              <Link href="/pricing">Upgrade to Pro — $9/month →</Link>
+            </Button>
+          </div>
         )}
 
         <div className="grid grid-cols-3 gap-4">
@@ -67,21 +62,21 @@ export default async function DashboardPage() {
             label="Total Invoiced"
             value={formatCurrency(stats.totalInvoiced)}
             subValue={`${stats.pendingInvoices} pending`}
-            icon={<FileText size={18} />}
+            accent="border-l-slate-400"
           />
           <StatCard
             label="Total Paid"
             value={formatCurrency(stats.totalPaid)}
             subValue={`${formatCurrency(stats.paidLast30Days)} last 30 days`}
-            icon={<DollarSign size={18} />}
-            valueColor="text-green-600"
+            valueColor="text-[#4F6AE6]"
+            accent="border-l-[#4F6AE6]"
           />
           <StatCard
             label="Outstanding"
             value={formatCurrency(stats.outstanding)}
             subValue={`${stats.overdueCount} overdue`}
-            icon={<Clock size={18} />}
             valueColor="text-amber-600"
+            accent="border-l-amber-500"
           />
         </div>
 
@@ -89,22 +84,26 @@ export default async function DashboardPage() {
           <StatCard
             label="Active Clients"
             value={String(stats.activeClients)}
-            icon={<Users size={18} />}
+            accent="border-t-teal-500"
+            accentPosition="top"
           />
           <StatCard
             label="Signed Contracts"
             value={String(stats.signedContracts)}
-            icon={<FileText size={18} />}
+            accent="border-t-[#4F6AE6]"
+            accentPosition="top"
           />
           <StatCard
             label="Pending"
             value={String(stats.pendingInvoices)}
-            icon={<Hourglass size={18} />}
+            accent="border-t-amber-500"
+            accentPosition="top"
           />
           <StatCard
             label="Drafts"
             value={String(stats.draftInvoices)}
-            icon={<Receipt size={18} />}
+            accent="border-t-slate-400"
+            accentPosition="top"
           />
         </div>
 
@@ -226,7 +225,7 @@ export default async function DashboardPage() {
                     {event.type === 'reminder' ? (
                       <Bell className="h-4 w-4 text-amber-500" />
                     ) : (
-                      <Calendar className="h-4 w-4 text-primary" />
+                      <CalendarBlank className="h-4 w-4 text-primary" />
                     )}
                   </div>
                   <div>

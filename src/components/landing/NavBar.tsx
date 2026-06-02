@@ -2,10 +2,10 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
-import { Menu, X } from 'lucide-react'
+import { List, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
-import { APP_NAME } from '@/lib/constants'
 import { cn } from '@/lib/utils'
+import { LogoFull } from '@/components/logo/LogoMark'
 
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false)
@@ -20,40 +20,41 @@ export function NavBar() {
   return (
     <nav className={cn(
       'fixed inset-x-0 top-0 z-50 transition-all',
-      scrolled ? 'bg-white/95 backdrop-blur-sm border-b shadow-sm' : 'bg-transparent'
+      scrolled ? 'bg-[#0a0f0e]/95 backdrop-blur-sm border-b border-[#1a2a28]' : 'bg-transparent'
     )}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/" className="flex items-center gap-2">
-          <div className="h-7 w-7 rounded-lg bg-primary flex items-center justify-center">
-            <span className="text-white text-xs font-bold">FC</span>
-          </div>
-          <span className="font-bold text-gray-900">{APP_NAME}</span>
+        <Link href="/">
+          <LogoFull className="text-white" />
         </Link>
 
-        <div className="hidden md:flex items-center gap-6 text-sm text-gray-600">
-          <a href="/#pricing" className="hover:text-primary transition-colors">Pricing</a>
-          <a href="/#faq" className="hover:text-primary transition-colors">FAQ</a>
-          <Link href="/dashboard" className="hover:text-primary transition-colors">Login</Link>
-          <Button asChild size="sm">
-            <Link href="/dashboard">Start Free →</Link>
+        <div className="hidden md:flex items-center gap-6 text-sm text-gray-400">
+          <a href="/#features" className="hover:text-white transition-colors">Features</a>
+          <a href="/#pricing" className="hover:text-white transition-colors">Pricing</a>
+          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
+          <Link href="/help" className="hover:text-white transition-colors">Help</Link>
+          <Link href="/login" className="hover:text-white transition-colors">Login</Link>
+          <Button asChild size="sm" className="bg-teal-600 hover:bg-teal-700 text-white">
+            <Link href="/signup">Start Free →</Link>
           </Button>
         </div>
 
         <button
-          className="md:hidden p-1 text-gray-600"
+          className="md:hidden p-1 text-gray-400"
           onClick={() => setMobileOpen((o) => !o)}
         >
-          {mobileOpen ? <X size={20} /> : <Menu size={20} />}
+          {mobileOpen ? <X size={20} /> : <List size={20} />}
         </button>
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden border-t bg-white px-4 py-4 space-y-3">
-          <a href="/#pricing" className="block text-sm text-gray-600" onClick={() => setMobileOpen(false)}>Pricing</a>
-          <a href="/#faq" className="block text-sm text-gray-600" onClick={() => setMobileOpen(false)}>FAQ</a>
-          <Link href="/dashboard" className="block text-sm text-gray-600" onClick={() => setMobileOpen(false)}>Login</Link>
-          <Button asChild size="sm" className="w-full">
-            <Link href="/dashboard">Start Free →</Link>
+        <div className="md:hidden border-t border-[#1a2a28] bg-[#0a0f0e] px-4 py-4 space-y-3">
+          <a href="/#features" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Features</a>
+          <a href="/#pricing" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Pricing</a>
+          <Link href="/blog" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Blog</Link>
+          <Link href="/help" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Help</Link>
+          <Link href="/login" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Login</Link>
+          <Button asChild size="sm" className="w-full bg-teal-600 hover:bg-teal-700 text-white">
+            <Link href="/signup">Start Free →</Link>
           </Button>
         </div>
       )}

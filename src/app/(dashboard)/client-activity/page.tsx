@@ -1,6 +1,6 @@
 export const dynamic = 'force-dynamic'
 
-import { Activity } from 'lucide-react'
+import { ChartLine } from '@/components/icons'
 import { Card, CardContent } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
 import { redirect } from 'next/navigation'
@@ -33,7 +33,7 @@ export default async function ClientActivityPage() {
       <PageHeader
         title="Client Activity"
         subtitle="Overview of all client interactions"
-        icon={<Activity size={24} />}
+        icon={<ChartLine size={24} />}
       />
 
       {clientActivity.length === 0 ? (

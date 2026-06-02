@@ -13,7 +13,12 @@ export default async function SettingsPage() {
   const profile = await getFullProfile(user.id)
   if (!profile) return null
 
-  const notificationPrefs = JSON.parse(profile.notification_prefs || '{}') as Record<string, boolean>
+  const rawPrefs = profile.notification_prefs
+  const notificationPrefs = (
+    typeof rawPrefs === 'string'
+      ? JSON.parse(rawPrefs || '{}')
+      : rawPrefs ?? {}
+  ) as Record<string, boolean>
 
   return (
     <SettingsTabs

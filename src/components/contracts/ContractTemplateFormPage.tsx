@@ -2,7 +2,7 @@
 
 import { useState, useRef } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, X } from 'lucide-react'
+import { FloppyDisk, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -170,7 +170,7 @@ export function ContractTemplateFormPage({ mode, templateId, initialData }: Prop
           <X className="mr-1 h-4 w-4" /> Cancel
         </Button>
         <Button onClick={handleSubmit} disabled={saving}>
-          <Save className="mr-1 h-4 w-4" />
+          <FloppyDisk className="mr-1 h-4 w-4" />
           {saving ? 'Saving…' : mode === 'create' ? 'Create Template' : 'Save Changes'}
         </Button>
       </div>

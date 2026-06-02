@@ -1,6 +1,6 @@
 'use client'
 
-import { Download } from 'lucide-react'
+import { DownloadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui'
@@ -19,7 +19,7 @@ export default function ExportsPage() {
       <PageHeader
         title="Export Data"
         subtitle="Download your data as CSV or JSON"
-        icon={<Download size={24} />}
+        icon={<DownloadSimple size={24} />}
       />
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 max-w-2xl">
@@ -36,7 +36,7 @@ export default function ExportsPage() {
                 className="w-full"
                 onClick={() => toast.info(`${item.label} CSV export coming soon`)}
               >
-                <Download className="mr-1 h-3.5 w-3.5" />
+                <DownloadSimple className="mr-1 h-3.5 w-3.5" />
                 Export CSV
               </Button>
             </CardContent>

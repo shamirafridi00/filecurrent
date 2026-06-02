@@ -1,6 +1,6 @@
 'use client'
 
-import { Zap, Star } from 'lucide-react'
+import { Lightning, Star } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -26,7 +26,7 @@ export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
-            <Zap className="h-5 w-5 text-primary" />
+            <Lightning className="h-5 w-5 text-primary" />
             You&apos;ve used your {limit} free documents this month
           </DialogTitle>
           <DialogDescription>

@@ -1,23 +1,29 @@
 'use client'
-
 import { useState } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { CaretDown } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
-export function FaqItem({ question, answer }: { question: string; answer: string }) {
-  const [open, setOpen] = useState(false)
+interface FaqItemProps {
+  question: string
+  answer: string
+}
 
+export function FaqItem({ question, answer }: FaqItemProps) {
+  const [open, setOpen] = useState(false)
   return (
-    <div className="rounded-lg border bg-white">
+    <div className="rounded-lg border border-[#1a2a28] bg-[#0d1614]">
       <button
-        className="flex w-full items-center justify-between p-4 text-left text-sm font-medium hover:bg-muted/40 transition-colors"
+        className="flex w-full items-center justify-between p-4 text-left"
         onClick={() => setOpen((o) => !o)}
       >
-        {question}
-        <ChevronDown className={cn('h-4 w-4 shrink-0 text-muted-foreground transition-transform', open && 'rotate-180')} />
+        <span className="font-medium text-white text-sm">{question}</span>
+        <CaretDown
+          size={16}
+          className={cn('shrink-0 text-gray-500 transition-transform', open && 'rotate-180')}
+        />
       </button>
       {open && (
-        <div className="px-4 pb-4 text-sm text-gray-500 leading-relaxed">
+        <div className="px-4 pb-4 text-sm text-gray-400 leading-relaxed">
           {answer}
         </div>
       )}

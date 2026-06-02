@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Receipt, Copy, CheckCircle, ExternalLink, Download } from 'lucide-react'
+import { Receipt, Copy, CheckCircle, ArrowSquareOut, DownloadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, InvoiceBadge } from '@/components/ui'
@@ -151,7 +151,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
                   <>
                     <tr>
                       <td colSpan={3} className="px-2.5 pb-1 text-right text-sm text-muted-foreground">Paid</td>
-                      <td className="px-2.5 pb-1 text-right text-green-600">−{formatCurrency(invoice.paidAmount, invoice.currency)}</td>
+                      <td className="px-2.5 pb-1 text-right text-[#4F6AE6]">−{formatCurrency(invoice.paidAmount, invoice.currency)}</td>
                     </tr>
                     <tr>
                       <td colSpan={3} className="px-2.5 pb-2 text-right font-bold">Balance Due</td>
@@ -199,10 +199,10 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
                 {payments.map((p) => (
                   <div key={p.id} className="flex items-center justify-between text-sm">
                     <div>
-                      <p className="font-medium text-green-600">{formatCurrency(p.amount, invoice.currency)}</p>
+                      <p className="font-medium text-[#4F6AE6]">{formatCurrency(p.amount, invoice.currency)}</p>
                       <p className="text-xs text-muted-foreground">{p.method} · {formatDate(p.paymentDate)}</p>
                     </div>
-                    <CheckCircle className="h-4 w-4 text-green-500" />
+                    <CheckCircle className="h-4 w-4 text-[#4F6AE6]" />
                   </div>
                 ))}
               </CardContent>

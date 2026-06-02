@@ -92,7 +92,7 @@ export function getInvoiceStatusConfig(status: InvoiceStatus) {
     },
     paid: {
       label: 'Paid',
-      className: 'bg-green-100 text-green-700 border border-green-200',
+      className: 'bg-[#EEF2FF] text-[#4F6AE6] border border-[#C7D2FE]',
     },
     overdue: {
       label: 'Overdue',
@@ -118,7 +118,7 @@ export function getContractStatusConfig(status: ContractStatus) {
     },
     signed: {
       label: 'Signed',
-      className: 'bg-green-100 text-green-700 border border-green-200',
+      className: 'bg-[#EEF2FF] text-[#4F6AE6] border border-[#C7D2FE]',
     },
   }
   return configs[status]

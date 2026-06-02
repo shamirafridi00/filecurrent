@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Save, Plus, X, Bell, Zap } from 'lucide-react'
+import { FloppyDisk, Plus, X, Bell, Lightning } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -88,7 +88,7 @@ export function ReminderSettingsForm({ initial }: Props) {
         {/* No-cap banner */}
         <Card className="border-l-4 border-l-primary">
           <CardContent className="flex items-start gap-3 p-4">
-            <Zap className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
+            <Lightning className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
             <p className="text-sm text-foreground">
               FileCurrent sends reminders automatically with <strong>no daily limits</strong>.
               You&apos;ll never miss a late payment because of an artificial cap.
@@ -247,7 +247,7 @@ export function ReminderSettingsForm({ initial }: Props) {
 
         <div className="flex justify-end gap-3">
           <Button onClick={handleSave} disabled={saving}>
-            <Save className="mr-1 h-4 w-4" />
+            <FloppyDisk className="mr-1 h-4 w-4" />
             {saving ? 'Saving…' : 'Save Settings'}
           </Button>
         </div>

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Plus, Users, Building, Mail } from 'lucide-react'
+import { Plus, Users, Buildings, Envelope } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, EmptyState } from '@/components/ui'
@@ -66,12 +66,12 @@ export default async function ClientsPage() {
                     <div className="flex items-center gap-3 mt-0.5">
                       {c.company && (
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <Building size={11} /> {c.company}
+                          <Buildings size={11} /> {c.company}
                         </span>
                       )}
                       {c.email && (
                         <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                          <Mail size={11} /> {c.email}
+                          <Envelope size={11} /> {c.email}
                         </span>
                       )}
                     </div>

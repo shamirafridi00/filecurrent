@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
-import { Plus, LayoutTemplate, Star } from 'lucide-react'
+import { Plus, Rows, Star } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -9,6 +9,7 @@ import { PageHeader, EmptyState } from '@/components/ui'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getInvoiceTemplates } from '@/lib/db/supabase'
+import { seedDefaultInvoiceTemplates } from '@/lib/db/seedUserDefaults'
 
 const THEME_LABELS: Record<string, string> = {
   summit: 'Summit — Minimal',
@@ -21,14 +22,20 @@ export default async function InvoiceTemplatesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const templates = await getInvoiceTemplates(user.id)
+  let templates = await getInvoiceTemplates(user.id)
+
+  // Auto-seed defaults for existing users with no templates
+  if (templates.length === 0) {
+    try { await seedDefaultInvoiceTemplates(user.id) } catch {}
+    templates = await getInvoiceTemplates(user.id)
+  }
 
   return (
     <div>
       <PageHeader
         title="Invoice Templates"
         subtitle="Control how your invoices look — logo, colors, and business info"
-        icon={<LayoutTemplate size={24} />}
+        icon={<Rows size={24} />}
         action={
           <Button asChild>
             <Link href="/invoices/templates/new">
@@ -43,7 +50,7 @@ export default async function InvoiceTemplatesPage() {
         <Card>
           <CardContent className="p-8">
             <EmptyState
-              icon={<LayoutTemplate size={40} />}
+              icon={<Rows size={40} />}
               title="No invoice templates yet"
               description="Your invoice template controls how your invoice looks — logo, colors, and business info."
               action={

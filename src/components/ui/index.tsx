@@ -2,7 +2,7 @@
 
 import React from 'react'
 import Link from 'next/link'
-import { ArrowLeft, AlertTriangle, Loader2, UploadCloud, X } from 'lucide-react'
+import { ArrowLeft, Warning, CircleNotch, CloudArrowUp, X } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { getContractStatusConfig, getInvoiceStatusConfig } from '@/lib/utils'
 import type { ContractStatus, InvoiceStatus, SelectOption } from '@/types'
@@ -95,7 +95,7 @@ export function Button({
       disabled={disabled || loading}
       {...props}
     >
-      {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : icon}
+      {loading ? <CircleNotch className="h-4 w-4 animate-spin" /> : icon}
       {children}
     </ShadcnButton>
   )
@@ -226,28 +226,27 @@ interface StatCardProps {
   subValue?: string
   icon?: React.ReactNode
   valueColor?: string
+  accent?: string
+  accentPosition?: 'left' | 'top'
 }
 
-export function StatCard({ label, value, subValue, icon, valueColor }: StatCardProps) {
+export function StatCard({ label, value, subValue, valueColor, accent, accentPosition = 'left' }: StatCardProps) {
   return (
-    <Card>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {label}
-          </p>
-          <p className={cn('mt-1 text-2xl font-bold', valueColor || 'text-foreground')}>
-            {value}
-          </p>
-          {subValue && <p className="mt-0.5 text-xs text-muted-foreground">{subValue}</p>}
-        </div>
-        {icon && (
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-accent text-primary">
-            {icon}
-          </div>
-        )}
-      </div>
-    </Card>
+    <ShadcnCard className={cn(
+      'overflow-hidden shadow-sm',
+      accent && accentPosition === 'left' && `border-l-4 ${accent}`,
+      accent && accentPosition === 'top' && `border-t-2 ${accent}`,
+    )}>
+      <CardContent className="p-5">
+        <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </p>
+        <p className={cn('mt-1 text-2xl font-bold', valueColor || 'text-foreground')}>
+          {value}
+        </p>
+        {subValue && <p className="mt-0.5 text-xs text-muted-foreground">{subValue}</p>}
+      </CardContent>
+    </ShadcnCard>
   )
 }
 
@@ -483,7 +482,7 @@ interface DropZoneProps {
 export function DropZone({ onFile, accept = '.csv,.xls,.xlsx', helperText }: DropZoneProps) {
   return (
     <label className="flex cursor-pointer flex-col items-center justify-center rounded-lg border border-dashed border-border bg-muted/30 p-8 text-center transition hover:bg-muted">
-      <UploadCloud className="mb-3 h-8 w-8 text-muted-foreground" />
+      <CloudArrowUp className="mb-3 h-8 w-8 text-muted-foreground" />
       <span className="text-sm font-medium">Drop a file here or browse</span>
       {helperText && <span className="mt-1 text-xs text-muted-foreground">{helperText}</span>}
       <input
@@ -523,5 +522,5 @@ export function PlaceholderGrid({ placeholders, onInsert }: PlaceholderGridProps
 }
 
 export function WarningIcon() {
-  return <AlertTriangle className="h-5 w-5 text-amber-600" />
+  return <Warning className="h-5 w-5 text-amber-600" />
 }

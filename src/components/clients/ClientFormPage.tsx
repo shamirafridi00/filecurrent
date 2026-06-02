@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, X, UserPlus } from 'lucide-react'
+import { FloppyDisk, X, UserPlus } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -98,7 +98,7 @@ export function ClientFormPage({ mode, clientId, returnTo, initial }: Props) {
               <X className="mr-1 h-4 w-4" /> Cancel
             </Button>
             <Button onClick={handleSubmit} disabled={saving}>
-              {mode === 'create' ? <UserPlus className="mr-1 h-4 w-4" /> : <Save className="mr-1 h-4 w-4" />}
+              {mode === 'create' ? <UserPlus className="mr-1 h-4 w-4" /> : <FloppyDisk className="mr-1 h-4 w-4" />}
               {saving ? 'Saving…' : mode === 'create' ? 'Add Client' : 'Save Changes'}
             </Button>
           </div>

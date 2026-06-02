@@ -3,14 +3,14 @@
 import { useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
 import {
-  BarChart3,
-  BriefcaseBusiness,
+  ChartBar,
+  Briefcase,
   Camera,
-  Code2,
-  MoreHorizontal,
+  Code,
+  DotsThree,
   Palette,
-  PenTool,
-} from 'lucide-react'
+  PenNib,
+} from '@phosphor-icons/react'
 import type { Profession } from '@/types'
 import { Button } from '@/components/ui/button'
 import {
@@ -45,13 +45,13 @@ const professions: Array<{
   label: string
   icon: React.ComponentType<{ className?: string }>
 }> = [
-  { value: 'web_developer', label: 'Web Developer', icon: Code2 },
+  { value: 'web_developer', label: 'Web Developer', icon: Code },
   { value: 'photographer', label: 'Photographer', icon: Camera },
-  { value: 'consultant', label: 'Consultant', icon: BriefcaseBusiness },
+  { value: 'consultant', label: 'Consultant', icon: Briefcase },
   { value: 'designer', label: 'Designer', icon: Palette },
-  { value: 'copywriter', label: 'Copywriter', icon: PenTool },
-  { value: 'marketer', label: 'Marketer', icon: BarChart3 },
-  { value: 'other', label: 'Other', icon: MoreHorizontal },
+  { value: 'copywriter', label: 'Copywriter', icon: PenNib },
+  { value: 'marketer', label: 'Marketer', icon: ChartBar },
+  { value: 'other', label: 'Other', icon: DotsThree },
 ]
 
 export function OnboardingModal({

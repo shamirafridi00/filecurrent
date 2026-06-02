@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Download } from 'lucide-react'
+import { DownloadSimple } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { UpgradePrompt } from '@/components/upgrade/UpgradePrompt'
 
@@ -28,7 +28,7 @@ export function InvoicePdfButton({ invoiceId, isPro }: Props) {
   return (
     <>
       <Button variant="outline" size="sm" onClick={handleClick} disabled={loading}>
-        <Download className="mr-1.5 h-3.5 w-3.5" />
+        <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
         {loading ? 'Generating…' : 'Download PDF'}
       </Button>
       <UpgradePrompt open={showUpgrade} onClose={() => setShowUpgrade(false)} />

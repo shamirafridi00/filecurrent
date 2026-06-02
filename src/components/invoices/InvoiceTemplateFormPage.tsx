@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { Save, X } from 'lucide-react'
+import { FloppyDisk, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -13,10 +13,85 @@ import { PageHeader } from '@/components/ui'
 import { toast } from 'sonner'
 import type { InvoiceTemplateRow } from '@/lib/db/supabase'
 
-const THEMES = [
-  { id: 'summit', label: 'Summit', desc: 'Clean & minimal' },
-  { id: 'aurora', label: 'Aurora', desc: 'Modern gradient' },
-  { id: 'ledger', label: 'Ledger', desc: 'Classic tabular' },
+function SummitPreview() {
+  return (
+    <div className="text-[7px]">
+      <div className="bg-[#0F766E] px-2 py-1.5 flex justify-between">
+        <span className="text-white font-bold text-[8px]">INVOICE</span>
+        <span className="text-white/70">#001</span>
+      </div>
+      <div className="bg-white px-2 py-1">
+        <div className="flex justify-between py-0.5 border-b border-slate-100">
+          <span className="text-slate-400">Description</span>
+          <span className="text-slate-400">Amount</span>
+        </div>
+        <div className="flex justify-between py-0.5">
+          <span className="text-slate-600">Service</span>
+          <span className="text-slate-700">$500</span>
+        </div>
+        <div className="flex justify-between pt-1 border-t border-slate-200 mt-0.5">
+          <span className="font-bold text-slate-800">Total</span>
+          <span className="font-bold text-[#0F766E]">$500</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function AuroraPreview() {
+  return (
+    <div className="text-[7px]">
+      <div className="px-2 py-1.5 flex justify-between" style={{ background: 'linear-gradient(135deg, #0F766E 0%, #14b8a6 100%)' }}>
+        <span className="text-white font-bold text-[8px]">INVOICE</span>
+        <span className="text-white/80">#001</span>
+      </div>
+      <div className="bg-white px-2 py-1">
+        <div className="flex justify-between py-0.5 bg-teal-50 px-1 rounded">
+          <span className="text-teal-700">Description</span>
+          <span className="text-teal-700">Amount</span>
+        </div>
+        <div className="flex justify-between py-0.5">
+          <span className="text-slate-600">Service</span>
+          <span className="text-slate-700">$500</span>
+        </div>
+        <div className="bg-teal-50 rounded px-1 py-0.5 mt-0.5 flex justify-between border border-teal-100">
+          <span className="font-bold text-teal-800">Total</span>
+          <span className="font-bold text-[#0F766E]">$500</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function LedgerPreview() {
+  return (
+    <div className="text-[7px]">
+      <div className="bg-[#111827] px-2 py-1.5 flex justify-between">
+        <span className="text-white font-bold text-[8px]">INVOICE</span>
+        <span className="text-gray-400">#001</span>
+      </div>
+      <div className="bg-white">
+        <div className="flex border-b border-[#111827] bg-[#1f2937]">
+          <span className="text-white px-2 py-0.5 flex-1 border-r border-gray-600">Description</span>
+          <span className="text-white px-2 py-0.5 w-12 text-right">Amount</span>
+        </div>
+        <div className="flex border-b border-slate-200">
+          <span className="text-slate-700 px-2 py-0.5 flex-1 border-r border-slate-200">Service</span>
+          <span className="text-slate-700 px-2 py-0.5 w-12 text-right">$500</span>
+        </div>
+        <div className="flex border-t-2 border-slate-800">
+          <span className="font-bold text-slate-900 px-2 py-0.5 flex-1">Total</span>
+          <span className="font-bold px-2 py-0.5 w-12 text-right text-[#0F766E]">$500</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const THEME_OPTIONS = [
+  { value: 'summit' as const, label: 'Summit', desc: 'Clean & minimal', Preview: SummitPreview },
+  { value: 'aurora' as const, label: 'Aurora', desc: 'Modern gradient', Preview: AuroraPreview },
+  { value: 'ledger' as const, label: 'Ledger', desc: 'Classic tabular', Preview: LedgerPreview },
 ]
 
 interface Props {
@@ -97,19 +172,27 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
               <div>
                 <Label className="mb-3 block">Theme</Label>
                 <div className="grid grid-cols-3 gap-3">
-                  {THEMES.map((t) => (
+                  {THEME_OPTIONS.map(({ value, label, desc, Preview }) => (
                     <button
-                      key={t.id}
+                      key={value}
                       type="button"
-                      onClick={() => setTheme(t.id)}
-                      className={`rounded-lg border p-3 text-left transition-colors ${
-                        theme === t.id
-                          ? 'border-primary bg-accent ring-2 ring-primary'
-                          : 'border-border hover:bg-muted'
+                      onClick={() => setTheme(value)}
+                      className={`relative text-left rounded-xl border-2 p-3 transition-all w-full ${
+                        theme === value
+                          ? 'border-[#0F766E] bg-teal-50 shadow-sm'
+                          : 'border-slate-200 hover:border-slate-300 bg-white'
                       }`}
                     >
-                      <p className="font-medium text-sm">{t.label}</p>
-                      <p className="text-xs text-muted-foreground">{t.desc}</p>
+                      {theme === value && (
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#0F766E] flex items-center justify-center">
+                          <span className="text-white text-[9px] font-bold">✓</span>
+                        </div>
+                      )}
+                      <div className="rounded-lg overflow-hidden border border-slate-100 mb-2.5 shadow-sm">
+                        <Preview />
+                      </div>
+                      <p className="font-semibold text-sm text-slate-800">{label}</p>
+                      <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
                     </button>
                   ))}
                 </div>
@@ -204,7 +287,7 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
           <X className="mr-1 h-4 w-4" /> Cancel
         </Button>
         <Button onClick={handleSubmit} disabled={saving}>
-          <Save className="mr-1 h-4 w-4" />
+          <FloppyDisk className="mr-1 h-4 w-4" />
           {saving ? 'Saving…' : mode === 'create' ? 'Create Template' : 'Save Changes'}
         </Button>
       </div>

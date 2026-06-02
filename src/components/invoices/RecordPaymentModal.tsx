@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Plus } from 'lucide-react'
+import { Plus } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -54,7 +54,7 @@ export function RecordPaymentModal({ invoiceId, currency, balance }: Props) {
   }
 
   if (balance <= 0) {
-    return <p className="text-sm text-green-600 font-medium">Invoice fully paid ✓</p>
+    return <p className="text-sm text-[#4F6AE6] font-medium">Invoice fully paid ✓</p>
   }
 
   return (
