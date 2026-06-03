@@ -17,10 +17,5 @@ export async function completeOnboardingAction(input: OnboardingInput) {
 
   revalidatePath('/dashboard')
 
-  return {
-    checkoutUrl:
-      input.plan === 'pro_monthly'
-        ? process.env.LEMONSQUEEZY_PRO_CHECKOUT_URL || '/pricing'
-        : null,
-  }
+  return { checkoutUrl: null }
 }

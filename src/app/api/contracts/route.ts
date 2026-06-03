@@ -16,7 +16,7 @@ export async function POST(req: NextRequest) {
 
   const limit = await checkDocLimit(user.id)
   if (!limit.allowed) {
-    return NextResponse.json({ error: 'doc_limit_reached', used: limit.used, limit: limit.limit }, { status: 402 })
+    return NextResponse.json({ error: limit.reason ?? 'upgrade_required' }, { status: 402 })
   }
 
   const id = await createContract(user.id, {

@@ -12,7 +12,6 @@ import {
 } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { Progress } from '@/components/ui/progress'
 import { StatCard, InvoiceBadge, ContractBadge } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
@@ -30,30 +29,41 @@ export default async function DashboardPage() {
     getDashboardStats(user.id),
   ])
 
-  const isFree = profile.plan === 'free'
-  const docsUsed = profile.docsUsedThisMonth
-  const docLimit = 3
-  const progress = Math.min((docsUsed / docLimit) * 100, 100)
+  const isTrial = profile.plan === 'trial'
+  const daysLeft = isTrial && profile.trialEndsAt
+    ? Math.max(0, Math.ceil((new Date(profile.trialEndsAt).getTime() - Date.now()) / 86400000))
+    : 0
+  const isUrgent = isTrial && daysLeft <= 2
 
   return (
     <div className="flex gap-6">
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
-        {isFree && (
-          <div className="flex items-center justify-between rounded-r-xl border-l-4 border-l-teal-600 bg-teal-50 p-4">
+        {isTrial && (
+          <div className={`flex items-center justify-between rounded-r-xl border-l-4 p-4 ${
+            isUrgent
+              ? 'border-l-amber-500 bg-amber-50'
+              : 'border-l-teal-600 bg-teal-50'
+          }`}>
             <div className="flex items-center gap-3">
-              <Lightning className="h-5 w-5 shrink-0 text-teal-600" />
+              <Lightning className={`h-5 w-5 shrink-0 ${isUrgent ? 'text-amber-600' : 'text-teal-600'}`} />
               <div>
-                <p className="font-semibold text-teal-900">
-                  You&apos;re on the Free plan — {docsUsed} of {docLimit} documents used this month
-                </p>
-                <p className="text-sm text-teal-700 mt-0.5">Upgrade for unlimited documents and no branding.</p>
-                <Progress value={progress} className="mt-1.5 h-1.5 w-48" />
+                {isUrgent ? (
+                  <p className="font-semibold text-amber-900">
+                    ⚠ Your trial ends in {daysLeft} day{daysLeft !== 1 ? 's' : ''}. Upgrade to keep access.
+                  </p>
+                ) : (
+                  <p className="font-semibold text-teal-900">
+                    You&apos;re on a free trial — {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining.
+                  </p>
+                )}
               </div>
             </div>
-            <Button asChild size="sm" className="ml-4 shrink-0 bg-teal-700 hover:bg-teal-800 text-white">
-              <Link href="/pricing">Upgrade to Pro — $9/month →</Link>
-            </Button>
+            {isUrgent && (
+              <Button asChild size="sm" className="ml-4 shrink-0 bg-amber-600 hover:bg-amber-700 text-white">
+                <Link href="/pricing">Upgrade Now →</Link>
+              </Button>
+            )}
           </div>
         )}
 

@@ -18,13 +18,29 @@ export default async function DashboardLayout({
 
   const profile = await getCurrentProfile(user.id)
 
+  const isPro =
+    profile.plan === 'pro_monthly' ||
+    profile.plan === 'pro_annual' ||
+    profile.plan === 'lifetime'
+
+  const trialExpired =
+    profile.plan === 'trial' &&
+    profile.trialEndsAt != null &&
+    new Date(profile.trialEndsAt) <= new Date()
+
+  const nonProNonTrial =
+    !isPro && profile.plan !== 'trial'
+
+  if (trialExpired || nonProNonTrial) {
+    redirect('/trial-expired')
+  }
+
   return (
     <DashboardShell
       user={{
         fullName: profile.fullName,
         plan: profile.plan,
-        docsUsedThisMonth: profile.docsUsedThisMonth,
-        monthlyDocLimit: 3,
+        trialEndsAt: profile.trialEndsAt,
       }}
     >
       {children}

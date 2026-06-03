@@ -18,9 +18,9 @@ export interface LocalProfile {
   businessName: string | null
   phone: string | null
   plan: Plan
+  trialEndsAt: string | null
   profession: Profession | null
   onboardingComplete: boolean
-  docsUsedThisMonth: number
 }
 
 export interface OnboardingInput {
@@ -28,13 +28,12 @@ export interface OnboardingInput {
   businessName: string
   fullName: string
   phone?: string
-  plan: Extract<Plan, 'free' | 'pro_monthly'>
 }
 
 export async function getCurrentProfile(userId: string): Promise<LocalProfile> {
   const { data, error } = await adminClient
     .from('profiles')
-    .select('id, email, full_name, business_name, phone, plan, profession, onboarding_complete, docs_used_this_month')
+    .select('id, email, full_name, business_name, phone, plan, trial_ends_at, profession, onboarding_complete')
     .eq('id', userId)
     .single()
 
@@ -46,10 +45,10 @@ export async function getCurrentProfile(userId: string): Promise<LocalProfile> {
     fullName: data.full_name || data.email || '',
     businessName: data.business_name,
     phone: data.phone,
-    plan: (data.plan as Plan) ?? 'free',
+    plan: (data.plan as Plan) ?? 'trial',
+    trialEndsAt: data.trial_ends_at ?? null,
     profession: data.profession as Profession | null,
     onboardingComplete: Boolean(data.onboarding_complete),
-    docsUsedThisMonth: data.docs_used_this_month ?? 0,
   }
 }
 
@@ -108,7 +107,6 @@ export async function completeOnboarding(userId: string, input: OnboardingInput)
       business_name: input.businessName,
       full_name: input.fullName,
       phone: input.phone || null,
-      plan: input.plan,
       onboarding_complete: true,
       updated_at: new Date().toISOString(),
     })
@@ -116,38 +114,43 @@ export async function completeOnboarding(userId: string, input: OnboardingInput)
   if (error) throw new Error(error.message)
 }
 
-// ── Doc limit ──────────────────────────────────────────────
+// ── Access check ───────────────────────────────────────────
 
-export async function checkDocLimit(userId: string): Promise<{ allowed: boolean; used: number; limit: number }> {
-  const { data } = await adminClient
+export async function checkDocLimit(userId: string): Promise<{
+  allowed: boolean
+  isTrial?: boolean
+  daysLeft?: number
+  reason?: string
+}> {
+  const { data: profile } = await adminClient
     .from('profiles')
-    .select('plan, docs_used_this_month')
+    .select('plan, trial_ends_at')
     .eq('id', userId)
     .single()
 
-  if (!data) return { allowed: false, used: 0, limit: 3 }
-  if (data.plan !== 'free') return { allowed: true, used: data.docs_used_this_month ?? 0, limit: Infinity }
-  const limit = 3
-  const used = data.docs_used_this_month ?? 0
-  return { allowed: used < limit, used, limit }
-}
+  if (!profile) return { allowed: false, reason: 'no_profile' }
 
-async function incrementDocsUsed(userId: string): Promise<void> {
-  try {
-    const { data } = await adminClient
-      .from('profiles')
-      .select('docs_used_this_month')
-      .eq('id', userId)
-      .single()
-    if (data) {
-      await adminClient
-        .from('profiles')
-        .update({ docs_used_this_month: (data.docs_used_this_month ?? 0) + 1 })
-        .eq('id', userId)
-    }
-  } catch {
-    // non-critical — don't block the main operation
+  if (
+    profile.plan === 'pro_monthly' ||
+    profile.plan === 'pro_annual' ||
+    profile.plan === 'lifetime'
+  ) {
+    return { allowed: true }
   }
+
+  if (profile.plan === 'trial') {
+    const trialEnd = new Date(profile.trial_ends_at)
+    if (trialEnd > new Date()) {
+      return {
+        allowed: true,
+        isTrial: true,
+        daysLeft: Math.ceil((trialEnd.getTime() - Date.now()) / 86400000),
+      }
+    }
+    return { allowed: false, reason: 'trial_expired' }
+  }
+
+  return { allowed: false, reason: 'upgrade_required' }
 }
 
 // ── Clients ────────────────────────────────────────────────
@@ -467,7 +470,6 @@ export async function createContract(
     .select('id')
     .single()
   if (error) throw new Error(error.message)
-  await incrementDocsUsed(userId)
   return row.id
 }
 
@@ -788,7 +790,7 @@ export async function createInvoice(
     .select('plan')
     .eq('id', userId)
     .single()
-  const isPro = profile.data?.plan !== 'free'
+  const isPro = profile.data?.plan === 'pro_monthly' || profile.data?.plan === 'pro_annual' || profile.data?.plan === 'lifetime'
 
   const { data: row, error } = await adminClient
     .from('invoices')
@@ -807,7 +809,6 @@ export async function createInvoice(
     .select('id')
     .single()
   if (error) throw new Error(error.message)
-  await incrementDocsUsed(userId)
   return row.id
 }
 

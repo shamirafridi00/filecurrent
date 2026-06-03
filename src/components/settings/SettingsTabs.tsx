@@ -44,6 +44,7 @@ const NOTIFICATION_OPTIONS = [
 ]
 
 const PLAN_LABELS: Record<Plan, string> = {
+  trial: 'Free Trial',
   free: 'Free Plan',
   pro_monthly: 'Pro Monthly',
   pro_annual: 'Pro Annual',
@@ -56,8 +57,7 @@ interface Props {
     address: string; city: string; state: string; postalCode: string
     country: string; taxId: string; defaultCurrency: string
     defaultTaxRate: number; timezone: string; profession: Profession | null
-    plan: Plan; docsUsedThisMonth: number; docsResetAt: string | null
-    planExpiresAt: string | null
+    plan: Plan; trialEndsAt: string | null; planExpiresAt: string | null
   }
   notificationPrefs: Record<string, boolean>
 }
@@ -130,13 +130,11 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
     }
   }
 
-  const isFree = initial.plan === 'free'
-  const docsUsed = initial.docsUsedThisMonth
-  const docLimit = 3
-  const resetDate = initial.docsResetAt
-    ? new Date(new Date(initial.docsResetAt).setMonth(new Date(initial.docsResetAt).getMonth() + 1))
-        .toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })
-    : null
+  const isPro = initial.plan === 'pro_monthly' || initial.plan === 'pro_annual' || initial.plan === 'lifetime'
+  const isTrial = initial.plan === 'trial'
+  const trialDaysLeft = isTrial && initial.trialEndsAt
+    ? Math.max(0, Math.ceil((new Date(initial.trialEndsAt).getTime() - Date.now()) / 86400000))
+    : 0
 
   return (
     <div>
@@ -271,16 +269,15 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
               <div className="flex items-start justify-between">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    {isFree
-                      ? <Lightning className="h-5 w-5 text-muted-foreground" />
-                      : <Star className="h-5 w-5 text-primary" />}
+                    {isPro
+                      ? <Star className="h-5 w-5 text-primary" />
+                      : <Lightning className="h-5 w-5 text-muted-foreground" />}
                     <p className="font-semibold text-lg">{PLAN_LABELS[initial.plan]}</p>
                   </div>
-                  {isFree ? (
+                  {isTrial ? (
                     <>
                       <p className="text-sm text-muted-foreground">
-                        {docsUsed} of {docLimit} documents used this month
-                        {resetDate && ` · Resets ${resetDate}`}
+                        {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} remaining · Full access to all features
                       </p>
                       <div className="mt-3 flex flex-wrap gap-2">
                         <Button
@@ -300,7 +297,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                         </Button>
                       </div>
                     </>
-                  ) : (
+                  ) : isPro ? (
                     <>
                       {initial.planExpiresAt && (
                         <p className="text-sm text-muted-foreground">
@@ -312,16 +309,16 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                         Cancel subscription
                       </Button>
                     </>
-                  )}
+                  ) : null}
                 </div>
-                <Badge variant={isFree ? 'secondary' : 'default'} className={!isFree ? 'bg-primary' : ''}>
+                <Badge variant={isPro ? 'default' : 'secondary'} className={isPro ? 'bg-primary' : ''}>
                   {PLAN_LABELS[initial.plan]}
                 </Badge>
               </div>
             </CardContent>
           </Card>
 
-          {isFree && (
+          {(isTrial || !isPro) && (
             <Card className="border-primary/20 bg-accent/30">
               <CardHeader>
                 <CardTitle className="text-base flex items-center gap-2">

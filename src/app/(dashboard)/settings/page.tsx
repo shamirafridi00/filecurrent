@@ -38,8 +38,7 @@ export default async function SettingsPage() {
         timezone: profile.timezone ?? 'UTC',
         profession: profile.profession ?? null,
         plan: profile.plan,
-        docsUsedThisMonth: profile.docs_used_this_month ?? 0,
-        docsResetAt: profile.docs_reset_at ?? null,
+        trialEndsAt: profile.trial_ends_at ?? null,
         planExpiresAt: profile.plan_expires_at ?? null,
       }}
       notificationPrefs={notificationPrefs}

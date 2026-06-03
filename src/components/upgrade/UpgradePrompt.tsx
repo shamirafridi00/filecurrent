@@ -14,11 +14,9 @@ import { useCheckout } from '@/hooks/useCheckout'
 interface Props {
   open: boolean
   onClose: () => void
-  used?: number
-  limit?: number
 }
 
-export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
+export function UpgradePrompt({ open, onClose }: Props) {
   const { startCheckout, loading } = useCheckout()
 
   return (
@@ -27,11 +25,11 @@ export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Lightning className="h-5 w-5 text-primary" />
-            You&apos;ve used your {limit} free documents this month
+            Your free trial has ended
           </DialogTitle>
           <DialogDescription>
-            Upgrade to Pro to create unlimited documents, remove FileCurrent branding,
-            and unlock automated payment reminders.
+            Upgrade to Pro to continue using FileCurrent — unlimited documents,
+            no branding, and automated payment reminders.
           </DialogDescription>
         </DialogHeader>
 
@@ -83,7 +81,7 @@ export function UpgradePrompt({ open, onClose, used = 3, limit = 3 }: Props) {
         </div>
 
         <p className="text-center text-xs text-muted-foreground">
-          No credit card required for free tier.
+          Questions? Email support@filecurrent.com
         </p>
 
         <Button variant="ghost" size="sm" className="w-full" onClick={onClose}>

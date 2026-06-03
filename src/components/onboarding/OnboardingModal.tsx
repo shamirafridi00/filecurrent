@@ -36,7 +36,6 @@ interface OnboardingModalProps {
     businessName: string
     fullName: string
     phone?: string
-    plan: 'free' | 'pro_monthly'
   }) => Promise<{ checkoutUrl: string | null }>
 }
 
@@ -71,25 +70,18 @@ export function OnboardingModal({
   const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  const finish = (plan: 'free' | 'pro_monthly') => {
+  const finish = () => {
     if (!profession) return
 
     startTransition(async () => {
       setError('')
       try {
-        const result = await onComplete({
+        await onComplete({
           profession,
           businessName: businessNameValue,
           fullName: fullNameValue,
           phone: phoneValue,
-          plan,
         })
-
-        if (result.checkoutUrl) {
-          window.location.href = result.checkoutUrl
-          return
-        }
-
         router.refresh()
       } catch {
         setError('Could not save onboarding. Please try again.')
@@ -201,46 +193,30 @@ export function OnboardingModal({
         {step === 3 && (
           <>
             <DialogHeader>
-              <DialogTitle>You&apos;re all set. Choose how to get started.</DialogTitle>
+              <DialogTitle>You&apos;re all set!</DialogTitle>
               <DialogDescription id="forced-modal-description">
-                No credit card required for the free tier.
+                You have 5 days of full access — no credit card required.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <PlanCard
-                title="Free"
-                price="$0"
-                features={[
-                  '3 documents/month',
-                  'All templates',
-                  'E-signatures',
-                  'FileCurrent branding',
-                ]}
-                action="Start for free"
-                loading={isPending}
-                onClick={() => finish('free')}
-              />
-              <PlanCard
-                highlighted
-                title="Pro"
-                price="$9/month"
-                features={[
-                  'Unlimited documents',
-                  'No FileCurrent branding',
-                  'Automated reminders',
-                  'Priority support',
-                ]}
-                action="Start Pro Trial"
-                loading={isPending}
-                onClick={() => finish('pro_monthly')}
-              />
+            <div className="rounded-xl border border-teal-200 bg-teal-50 p-5 space-y-2">
+              <p className="font-semibold text-teal-900">Your 5-day free trial includes:</p>
+              <ul className="space-y-1.5 text-sm text-teal-800">
+                <li>✓ Unlimited invoices &amp; contracts</li>
+                <li>✓ E-signatures</li>
+                <li>✓ Automated payment reminders</li>
+                <li>✓ All invoice &amp; contract templates</li>
+              </ul>
             </div>
+
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <DialogFooter>
               <Button variant="outline" disabled={isPending} onClick={() => setStep(2)}>
                 Back
+              </Button>
+              <Button disabled={isPending} onClick={finish}>
+                {isPending ? 'Setting up…' : 'Start My Trial →'}
               </Button>
             </DialogFooter>
           </>
@@ -250,42 +226,3 @@ export function OnboardingModal({
   )
 }
 
-function PlanCard({
-  title,
-  price,
-  features,
-  action,
-  highlighted,
-  loading,
-  onClick,
-}: {
-  title: string
-  price: string
-  features: string[]
-  action: string
-  highlighted?: boolean
-  loading?: boolean
-  onClick: () => void
-}) {
-  return (
-    <div
-      className={cn(
-        'rounded-lg border bg-card p-5',
-        highlighted && 'border-primary shadow-sm'
-      )}
-    >
-      <div className="mb-4">
-        <h3 className="font-semibold">{title}</h3>
-        <p className="mt-1 text-2xl font-bold">{price}</p>
-      </div>
-      <ul className="mb-5 space-y-2 text-sm text-muted-foreground">
-        {features.map((feature) => (
-          <li key={feature}>{feature}</li>
-        ))}
-      </ul>
-      <Button className="w-full" variant={highlighted ? 'default' : 'outline'} disabled={loading} onClick={onClick}>
-        {action}
-      </Button>
-    </div>
-  )
-}

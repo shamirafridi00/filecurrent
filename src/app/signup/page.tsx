@@ -45,7 +45,7 @@ export default function SignupPage() {
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <Link href="/" className="text-2xl font-bold text-primary">{APP_NAME}</Link>
-          <p className="text-sm text-muted-foreground mt-1">Create your free account</p>
+          <p className="text-sm text-muted-foreground mt-1">Start your 5-day free trial</p>
         </div>
 
         <div className="bg-white rounded-xl border shadow-sm p-6">
@@ -94,7 +94,7 @@ export default function SignupPage() {
             )}
 
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account…' : 'Create Free Account'}
+              {loading ? 'Creating account…' : 'Start Free Trial'}
             </Button>
           </form>
         </div>
@@ -107,7 +107,7 @@ export default function SignupPage() {
         </p>
 
         <p className="text-center text-xs text-muted-foreground mt-3">
-          Free plan: 3 documents/month. No credit card required.
+          5 days full access. No credit card required.
         </p>
       </div>
     </div>

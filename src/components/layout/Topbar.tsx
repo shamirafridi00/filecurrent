@@ -33,6 +33,7 @@ interface TopbarProps {
 }
 
 const planLabels: Record<LayoutUser['plan'], string> = {
+  trial: 'Trial',
   free: 'Free',
   pro_monthly: 'Pro',
   pro_annual: 'Pro Annual',

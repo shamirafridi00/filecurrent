@@ -7,8 +7,7 @@ import type { Plan } from '@/types'
 export interface LayoutUser {
   fullName: string
   plan: Plan
-  docsUsedThisMonth?: number
-  monthlyDocLimit?: number
+  trialEndsAt?: string | null
 }
 
 interface AppLayoutProps {

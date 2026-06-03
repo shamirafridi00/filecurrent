@@ -116,18 +116,19 @@ function NavSection({ title, items }: { title: string; items: NavEntry[] }) {
   )
 }
 
-function FreeUsage({ user }: { user: LayoutUser }) {
-  if (user.plan !== 'free') return null
+function TrialUsage({ user }: { user: LayoutUser }) {
+  if (user.plan !== 'trial' || !user.trialEndsAt) return null
 
-  const used = user.docsUsedThisMonth ?? 0
-  const limit = user.monthlyDocLimit ?? 3
-  const progress = Math.min((used / limit) * 100, 100)
+  const trialEnd = new Date(user.trialEndsAt)
+  const daysLeft = Math.max(0, Math.ceil((trialEnd.getTime() - Date.now()) / 86400000))
+  const daysUsed = Math.max(0, 5 - daysLeft)
+  const progress = Math.min((daysUsed / 5) * 100, 100)
 
   return (
     <div className="rounded-lg border border-[#1a3330] bg-[#0a1917] p-3">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-[#a8c5c2]">Free Plan</span>
-        <span className="text-xs text-white">{used} / {limit}</span>
+        <span className="text-sm font-medium text-[#a8c5c2]">Free Trial</span>
+        <span className="text-xs text-white">{daysLeft}d left</span>
       </div>
       <div className="mb-3 h-1.5 w-full rounded-full bg-[#1a3330]">
         <div
@@ -160,7 +161,7 @@ export function Sidebar({ user }: { user: LayoutUser }) {
         </div>
       </div>
       <div className="border-t border-[#1a3330] p-3">
-        <FreeUsage user={user} />
+        <TrialUsage user={user} />
       </div>
     </aside>
   )
