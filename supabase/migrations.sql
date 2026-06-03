@@ -569,3 +569,11 @@ INSERT INTO line_item_presets (profession, label, description, default_rate, sor
   ('other', 'Consultation', 'Advisory session', NULL, 2),
   ('other', 'Revision', 'Revision and feedback round', NULL, 3)
 ON CONFLICT (profession, label) DO NOTHING;
+
+-- Backfill NULL share_tokens for invoices created before the column was added
+UPDATE invoices SET share_token = encode(gen_random_bytes(16), 'hex') WHERE share_token IS NULL;
+-- Enforce NOT NULL now that all rows have values
+ALTER TABLE invoices ALTER COLUMN share_token SET NOT NULL;
+
+-- Backfill any signing_sessions rows with NULL unique_token
+UPDATE signing_sessions SET unique_token = encode(gen_random_bytes(16), 'hex') WHERE unique_token IS NULL;

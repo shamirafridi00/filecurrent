@@ -40,7 +40,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
           <div className="flex items-center gap-2">
             <InvoiceBadge status={invoice.status as InvoiceStatus} />
             <InvoicePdfButton invoiceId={invoice.id} isPro={profile.plan !== 'free'} />
-            <InvoiceShareLink shareToken={invoice.shareToken} />
+            {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} />}
           </div>
         }
       />
@@ -212,7 +212,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
           <Card>
             <CardHeader><CardTitle className="text-base">Share Link</CardTitle></CardHeader>
             <CardContent>
-              <InvoiceShareLink shareToken={invoice.shareToken} />
+              {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} />}
             </CardContent>
           </Card>
         </div>

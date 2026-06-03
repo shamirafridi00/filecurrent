@@ -511,7 +511,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     .from('signing_sessions')
     .select(`
       unique_token, contract_id, signer_email, signer_name, status,
-      contracts!inner(
+      contracts(
         title, amount, currency, start_date, end_date, payment_terms,
         project_description,
         contract_templates(content),
@@ -885,6 +885,7 @@ export interface InvoicePublicRow {
 }
 
 export async function getInvoiceByShareToken(token: string): Promise<InvoicePublicRow | null> {
+  if (!token) return null
   const { data } = await adminClient
     .from('invoices')
     .select(`

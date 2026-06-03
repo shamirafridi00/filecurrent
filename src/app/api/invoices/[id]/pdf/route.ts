@@ -2,7 +2,7 @@ export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
-import React, { type JSXElementConstructor, type ReactElement } from 'react'
+import React from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getInvoice, getCurrentProfile } from '@/lib/db/supabase'
 import { InvoicePDF } from '@/lib/pdf/InvoicePDF'
@@ -19,8 +19,6 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   if (!invoice) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  console.error('PDF generation data:', JSON.stringify(invoice, null, 2))
-
   const isPro = profile.plan !== 'free'
 
   const element = React.createElement(InvoicePDF, {
@@ -28,11 +26,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     template: invoice.template,
     freelancerName: profile.businessName || profile.fullName,
     isPro,
-  }) as ReactElement<DocumentProps, string | JSXElementConstructor<unknown>>
+  })
 
-  const buffer = await renderToBuffer(element)
+  const buffer = await renderToBuffer(element as React.ReactElement<DocumentProps>)
 
-  return new NextResponse(new Uint8Array(buffer as unknown as ArrayBuffer), {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="Invoice-${invoice.invoiceNumber}.pdf"`,
