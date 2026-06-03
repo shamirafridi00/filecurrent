@@ -34,6 +34,20 @@
     --ring: 245 100% 67%;             /* #635BFF */
 
     --radius: 0.5rem;
+
+    /* Custom semantic tokens */
+    --success: 141 64% 42%;           /* #1DB954 */
+    --success-bg: 141 64% 97%;        /* #F0FBF4 */
+    --success-border: 141 50% 77%;    /* #A3E6C0 */
+
+    --warning: 38 79% 50%;            /* #E6A817 */
+    --warning-bg: 45 100% 97%;        /* #FFF9ED */
+    --warning-border: 45 95% 73%;     /* #FDD87A */
+
+    --stripe-navy: 213 73% 15%;       /* #0A2540 — sidebar bg */
+    --stripe-navy-hover: 213 55% 22%; /* #1A3A5C — sidebar active */
+    --stripe-navy-muted: 213 35% 40%; /* #4F6B8A — sidebar labels */
+    --stripe-text-dim: 213 22% 55%;   /* #8898AA — sidebar default text */
   }
 
   .dark {

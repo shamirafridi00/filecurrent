@@ -2,11 +2,19 @@
 
 import Link from 'next/link'
 import { LogoFull } from '@/components/logo/LogoMark'
-import { Star } from '@phosphor-icons/react'
+import { Star, Check } from '@phosphor-icons/react'
 import { useCheckout } from '@/hooks/useCheckout'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+
+const PRO_FEATURES = [
+  'Unlimited documents',
+  'No FileCurrent branding',
+  'Automated payment reminders',
+  'Invoice share links',
+  'Priority support',
+]
 
 export default function TrialExpiredPage() {
   const { startCheckout, loading } = useCheckout()
@@ -19,40 +27,38 @@ export default function TrialExpiredPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6">
+    <div className="min-h-screen bg-[#F6F9FC] flex flex-col items-center justify-center p-6">
       <div className="w-full max-w-2xl">
-        {/* Logo */}
         <div className="flex justify-center mb-10">
           <LogoFull size={36} />
         </div>
 
-        {/* Heading */}
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-slate-900 mb-3">
+          <h1 className="text-3xl font-bold text-[#0A2540] mb-3">
             Your free trial has ended
           </h1>
-          <p className="text-slate-500 text-lg max-w-md mx-auto">
+          <p className="text-[#8898AA] text-lg max-w-md mx-auto">
             You had 5 days of full access. Upgrade to Pro to continue using FileCurrent.
           </p>
         </div>
 
-        {/* Pricing cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
           {/* Monthly */}
-          <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm space-y-4">
+          <div className="bg-white border border-[#E6EBF1] rounded-2xl p-6 shadow-sm space-y-4">
             <div>
-              <p className="text-2xl font-bold text-slate-900">$9</p>
-              <p className="text-slate-500 text-sm">per month</p>
+              <p className="text-2xl font-bold text-[#0A2540]">$9</p>
+              <p className="text-[#8898AA] text-sm">per month</p>
             </div>
-            <p className="font-semibold text-slate-800">Pro Monthly</p>
-            <ul className="space-y-2 text-sm text-slate-600">
-              <li>✓ Unlimited invoices &amp; contracts</li>
-              <li>✓ No FileCurrent branding</li>
-              <li>✓ Automated payment reminders</li>
-              <li>✓ Priority support</li>
+            <p className="font-semibold text-[#0A2540]">Pro Monthly</p>
+            <ul className="space-y-2">
+              {PRO_FEATURES.map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-[#425466]">
+                  <Check className="h-4 w-4 text-[#635BFF] shrink-0" weight="bold" /> {f}
+                </li>
+              ))}
             </ul>
             <Button
-              className="w-full"
+              className="w-full bg-[#635BFF] hover:bg-[#5145E5] text-white"
               disabled={loading !== null}
               onClick={() => startCheckout('monthly')}
             >
@@ -69,18 +75,19 @@ export default function TrialExpiredPage() {
               </span>
             </div>
             <div>
-              <p className="text-2xl font-bold text-slate-900">$79</p>
-              <p className="text-slate-500 text-sm">per year · save 27%</p>
+              <p className="text-2xl font-bold text-[#0A2540]">$79</p>
+              <p className="text-[#8898AA] text-sm">per year · save 27%</p>
             </div>
-            <p className="font-semibold text-slate-800">Pro Annual</p>
-            <ul className="space-y-2 text-sm text-slate-600">
-              <li>✓ Everything in Monthly</li>
-              <li>✓ Save $29/year</li>
-              <li>✓ Invoice analytics</li>
-              <li>✓ Early access to new features</li>
+            <p className="font-semibold text-[#0A2540]">Pro Annual</p>
+            <ul className="space-y-2">
+              {[...PRO_FEATURES, 'Save $29/year vs monthly'].map((f) => (
+                <li key={f} className="flex items-center gap-2 text-sm text-[#425466]">
+                  <Check className="h-4 w-4 text-[#635BFF] shrink-0" weight="bold" /> {f}
+                </li>
+              ))}
             </ul>
             <Button
-              className="w-full bg-[#635BFF] hover:bg-[#5145E5]"
+              className="w-full bg-[#635BFF] hover:bg-[#5145E5] text-white"
               disabled={loading !== null}
               onClick={() => startCheckout('annual')}
             >
@@ -89,9 +96,25 @@ export default function TrialExpiredPage() {
           </div>
         </div>
 
-        {/* Footer */}
+        {/* Lifetime deal */}
+        <div className="rounded-xl bg-[#0A2540] border border-[#1A3A5C] p-6 flex items-center justify-between gap-4 flex-wrap mb-8">
+          <div>
+            <p className="font-bold text-lg text-white">Launch Lifetime Deal — $49 one-time</p>
+            <p className="text-sm text-[#8898AA] mt-0.5">
+              Pay once, use FileCurrent Pro forever.
+            </p>
+          </div>
+          <Button
+            className="bg-[#635BFF] hover:bg-[#5145E5] text-white shrink-0"
+            disabled={loading !== null}
+            onClick={() => startCheckout('lifetime')}
+          >
+            {loading === 'lifetime' ? 'Redirecting…' : 'Get Lifetime Access'}
+          </Button>
+        </div>
+
         <div className="text-center space-y-3">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-[#8898AA]">
             Questions? Contact us at{' '}
             <a href="mailto:support@filecurrent.com" className="text-[#635BFF] hover:underline">
               support@filecurrent.com
@@ -99,7 +122,7 @@ export default function TrialExpiredPage() {
           </p>
           <button
             onClick={handleLogout}
-            className="text-sm text-slate-400 hover:text-slate-600 underline"
+            className="text-sm text-[#8898AA] hover:text-[#425466] underline"
           >
             Log out
           </button>
