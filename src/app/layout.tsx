@@ -7,9 +7,11 @@ export const metadata: Metadata = {
   title: APP_NAME,
   description: APP_DESCRIPTION,
   icons: {
-    icon: '/favicon.svg',
-    shortcut: '/favicon.svg',
-    apple: '/favicon.svg',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' },
+      { url: '/favicon.ico', sizes: 'any' },
+    ],
+    apple: '/apple-touch-icon.png',
   },
 }
 
