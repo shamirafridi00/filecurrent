@@ -7,6 +7,19 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
 import { APP_NAME } from '@/lib/constants'
 
+function renderInline(text: string, key: string | number) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  return (
+    <p key={key} className="whitespace-pre-wrap">
+      {parts.map((part, j) =>
+        part.startsWith('**') && part.endsWith('**')
+          ? <strong key={j}>{part.slice(2, -2)}</strong>
+          : part
+      )}
+    </p>
+  )
+}
+
 export default async function SignPage({ params }: { params: { token: string } }) {
   const session = await getContractForSigning(params.token)
   if (!session) {
@@ -51,8 +64,17 @@ export default async function SignPage({ params }: { params: { token: string } }
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
-          <span className="text-sm font-bold text-primary">{APP_NAME}</span>
-          <span className="text-sm font-medium text-foreground">{session.contractTitle}</span>
+          <div className="flex items-center gap-2">
+            {session.freelancerLogo ? (
+              <img src={session.freelancerLogo} alt="Logo" className="h-8 w-auto object-contain" />
+            ) : (
+              <span className="text-sm font-bold text-primary">{session.freelancerBusiness ?? session.freelancerName}</span>
+            )}
+            {session.freelancerLogo && (
+              <span className="text-sm font-semibold text-foreground">{session.freelancerBusiness ?? session.freelancerName}</span>
+            )}
+          </div>
+          <span className="text-sm font-medium text-muted-foreground">{session.contractTitle}</span>
           <span className="text-sm text-muted-foreground">{formatCurrency(session.amount, session.currency)}</span>
         </div>
       </header>
@@ -62,13 +84,22 @@ export default async function SignPage({ params }: { params: { token: string } }
         <div className="rounded-xl border bg-card p-8 shadow-sm">
           <div className="space-y-2 text-sm leading-relaxed text-foreground">
             {resolvedContent.split('\n').map((line, i) => {
-              if (line.startsWith('## ')) return <h2 key={i} className="mt-4 font-semibold text-base">{line.slice(3)}</h2>
-              if (line.startsWith('### ')) return <h3 key={i} className="mt-3 font-medium">{line.slice(4)}</h3>
+              if (line.startsWith('## ')) return <h2 key={i} className="mt-4 font-semibold text-base">{line.slice(3).replace(/\*\*/g, '')}</h2>
+              if (line.startsWith('### ')) return <h3 key={i} className="mt-3 font-medium">{line.slice(4).replace(/\*\*/g, '')}</h3>
               if (line === '---') return <hr key={i} className="my-3 border-border" />
-              return <p key={i} className="whitespace-pre-wrap">{line}</p>
+              return renderInline(line, i)
             })}
           </div>
         </div>
+
+        {session.additionalTerms && (
+          <div className="mt-4 rounded-xl border bg-card p-8 shadow-sm">
+            <h3 className="mb-3 text-sm font-semibold text-foreground">Additional Terms</h3>
+            <p className="text-sm leading-relaxed text-muted-foreground whitespace-pre-wrap">
+              {session.additionalTerms}
+            </p>
+          </div>
+        )}
 
         {/* Footer branding */}
         <p className="mt-4 text-center text-xs text-muted-foreground">

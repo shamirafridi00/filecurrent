@@ -495,6 +495,7 @@ export interface SigningSessionRow {
   status: string
   freelancerName: string
   freelancerBusiness: string | null
+  freelancerLogo: string | null
   clientName: string
   clientEmail: string | null
   clientCompany: string | null
@@ -504,6 +505,7 @@ export interface SigningSessionRow {
   endDate: string | null
   paymentTerms: string | null
   projectDescription: string | null
+  additionalTerms: string | null
 }
 
 export async function getContractForSigning(token: string): Promise<SigningSessionRow | null> {
@@ -513,7 +515,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
       unique_token, contract_id, signer_email, signer_name, status,
       contracts(
         title, amount, currency, start_date, end_date, payment_terms,
-        project_description, user_id,
+        project_description, user_id, additional_terms,
         contract_templates(content),
         clients!inner(name, email, company)
       )
@@ -526,17 +528,18 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     title: string; amount: number; currency: string; start_date: string | null
     end_date: string | null; payment_terms: string | null; project_description: string | null
     user_id: string
+    additional_terms: string | null
     contract_templates: { content: string } | null
     clients: { name: string; email: string | null; company: string | null }
   }
 
   const { data: profileData } = await adminClient
     .from('profiles')
-    .select('full_name, business_name')
+    .select('full_name, business_name, business_logo')
     .eq('id', contract.user_id)
     .single()
 
-  const profile = profileData as { full_name: string | null; business_name: string | null } | null
+  const profile = profileData as { full_name: string | null; business_name: string | null; business_logo: string | null } | null
 
   return {
     token: data.unique_token,
@@ -548,6 +551,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     status: data.status,
     freelancerName: profile?.full_name || 'Service Provider',
     freelancerBusiness: profile?.business_name ?? null,
+    freelancerLogo: profile?.business_logo ?? null,
     clientName: contract.clients.name,
     clientEmail: contract.clients.email,
     clientCompany: contract.clients.company,
@@ -557,6 +561,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     endDate: contract.end_date,
     paymentTerms: contract.payment_terms,
     projectDescription: contract.project_description,
+    additionalTerms: contract.additional_terms,
   }
 }
 
