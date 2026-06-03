@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -10,10 +10,19 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { LogoFull } from '@/components/logo/LogoMark'
 
-export default function LoginPage() {
-  const router = useRouter()
+function OAuthError() {
   const searchParams = useSearchParams()
   const errorMsg = searchParams.get('error')
+  if (!errorMsg) return null
+  return (
+    <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm mb-4">
+      {errorMsg}
+    </div>
+  )
+}
+
+function LoginForm() {
+  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -59,11 +68,9 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-[#0A2540] mb-1">Welcome back</h1>
         <p className="text-[#8898AA] text-sm mb-6">Sign in to your FileCurrent account</p>
 
-        {errorMsg && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm mb-4">
-            {errorMsg}
-          </div>
-        )}
+        <Suspense>
+          <OAuthError />
+        </Suspense>
 
         <button
           onClick={handleGoogleSignIn}
@@ -130,4 +137,8 @@ export default function LoginPage() {
       </div>
     </div>
   )
+}
+
+export default function LoginPage() {
+  return <LoginForm />
 }
