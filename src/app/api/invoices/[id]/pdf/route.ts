@@ -28,7 +28,13 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     isPro,
   })
 
-  const buffer = await renderToBuffer(element as React.ReactElement<DocumentProps>)
+  let buffer: Buffer
+  try {
+    buffer = await renderToBuffer(element as React.ReactElement<DocumentProps>)
+  } catch (err) {
+    console.error('PDF render error:', err)
+    return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
+  }
 
   return new NextResponse(new Uint8Array(buffer), {
     headers: {

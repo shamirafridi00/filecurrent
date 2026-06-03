@@ -513,10 +513,9 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
       unique_token, contract_id, signer_email, signer_name, status,
       contracts(
         title, amount, currency, start_date, end_date, payment_terms,
-        project_description,
+        project_description, user_id,
         contract_templates(content),
-        clients!inner(name, email, company),
-        profiles!inner(full_name, business_name)
+        clients!inner(name, email, company)
       )
     `)
     .eq('unique_token', token)
@@ -526,10 +525,18 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
   const contract = data.contracts as unknown as {
     title: string; amount: number; currency: string; start_date: string | null
     end_date: string | null; payment_terms: string | null; project_description: string | null
+    user_id: string
     contract_templates: { content: string } | null
     clients: { name: string; email: string | null; company: string | null }
-    profiles: { full_name: string | null; business_name: string | null }
   }
+
+  const { data: profileData } = await adminClient
+    .from('profiles')
+    .select('full_name, business_name')
+    .eq('id', contract.user_id)
+    .single()
+
+  const profile = profileData as { full_name: string | null; business_name: string | null } | null
 
   return {
     token: data.unique_token,
@@ -539,8 +546,8 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     signerEmail: data.signer_email,
     signerName: data.signer_name,
     status: data.status,
-    freelancerName: contract.profiles.full_name || 'Service Provider',
-    freelancerBusiness: contract.profiles.business_name,
+    freelancerName: profile?.full_name || 'Service Provider',
+    freelancerBusiness: profile?.business_name ?? null,
     clientName: contract.clients.name,
     clientEmail: contract.clients.email,
     clientCompany: contract.clients.company,
@@ -888,13 +895,16 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
   if (!token) return null
   const { data } = await adminClient
     .from('invoices')
-    .select(`
-      *, clients!inner(name, email, company),
-      profiles!inner(full_name, business_name)
-    `)
+    .select(`*, clients!inner(name, email, company)`)
     .eq('share_token', token)
     .single()
   if (!data) return null
+
+  const { data: profileData } = await adminClient
+    .from('profiles')
+    .select('full_name, business_name')
+    .eq('id', data.user_id)
+    .single()
 
   // Track open
   await adminClient
@@ -903,7 +913,7 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
     .eq('share_token', token)
 
   const client = data.clients as unknown as { name: string; email: string | null; company: string | null }
-  const profile = data.profiles as unknown as { full_name: string | null; business_name: string | null }
+  const profile = profileData as { full_name: string | null; business_name: string | null } | null
   const template = data.invoice_template_id ? await getInvoiceTemplate(data.invoice_template_id) : null
 
   return {
@@ -916,8 +926,8 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
     hasBrandingFooter: Boolean(data.has_branding_footer),
     clientName: client.name, clientEmail: client.email,
     clientCompany: client.company,
-    freelancerName: profile.full_name || 'Service Provider',
-    businessName: profile.business_name, template,
+    freelancerName: profile?.full_name || 'Service Provider',
+    businessName: profile?.business_name ?? null, template,
   }
 }
 
