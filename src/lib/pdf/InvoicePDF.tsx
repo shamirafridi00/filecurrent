@@ -55,7 +55,7 @@ interface InvoicePDFProps {
 // ── Styles ─────────────────────────────────────────────────
 
 const s = StyleSheet.create({
-  page: { fontFamily: 'Inter', fontSize: 10, color: '#111827', paddingBottom: 48 },
+  page: { fontFamily: 'Helvetica', fontSize: 10, color: '#111827', paddingBottom: 48 },
   // header
   header: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', padding: 28 },
   logo: { width: 56, height: 56, objectFit: 'contain' },

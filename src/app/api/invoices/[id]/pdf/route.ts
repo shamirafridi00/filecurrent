@@ -36,6 +36,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
   }
 
+  console.log('PDF buffer size:', buffer.length, 'bytes')
+
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
