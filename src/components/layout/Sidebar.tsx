@@ -14,7 +14,6 @@ import {
   Rows,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
-import { LogoFullInverse } from '@/components/logo/LogoMark'
 
 const ICON_MAP = {
   Activity: ChartLine,
@@ -87,7 +86,7 @@ function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
   )
 }
 
-function NavSection({ title, items }: { title: string; items: NavEntry[] }) {
+function NavGroup({ items }: { items: NavEntry[] }) {
   const pathname = usePathname()
   const isActive = (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
@@ -95,29 +94,23 @@ function NavSection({ title, items }: { title: string; items: NavEntry[] }) {
   }
 
   return (
-    <div>
-      <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-[#4F6B8A]">
-        {title}
-      </p>
-      <nav className="space-y-0.5">
-        {items.map((item) => (
-          <NavItem key={item.href} entry={item} active={isActive(item.href)} />
-        ))}
-      </nav>
-    </div>
+    <nav className="space-y-0.5">
+      {items.map((item) => (
+        <NavItem key={item.href} entry={item} active={isActive(item.href)} />
+      ))}
+    </nav>
   )
 }
 
 export function Sidebar() {
   return (
     <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r border-[#0D2D4A] bg-[#0A2540]">
-      <div className="sidebar-scroll flex-1 overflow-y-auto p-3">
-        <div className="mb-5 px-1">
-          <LogoFullInverse size={28} />
-        </div>
-        <div className="space-y-6">
-          <NavSection title="Main Menu" items={MAIN_NAV} />
-          <NavSection title="Tools" items={TOOL_NAV} />
+      <div className="sidebar-scroll flex-1 overflow-y-auto p-3 pt-4">
+        <div className="space-y-4">
+          <NavGroup items={MAIN_NAV} />
+          <div className="border-t border-[#0D2D4A] pt-3">
+            <NavGroup items={TOOL_NAV} />
+          </div>
         </div>
       </div>
     </aside>

@@ -17,7 +17,6 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Avatar, AvatarFallback } from '@/components/ui/avatar'
-import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,20 +31,29 @@ interface TopbarProps {
   onLogout: () => void
 }
 
-const planBadgeClass: Record<LayoutUser['plan'], string> = {
-  trial: 'bg-[#FFF9ED] text-[#E6A817] border border-[#FDD87A]',
-  free: 'bg-[#FFF9ED] text-[#E6A817] border border-[#FDD87A]',
-  pro_monthly: 'bg-[#F0EFFF] text-[#635BFF] border border-[#C7C4FF]',
-  pro_annual: 'bg-[#F0EFFF] text-[#635BFF] border border-[#C7C4FF]',
-  lifetime: 'bg-[#F0FBF4] text-[#1DB954] border border-[#A3E6C0]',
-}
+function PlanBadge({ user }: { user: LayoutUser }) {
+  const base = 'inline-flex items-center whitespace-nowrap rounded-full border px-3 py-1 text-xs font-semibold'
 
-const planBadgeLabel: Record<LayoutUser['plan'], string> = {
-  trial: 'Trial',
-  free: 'Free',
-  pro_monthly: 'Pro',
-  pro_annual: 'Pro Annual',
-  lifetime: 'Lifetime',
+  if (user.plan === 'trial') {
+    const daysLeft = user.trialEndsAt
+      ? Math.max(0, Math.ceil((new Date(user.trialEndsAt).getTime() - Date.now()) / 86400000))
+      : 0
+    return (
+      <span className={`${base} bg-[#FFF9ED] text-[#E6A817] border-[#FDD87A]`}>
+        Trial · {daysLeft} day{daysLeft !== 1 ? 's' : ''}
+      </span>
+    )
+  }
+  if (user.plan === 'free') {
+    return <span className={`${base} bg-[#FFF9ED] text-[#E6A817] border-[#FDD87A]`}>Free</span>
+  }
+  if (user.plan === 'pro_monthly' || user.plan === 'pro_annual') {
+    return <span className={`${base} bg-[#F0EFFF] text-[#635BFF] border-[#C7C4FF]`}>Pro</span>
+  }
+  if (user.plan === 'lifetime') {
+    return <span className={`${base} bg-[#F0FBF4] text-[#1DB954] border-[#A3E6C0]`}>Lifetime</span>
+  }
+  return null
 }
 
 function PlanStatusLine({ user }: { user: LayoutUser }) {
@@ -115,15 +123,13 @@ export function Topbar({ user, onLogout }: TopbarProps) {
       </Link>
 
       <div className="flex items-center gap-3">
-        <Badge variant="secondary" className={planBadgeClass[user.plan]}>
-          {planBadgeLabel[user.plan]}
-        </Badge>
+        <PlanBadge user={user} />
 
         <DropdownMenu>
           <DropdownMenuTrigger className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-[#635BFF] focus-visible:ring-offset-2">
-            <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-[#635BFF] text-xs font-semibold text-white">
-                {getInitials(user.fullName)}
+            <Avatar className="h-9 w-9 cursor-pointer">
+              <AvatarFallback className="bg-[#635BFF] text-sm font-semibold text-white">
+                {getInitials(user.fullName || user.email)}
               </AvatarFallback>
             </Avatar>
           </DropdownMenuTrigger>

@@ -103,6 +103,36 @@
   to   { opacity: 1; transform: translateY(0); }
 }
 
+/* ── Hide global page scrollbar ── */
+html {
+  overflow-y: scroll;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+html::-webkit-scrollbar {
+  display: none;
+}
+
+/* ── Thin scrollbar on overflow containers ── */
+.overflow-auto,
+.overflow-y-auto {
+  scrollbar-width: thin;
+  scrollbar-color: #CFD7E0 transparent;
+}
+.overflow-auto::-webkit-scrollbar,
+.overflow-y-auto::-webkit-scrollbar {
+  width: 4px;
+}
+.overflow-auto::-webkit-scrollbar-track,
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+.overflow-auto::-webkit-scrollbar-thumb,
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #CFD7E0;
+  border-radius: 4px;
+}
+
 /* ── Hide sidebar scrollbar ── */
 .sidebar-scroll {
   scrollbar-width: none;
