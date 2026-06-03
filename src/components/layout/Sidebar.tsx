@@ -8,16 +8,12 @@ import {
   DownloadSimple,
   FileText,
   SquaresFour,
-  ChatCircle,
   Receipt,
-  GearSix,
   UploadSimple,
   Users,
   Rows,
-  Lightning,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
-import type { LayoutUser } from './AppLayout'
 import { LogoFullInverse } from '@/components/logo/LogoMark'
 
 const ICON_MAP = {
@@ -26,12 +22,9 @@ const ICON_MAP = {
   Download: DownloadSimple,
   FileText,
   LayoutDashboard: SquaresFour,
-  MessageSquare: ChatCircle,
   Receipt,
-  Settings: GearSix,
   Upload: UploadSimple,
   Users,
-  LayoutTemplate: Rows,
 }
 
 type NavEntry =
@@ -52,11 +45,6 @@ const MAIN_NAV: NavEntry[] = [
 const TOOL_NAV: NavEntry[] = [
   { label: 'Export Data', href: '/exports', icon: 'Download' },
   { label: 'Import Clients', href: '/imports', icon: 'Upload' },
-]
-
-const ACCOUNT_NAV: NavEntry[] = [
-  { label: 'Settings', href: '/settings', icon: 'Settings' },
-  { label: 'Feedback', href: '/feedback', icon: 'MessageSquare' },
 ]
 
 function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
@@ -120,38 +108,7 @@ function NavSection({ title, items }: { title: string; items: NavEntry[] }) {
   )
 }
 
-function TrialUsage({ user }: { user: LayoutUser }) {
-  if (user.plan !== 'trial' || !user.trialEndsAt) return null
-
-  const trialEnd = new Date(user.trialEndsAt)
-  const daysLeft = Math.max(0, Math.ceil((trialEnd.getTime() - Date.now()) / 86400000))
-  const daysUsed = Math.max(0, 5 - daysLeft)
-  const progress = Math.min((daysUsed / 5) * 100, 100)
-
-  return (
-    <div className="rounded-lg border border-[#0D2D4A] bg-[#071929] p-3">
-      <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-[#8898AA]">Free Trial</span>
-        <span className="text-xs text-white">{daysLeft}d left</span>
-      </div>
-      <div className="mb-3 h-1.5 w-full rounded-full bg-[#1A3A5C]">
-        <div
-          className="h-1.5 rounded-full bg-[#635BFF] transition-all"
-          style={{ width: `${progress}%` }}
-        />
-      </div>
-      <Link
-        href="/pricing"
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#635BFF] py-2 text-sm font-medium text-white transition-colors hover:bg-[#5145E5]"
-      >
-        <Lightning size={13} weight="fill" />
-        Upgrade to Pro
-      </Link>
-    </div>
-  )
-}
-
-export function Sidebar({ user }: { user: LayoutUser }) {
+export function Sidebar() {
   return (
     <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r border-[#0D2D4A] bg-[#0A2540]">
       <div className="sidebar-scroll flex-1 overflow-y-auto p-3">
@@ -161,11 +118,7 @@ export function Sidebar({ user }: { user: LayoutUser }) {
         <div className="space-y-6">
           <NavSection title="Main Menu" items={MAIN_NAV} />
           <NavSection title="Tools" items={TOOL_NAV} />
-          <NavSection title="Account" items={ACCOUNT_NAV} />
         </div>
-      </div>
-      <div className="border-t border-[#0D2D4A] p-3">
-        <TrialUsage user={user} />
       </div>
     </aside>
   )

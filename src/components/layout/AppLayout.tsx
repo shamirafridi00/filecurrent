@@ -6,6 +6,7 @@ import type { Plan } from '@/types'
 
 export interface LayoutUser {
   fullName: string
+  email: string
   plan: Plan
   trialEndsAt?: string | null
 }
@@ -20,7 +21,7 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
       <Topbar user={user} onLogout={onLogout} />
-      <Sidebar user={user} />
+      <Sidebar />
       <main className="ml-56 mt-14 min-h-[calc(100vh-56px)]">
         <div className="p-6">{children}</div>
       </main>

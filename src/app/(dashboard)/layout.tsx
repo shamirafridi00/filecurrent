@@ -39,6 +39,7 @@ export default async function DashboardLayout({
     <DashboardShell
       user={{
         fullName: profile.fullName,
+        email: profile.email,
         plan: profile.plan,
         trialEndsAt: profile.trialEndsAt,
       }}

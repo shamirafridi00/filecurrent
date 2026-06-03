@@ -39,31 +39,17 @@ export default async function DashboardPage() {
     <div className="flex gap-6">
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
-        {isTrial && (
-          <div className={`flex items-center justify-between rounded-r-xl border-l-4 p-4 ${
-            isUrgent
-              ? 'border-l-[#E6A817] bg-[#FFF9ED]'
-              : 'border-l-[#635BFF] bg-[#F0EFFF]'
-          }`}>
+        {isUrgent && (
+          <div className="flex items-center justify-between rounded-r-xl border-l-4 border-l-[#E6A817] bg-[#FFF9ED] p-4">
             <div className="flex items-center gap-3">
-              <Lightning className={`h-5 w-5 shrink-0 ${isUrgent ? 'text-[#E6A817]' : 'text-[#635BFF]'}`} />
-              <div>
-                {isUrgent ? (
-                  <p className="font-semibold text-[#0A2540]">
-                    ⚠ Your trial ends in {daysLeft} day{daysLeft !== 1 ? 's' : ''}. Upgrade to keep access.
-                  </p>
-                ) : (
-                  <p className="font-semibold text-[#0A2540]">
-                    You&apos;re on a free trial — {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining.
-                  </p>
-                )}
-              </div>
+              <Lightning className="h-5 w-5 shrink-0 text-[#E6A817]" />
+              <p className="font-semibold text-[#0A2540]">
+                ⚠ Your trial ends in {daysLeft} day{daysLeft !== 1 ? 's' : ''} — upgrade to keep access.
+              </p>
             </div>
-            {isUrgent && (
-              <Button asChild size="sm" className="ml-4 shrink-0 bg-[#635BFF] hover:bg-[#5145E5] text-white">
-                <Link href="/pricing">Upgrade Now →</Link>
-              </Button>
-            )}
+            <Button asChild size="sm" className="ml-4 shrink-0 bg-[#635BFF] hover:bg-[#5145E5] text-white">
+              <Link href="/trial-expired">Upgrade Now →</Link>
+            </Button>
           </div>
         )}
 
