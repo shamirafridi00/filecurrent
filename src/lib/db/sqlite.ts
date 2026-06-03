@@ -845,7 +845,7 @@ export function createInvoiceTemplate(
      VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)`
   ).run(
     id, userId, data.name, data.description ?? null,
-    data.theme ?? 'summit', data.primaryColor ?? '#0F766E',
+    data.theme ?? 'summit', data.primaryColor ?? '#635BFF',
     data.secondaryColor ?? '#111827', data.brandName ?? null,
     data.brandAddress ?? null, data.phone ?? null, data.website ?? null,
     data.taxId ?? null, data.defaultNotes ?? null,
@@ -869,7 +869,7 @@ export function updateInvoiceTemplate(
      WHERE id=? AND user_id=?`
   ).run(
     data.name, data.description ?? null, data.theme ?? 'summit',
-    data.primaryColor ?? '#0F766E', data.secondaryColor ?? '#111827',
+    data.primaryColor ?? '#635BFF', data.secondaryColor ?? '#111827',
     data.brandName ?? null, data.brandAddress ?? null, data.phone ?? null,
     data.website ?? null, data.taxId ?? null, data.defaultNotes ?? null,
     data.defaultPaymentTerms ?? null, data.defaultTaxRate ?? 0,

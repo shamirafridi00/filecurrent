@@ -36,13 +36,13 @@ export default async function RemindersPage() {
       </div>
 
       {/* No-limits banner */}
-      <div className="bg-teal-50 border border-teal-200 rounded-xl p-4 flex items-start gap-3 mb-6">
-        <Lightning size={20} weight="fill" className="text-teal-600 mt-0.5 shrink-0" />
+      <div className="bg-[#F0EFFF] border border-[#C7C4FF] rounded-xl p-4 flex items-start gap-3 mb-6">
+        <Lightning size={20} weight="fill" className="text-[#635BFF] mt-0.5 shrink-0" />
         <div>
-          <p className="font-semibold text-teal-900 text-sm">
+          <p className="font-semibold text-[#0A2540] text-sm">
             Unlimited payment reminders — no daily cap
           </p>
-          <p className="text-teal-700 text-sm mt-0.5">
+          <p className="text-[#635BFF] text-sm mt-0.5">
             FileCurrent sends reminders automatically with no daily limits.
             Freelancers with 20+ active invoices are never penalized.
           </p>
@@ -52,9 +52,9 @@ export default async function RemindersPage() {
       {/* 3 action cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Link href="/reminders/settings">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-sm transition-all cursor-pointer group">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-3 group-hover:bg-teal-100 transition-colors">
-              <GearSix size={20} weight="duotone" className="text-teal-600" />
+          <div className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#A5B4FC] hover:shadow-sm transition-all cursor-pointer group">
+            <div className="w-10 h-10 rounded-lg bg-[#F0EFFF] flex items-center justify-center mb-3 group-hover:bg-[#E8E7FF] transition-colors">
+              <GearSix size={20} weight="duotone" className="text-[#635BFF]" />
             </div>
             <p className="font-semibold text-slate-800">Automation Settings</p>
             <p className="text-sm text-slate-500 mt-1">Configure your before-due and overdue schedule</p>
@@ -62,9 +62,9 @@ export default async function RemindersPage() {
         </Link>
 
         <Link href="/invoices">
-          <div className="bg-white border border-slate-200 rounded-xl p-5 hover:border-teal-300 hover:shadow-sm transition-all cursor-pointer group">
-            <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-3 group-hover:bg-teal-100 transition-colors">
-              <PaperPlaneTilt size={20} weight="duotone" className="text-teal-600" />
+          <div className="bg-white border border-slate-200 rounded-xl p-5 hover:border-[#A5B4FC] hover:shadow-sm transition-all cursor-pointer group">
+            <div className="w-10 h-10 rounded-lg bg-[#F0EFFF] flex items-center justify-center mb-3 group-hover:bg-[#E8E7FF] transition-colors">
+              <PaperPlaneTilt size={20} weight="duotone" className="text-[#635BFF]" />
             </div>
             <p className="font-semibold text-slate-800">Send Reminder</p>
             <p className="text-sm text-slate-500 mt-1">Send a manual reminder from any invoice page</p>
@@ -72,8 +72,8 @@ export default async function RemindersPage() {
         </Link>
 
         <div className="bg-white border border-slate-200 rounded-xl p-5">
-          <div className="w-10 h-10 rounded-lg bg-teal-50 flex items-center justify-center mb-3">
-            <Bell size={20} weight="duotone" className="text-teal-600" />
+          <div className="w-10 h-10 rounded-lg bg-[#F0EFFF] flex items-center justify-center mb-3">
+            <Bell size={20} weight="duotone" className="text-[#635BFF]" />
           </div>
           <p className="font-semibold text-slate-800">Total Sent</p>
           <p className="text-2xl font-bold text-slate-900 mt-1">{logs.length}</p>
@@ -111,7 +111,7 @@ export default async function RemindersPage() {
                 {logs.map((r) => (
                   <tr key={r.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-3">
-                      <span className="text-sm text-teal-600 font-medium">
+                      <span className="text-sm text-[#635BFF] font-medium">
                         {r.invoiceNumber}
                       </span>
                     </td>
@@ -151,28 +151,28 @@ export default async function RemindersPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             {
-              icon: <PaperPlaneTilt size={18} weight="duotone" className="text-teal-600" />,
+              icon: <PaperPlaneTilt size={18} weight="duotone" className="text-[#635BFF]" />,
               title: 'Manual Reminders',
               desc: 'Send a reminder instantly from any invoice page',
             },
             {
-              icon: <ArrowsClockwise size={18} weight="duotone" className="text-teal-600" />,
+              icon: <ArrowsClockwise size={18} weight="duotone" className="text-[#635BFF]" />,
               title: 'Automated Schedule',
               desc: 'Runs daily — sends reminders before due, on due, and after overdue',
             },
             {
-              icon: <Lightning size={18} weight="duotone" className="text-teal-600" />,
+              icon: <Lightning size={18} weight="duotone" className="text-[#635BFF]" />,
               title: 'No Daily Limits',
               desc: "Unlike other tools, FileCurrent never caps how many reminders you can send",
             },
             {
-              icon: <CheckCircle size={18} weight="duotone" className="text-teal-600" />,
+              icon: <CheckCircle size={18} weight="duotone" className="text-[#635BFF]" />,
               title: 'Auto-stops on Payment',
               desc: 'When an invoice is marked paid, all future reminders cancel automatically',
             },
           ].map((item, i) => (
             <div key={i} className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center shrink-0">
+              <div className="w-8 h-8 rounded-lg bg-[#F0EFFF] flex items-center justify-center shrink-0">
                 {item.icon}
               </div>
               <div>

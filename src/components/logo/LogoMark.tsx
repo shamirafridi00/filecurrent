@@ -7,7 +7,7 @@ export function LogoMark({ size = 32 }: { size?: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect width="40" height="40" rx="10" fill="#0F766E" />
+      <rect width="40" height="40" rx="10" fill="#0A2540" />
       <path
         d="M9 20 C13 13, 19 13, 22 20 C25 27, 31 27, 34 20"
         stroke="white"
@@ -38,7 +38,7 @@ export function LogoMarkInverse({ size = 32 }: { size?: number }) {
     >
       <path
         d="M9 20 C13 13, 19 13, 22 20 C25 27, 31 27, 34 20"
-        stroke="#0F766E"
+        stroke="#635BFF"
         strokeWidth="2.8"
         strokeLinecap="round"
         fill="none"
@@ -46,7 +46,7 @@ export function LogoMarkInverse({ size = 32 }: { size?: number }) {
       />
       <path
         d="M6 24 C10 17, 17 17, 20 24 C23 31, 30 31, 34 24"
-        stroke="#0F766E"
+        stroke="#635BFF"
         strokeWidth="2.8"
         strokeLinecap="round"
         fill="none"

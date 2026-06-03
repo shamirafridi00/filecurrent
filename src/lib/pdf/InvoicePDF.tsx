@@ -108,7 +108,7 @@ const s = StyleSheet.create({
 export function InvoicePDF({ invoice, template, freelancerName, isPro }: InvoicePDFProps) {
   const themeName = (template?.theme ?? 'summit') as keyof typeof themes
   const theme = themes[themeName] ?? themes.summit
-  const primary = template?.primaryColor ?? '#0F766E'
+  const primary = template?.primaryColor ?? '#635BFF'
   const brandName = template?.brandName ?? freelancerName
 
   const balance = invoice.total - (invoice.paidAmount ?? 0)

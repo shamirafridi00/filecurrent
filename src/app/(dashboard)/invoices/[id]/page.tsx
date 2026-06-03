@@ -27,7 +27,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
   if (!invoice) notFound()
 
   const template = invoice.template
-  const primaryColor = template?.primaryColor ?? '#0F766E'
+  const primaryColor = template?.primaryColor ?? '#635BFF'
   const brandName = template?.brandName ?? profile.businessName ?? profile.fullName
   return (
     <div>

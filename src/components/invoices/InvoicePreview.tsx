@@ -40,7 +40,7 @@ interface InvoicePreviewProps {
 }
 
 export function InvoicePreview({ data, template }: InvoicePreviewProps) {
-  const primaryColor = template?.primaryColor ?? '#0F766E'
+  const primaryColor = template?.primaryColor ?? '#635BFF'
   const brandName = template?.brandName ?? 'Your Business'
 
   const formatAmount = (n: number) =>

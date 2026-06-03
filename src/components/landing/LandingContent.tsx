@@ -12,17 +12,17 @@ import { LogoFull } from '@/components/logo/LogoMark'
 
 const FEATURES = [
   {
-    icon: <FileText className="h-7 w-7 text-teal-400" />,
+    icon: <FileText className="h-7 w-7 text-[#635BFF]" />,
     title: 'Profession Templates',
     desc: 'Contracts built for your exact freelance niche — web dev, photography, consulting, design, and more.',
   },
   {
-    icon: <PencilLine className="h-7 w-7 text-teal-400" />,
+    icon: <PencilLine className="h-7 w-7 text-[#635BFF]" />,
     title: 'Legal E-Signatures',
     desc: 'ESIGN Act compliant. Clients sign directly in the browser. No DocuSign account needed.',
   },
   {
-    icon: <Bell className="h-7 w-7 text-teal-400" />,
+    icon: <Bell className="h-7 w-7 text-[#635BFF]" />,
     title: 'Automated Reminders',
     desc: 'No daily cap. Escalating tone. Auto-stops when the invoice is paid. Zero manual follow-up.',
   },
@@ -65,7 +65,7 @@ const FAQS = [
   { q: 'What is the lifetime deal?', a: "The lifetime deal ($49) gives you permanent Pro access for a one-time payment. It's available for the first 90 days only." },
 ]
 
-function CheckIcon() { return <Check className="h-4 w-4 text-teal-400" /> }
+function CheckIcon() { return <Check className="h-4 w-4 text-[#635BFF]" /> }
 function XIcon() { return <X className="h-4 w-4 text-gray-600" /> }
 
 function CellValue({ val }: { val: boolean | string }) {
@@ -76,25 +76,25 @@ function CellValue({ val }: { val: boolean | string }) {
 
 export function LandingContent() {
   return (
-    <div className="min-h-screen bg-[#0a0f0e] text-gray-100">
+    <div className="min-h-screen bg-[#0A2540] text-gray-100">
       <NavBar />
 
       {/* Hero */}
       <section className="hero-bg pt-28 pb-20 px-4">
         <div className="mx-auto max-w-4xl text-center">
-          <Badge variant="secondary" className="mb-6 text-xs font-medium bg-white/10 text-teal-300 border-teal-800">
+          <Badge variant="secondary" className="mb-6 text-xs font-medium bg-white/10 text-[#A5B4FC] border-[#5145E5]">
             Cheaper than HoneyBook. Simpler than Bonsai.
           </Badge>
           <h1 className="hero-headline text-5xl font-bold tracking-tight text-white mb-4 leading-tight">
             Contracts. Invoices.<br />
-            <span className="text-[#2dd4bf]">E-Signatures. Done.</span>
+            <span className="text-[#635BFF]">E-Signatures. Done.</span>
           </h1>
           <p className="hero-subtitle text-xl text-gray-400 mb-8 leading-relaxed">
             The freelance document tool that does exactly what you need<br />
             and nothing you don&apos;t. $9/month or free forever.
           </p>
           <div className="hero-ctas flex items-center justify-center gap-4 flex-wrap">
-            <Button asChild size="lg" className="text-base px-8 bg-white text-teal-800 hover:bg-gray-100">
+            <Button asChild size="lg" className="text-base px-8 bg-white text-[#635BFF] hover:bg-[#F0EFFF]">
               <Link href="/signup">Start Free — No card needed</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="text-base border-white/40 text-white hover:bg-white/10 bg-transparent">
@@ -103,13 +103,13 @@ export function LandingContent() {
           </div>
           <div className="mt-8 flex items-center justify-center gap-6 text-sm text-gray-500">
             <span>Trusted by thousands of freelancers across the US</span>
-            <span className="text-teal-400">★★★★★</span>
+            <span className="text-[#635BFF]">★★★★★</span>
           </div>
         </div>
       </section>
 
       {/* Features */}
-      <section id="features" className="py-20 px-4 bg-[#0d1614]">
+      <section id="features" className="py-20 px-4 bg-[#071929]">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-3xl font-bold text-center mb-3 text-white">
             Everything a freelancer needs. Nothing you don&apos;t.
@@ -120,25 +120,25 @@ export function LandingContent() {
       </section>
 
       {/* Comparison table */}
-      <section className="py-20 px-4 bg-[#0a0f0e]">
+      <section className="py-20 px-4 bg-[#0A2540]">
         <div className="mx-auto max-w-3xl">
           <h2 className="text-3xl font-bold text-center mb-3 text-white">Why freelancers choose FileCurrent</h2>
           <p className="text-center text-gray-400 mb-10 text-sm">See how we compare to the leading alternatives</p>
-          <div className="overflow-x-auto rounded-xl border border-[#1a2a28]">
+          <div className="overflow-x-auto rounded-xl border border-[#1A3A5C]">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#1a2a28]">
+                <tr className="border-b border-[#1A3A5C]">
                   <th className="p-3 text-left font-semibold text-gray-400">Feature</th>
-                  <th className="p-3 text-center font-semibold text-white bg-[#0F766E]/20">FileCurrent</th>
+                  <th className="p-3 text-center font-semibold text-white bg-[#635BFF]/20">FileCurrent</th>
                   <th className="p-3 text-center text-gray-500 font-normal">Bonsai</th>
                   <th className="p-3 text-center text-gray-500 font-normal">HoneyBook</th>
                 </tr>
               </thead>
               <tbody>
                 {COMPARISON.map((row, i) => (
-                  <tr key={row.feature} className={i % 2 === 0 ? 'bg-[#0a0f0e]' : 'bg-[#0d1614]'}>
+                  <tr key={row.feature} className={i % 2 === 0 ? 'bg-[#0A2540]' : 'bg-[#071929]'}>
                     <td className="p-3 font-medium text-gray-300">{row.feature}</td>
-                    <td className="p-3 text-center bg-[#0F766E]/10">
+                    <td className="p-3 text-center bg-[#635BFF]/10">
                       <span className="flex justify-center"><CellValue val={row.fc} /></span>
                     </td>
                     <td className="p-3 text-center text-gray-500">
@@ -156,14 +156,14 @@ export function LandingContent() {
       </section>
 
       {/* Pricing */}
-      <section id="pricing" className="py-20 px-4 bg-[#0d1614]">
+      <section id="pricing" className="py-20 px-4 bg-[#071929]">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-3xl font-bold text-center mb-3 text-white">Simple, honest pricing</h2>
           <p className="text-center text-gray-400 mb-12 text-sm">No hidden fees. Cancel anytime.</p>
 
           <div className="grid grid-cols-1 gap-5 md:grid-cols-3 mb-5">
             {/* Free */}
-            <div className="rounded-xl border border-[#1a2a28] bg-[#0a1410] p-6 space-y-4">
+            <div className="rounded-xl border border-[#1A3A5C] bg-[#071929] p-6 space-y-4">
               <div>
                 <p className="font-semibold text-lg text-white">Free</p>
                 <p className="text-3xl font-bold mt-1 text-white">$0<span className="text-base font-normal text-gray-500">/mo</span></p>
@@ -172,39 +172,39 @@ export function LandingContent() {
               <ul className="space-y-2">
                 {FREE_FEATURES.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-400">
-                    <Check className="h-4 w-4 text-teal-500 shrink-0" /> {f}
+                    <Check className="h-4 w-4 text-[#635BFF] shrink-0" /> {f}
                   </li>
                 ))}
               </ul>
-              <Button asChild variant="outline" className="w-full border-[#1a2a28] text-gray-300 hover:bg-white/5">
+              <Button asChild variant="outline" className="w-full border-[#1A3A5C] text-gray-300 hover:bg-white/5">
                 <Link href="/signup">Get started free</Link>
               </Button>
             </div>
 
             {/* Pro Monthly */}
-            <div className="rounded-xl border-2 border-teal-600 bg-[#0a1410] p-6 space-y-4 shadow-lg shadow-teal-900/20">
+            <div className="rounded-xl border-2 border-[#635BFF] bg-[#071929] p-6 space-y-4 shadow-lg shadow-[#0A2540]/20">
               <div className="flex items-start justify-between">
                 <div>
                   <p className="font-semibold text-lg text-white">Pro</p>
                   <p className="text-3xl font-bold mt-1 text-white">$9<span className="text-base font-normal text-gray-500">/mo</span></p>
                   <p className="text-sm text-gray-500 mt-1">Billed monthly</p>
                 </div>
-                <Badge className="bg-teal-600 text-white">Popular</Badge>
+                <Badge className="bg-[#635BFF] text-white">Popular</Badge>
               </div>
               <ul className="space-y-2">
                 {PRO_FEATURES.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-400">
-                    <Check className="h-4 w-4 text-teal-500 shrink-0" /> {f}
+                    <Check className="h-4 w-4 text-[#635BFF] shrink-0" /> {f}
                   </li>
                 ))}
               </ul>
-              <Button asChild className="w-full bg-teal-600 hover:bg-teal-700 text-white">
+              <Button asChild className="w-full bg-[#635BFF] hover:bg-[#5145E5] text-white">
                 <Link href="/signup">Start Pro Trial</Link>
               </Button>
             </div>
 
             {/* Annual */}
-            <div className="rounded-xl border border-[#1a2a28] bg-[#0a1410] p-6 space-y-4">
+            <div className="rounded-xl border border-[#1A3A5C] bg-[#071929] p-6 space-y-4">
               <div>
                 <div className="flex items-center gap-2 mb-1">
                   <Star className="h-4 w-4 text-amber-400" />
@@ -217,28 +217,28 @@ export function LandingContent() {
               <ul className="space-y-2">
                 {ANNUAL_FEATURES.map((f) => (
                   <li key={f} className="flex items-center gap-2 text-sm text-gray-400">
-                    <Check className="h-4 w-4 text-teal-500 shrink-0" /> {f}
+                    <Check className="h-4 w-4 text-[#635BFF] shrink-0" /> {f}
                   </li>
                 ))}
               </ul>
-              <Button asChild variant="outline" className="w-full border-[#1a2a28] text-gray-300 hover:bg-white/5">
+              <Button asChild variant="outline" className="w-full border-[#1A3A5C] text-gray-300 hover:bg-white/5">
                 <Link href="/signup">Get Annual</Link>
               </Button>
             </div>
           </div>
 
           {/* Lifetime deal */}
-          <div className="rounded-xl border border-teal-800/50 bg-teal-900/20 p-6 flex items-center justify-between gap-4 flex-wrap">
+          <div className="rounded-xl border border-[#5145E5]/50 bg-[#0A2540]/20 p-6 flex items-center justify-between gap-4 flex-wrap">
             <div>
               <div className="flex items-center gap-2 mb-1">
-                <Badge variant="secondary" className="text-teal-300 bg-teal-900/50 border-teal-700">Limited Time</Badge>
+                <Badge variant="secondary" className="text-[#A5B4FC] bg-[#0A2540]/50 border-[#635BFF]">Limited Time</Badge>
               </div>
               <p className="font-bold text-xl text-white">Launch Lifetime Deal — $49 one-time</p>
               <p className="text-sm text-gray-400 mt-0.5">
                 Pay once, use FileCurrent Pro forever. Available for the first 90 days only.
               </p>
             </div>
-            <Button asChild size="lg" className="bg-teal-600 hover:bg-teal-700 text-white">
+            <Button asChild size="lg" className="bg-[#635BFF] hover:bg-[#5145E5] text-white">
               <Link href="/signup">Get Lifetime Access</Link>
             </Button>
           </div>
@@ -246,7 +246,7 @@ export function LandingContent() {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 bg-[#0a0f0e]">
+      <section className="py-20 px-4 bg-[#0A2540]">
         <div className="mx-auto max-w-4xl">
           <h2 className="text-3xl font-bold text-center mb-12 text-white">What freelancers say</h2>
           <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -255,8 +255,8 @@ export function LandingContent() {
               { name: 'James T.', role: 'Photographer', body: 'The reminder system is excellent — no cap, no hassle. My overdue invoice rate dropped by 60%.' },
               { name: 'Maria L.', role: 'Copywriter', body: "I switched from Bonsai and I'm paying 57% less for basically the same features. The e-signature flow is cleaner too." },
             ].map((t) => (
-              <div key={t.name} className="rounded-xl border border-[#1a2a28] bg-[#0d1614] p-5 space-y-3">
-                <div className="text-teal-400 text-sm">★★★★★</div>
+              <div key={t.name} className="rounded-xl border border-[#1A3A5C] bg-[#071929] p-5 space-y-3">
+                <div className="text-[#635BFF] text-sm">★★★★★</div>
                 <p className="text-sm text-gray-400 leading-relaxed">&ldquo;{t.body}&rdquo;</p>
                 <div>
                   <p className="font-medium text-sm text-white">{t.name}</p>
@@ -269,7 +269,7 @@ export function LandingContent() {
       </section>
 
       {/* FAQ */}
-      <section id="faq" className="py-20 px-4 bg-[#0d1614]">
+      <section id="faq" className="py-20 px-4 bg-[#071929]">
         <div className="mx-auto max-w-2xl">
           <h2 className="text-3xl font-bold text-center mb-10 text-white">Frequently asked questions</h2>
           <div className="space-y-2">
@@ -281,7 +281,7 @@ export function LandingContent() {
       </section>
 
       {/* Footer */}
-      <footer className="bg-[#0a0f0e] text-gray-400 border-t border-[#1a2a28]">
+      <footer className="bg-[#0A2540] text-gray-400 border-t border-[#1A3A5C]">
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <div className="col-span-2 md:col-span-1">
@@ -323,7 +323,7 @@ export function LandingContent() {
               </ul>
             </div>
           </div>
-          <div className="border-t border-[#1a2a28] mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
+          <div className="border-t border-[#1A3A5C] mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-gray-600">
             <span>© {new Date().getFullYear()} FileCurrent. All rights reserved.</span>
             <span>Made for freelancers worldwide.</span>
           </div>

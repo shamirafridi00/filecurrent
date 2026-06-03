@@ -33,7 +33,7 @@ export function invoiceSentEmail({
 <html>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
   <div style="max-width:620px;margin:40px auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-    <div style="background:#0F766E;padding:28px 32px;display:flex;justify-content:space-between;align-items:center;">
+    <div style="background:#635BFF;padding:28px 32px;display:flex;justify-content:space-between;align-items:center;">
       <span style="color:#ffffff;font-size:20px;font-weight:700;">FileCurrent</span>
       <span style="color:rgba(255,255,255,0.85);font-size:14px;">Invoice ${invoiceNumber}</span>
     </div>
@@ -57,7 +57,7 @@ export function invoiceSentEmail({
         <tfoot>
           <tr>
             <td colspan="3" style="padding:14px 8px;text-align:right;font-weight:700;font-size:16px;color:#111827;border-top:2px solid #E5E7EB;">Total</td>
-            <td style="padding:14px 8px;text-align:right;font-weight:700;font-size:18px;color:#0F766E;border-top:2px solid #E5E7EB;">${total}</td>
+            <td style="padding:14px 8px;text-align:right;font-weight:700;font-size:18px;color:#635BFF;border-top:2px solid #E5E7EB;">${total}</td>
           </tr>
         </tfoot>
       </table>
@@ -76,14 +76,14 @@ export function invoiceSentEmail({
 
       <div style="text-align:center;margin:28px 0;">
         <a href="${invoiceUrl}"
-           style="display:inline-block;background:#0F766E;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">
+           style="display:inline-block;background:#635BFF;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">
           View Invoice →
         </a>
       </div>
 
       <hr style="border:none;border-top:1px solid #E5E7EB;margin:28px 0;">
       ${hasBrandingFooter
-        ? `<p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">Sent via <a href="https://filecurrent.io" style="color:#0F766E;">FileCurrent</a> — filecurrent.io</p>`
+        ? `<p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">Sent via <a href="https://filecurrent.io" style="color:#635BFF;">FileCurrent</a> — filecurrent.io</p>`
         : `<p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">Thank you for your business.</p>`
       }
     </div>

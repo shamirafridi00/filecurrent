@@ -88,7 +88,7 @@ function getStageContent(
     return {
       heading: `Friendly reminder: Invoice ${invoiceNumber} due soon`,
       intro: `Just a heads-up that invoice ${invoiceNumber} for ${amount} is coming due on ${dueDate}. No action needed if you've already arranged payment — we just wanted to give you advance notice.`,
-      tone: { headerColor: '#0F766E', borderColor: '#D1FAE5', bgColor: '#F0FDF4', amountColor: '#065F46' },
+      tone: { headerColor: '#635BFF', borderColor: '#D1FAE5', bgColor: '#F0FDF4', amountColor: '#065F46' },
     }
   }
   if (stage === 'on_due') {

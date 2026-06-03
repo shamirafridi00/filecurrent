@@ -199,9 +199,9 @@ export function OnboardingModal({
               </DialogDescription>
             </DialogHeader>
 
-            <div className="rounded-xl border border-teal-200 bg-teal-50 p-5 space-y-2">
-              <p className="font-semibold text-teal-900">Your 5-day free trial includes:</p>
-              <ul className="space-y-1.5 text-sm text-teal-800">
+            <div className="rounded-xl border border-[#C7C4FF] bg-[#F0EFFF] p-5 space-y-2">
+              <p className="font-semibold text-[#0A2540]">Your 5-day free trial includes:</p>
+              <ul className="space-y-1.5 text-sm text-[#5145E5]">
                 <li>✓ Unlimited invoices &amp; contracts</li>
                 <li>✓ E-signatures</li>
                 <li>✓ Automated payment reminders</li>

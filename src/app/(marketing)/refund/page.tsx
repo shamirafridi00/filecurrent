@@ -34,7 +34,7 @@ export default function RefundPage() {
 
         {/* Policy details */}
         <div className="space-y-8">
-          <div className="border-b border-[#1a2a28] pb-8">
+          <div className="border-b border-[#1A3A5C] pb-8">
             <h2 className="text-lg font-semibold text-white mb-4">Our Refund Policy</h2>
             <ul className="space-y-3">
               {[
@@ -44,7 +44,7 @@ export default function RefundPage() {
                 ['Fast Processing', 'Processed within 5–7 business days'],
               ].map(([title, desc]) => (
                 <li key={title} className="flex items-start gap-3">
-                  <Check className="h-4 w-4 text-teal-400 mt-0.5 shrink-0" />
+                  <Check className="h-4 w-4 text-[#635BFF] mt-0.5 shrink-0" />
                   <div>
                     <span className="text-white font-medium text-sm">{title}:</span>
                     <span className="text-gray-400 text-sm ml-1">{desc}</span>
@@ -54,7 +54,7 @@ export default function RefundPage() {
             </ul>
           </div>
 
-          <div className="border-b border-[#1a2a28] pb-8">
+          <div className="border-b border-[#1A3A5C] pb-8">
             <h2 className="text-lg font-semibold text-white mb-4">How to Request a Refund</h2>
             <ol className="space-y-4">
               {[
@@ -64,7 +64,7 @@ export default function RefundPage() {
                 ['Processing', 'Refund processed to your original payment method'],
               ].map(([step, desc], i) => (
                 <li key={step} className="flex items-start gap-4">
-                  <div className="w-7 h-7 rounded-full bg-teal-600/20 border border-teal-700 flex items-center justify-center shrink-0 text-teal-400 text-xs font-bold">
+                  <div className="w-7 h-7 rounded-full bg-[#635BFF]/20 border border-[#635BFF] flex items-center justify-center shrink-0 text-[#635BFF] text-xs font-bold">
                     {i + 1}
                   </div>
                   <div>
@@ -76,7 +76,7 @@ export default function RefundPage() {
             </ol>
           </div>
 
-          <div className="border-b border-[#1a2a28] pb-8">
+          <div className="border-b border-[#1A3A5C] pb-8">
             <h2 className="text-lg font-semibold text-white mb-4">Important Notes</h2>
             <ul className="space-y-2 text-sm text-gray-400">
               <li>• Refunds are available within 30 days of purchase date only</li>
@@ -86,12 +86,12 @@ export default function RefundPage() {
             </ul>
           </div>
 
-          <div className="rounded-xl border border-teal-800/50 bg-teal-900/20 p-6">
-            <p className="text-teal-300 text-sm font-medium mb-1">Try before you buy</p>
+          <div className="rounded-xl border border-[#5145E5]/50 bg-[#0A2540]/20 p-6">
+            <p className="text-[#A5B4FC] text-sm font-medium mb-1">Try before you buy</p>
             <p className="text-gray-400 text-sm mb-4">
               FileCurrent is free for up to 3 documents per month, forever. No credit card required.
             </p>
-            <Button asChild className="bg-teal-600 hover:bg-teal-700 text-white">
+            <Button asChild className="bg-[#635BFF] hover:bg-[#635BFF] text-white">
               <Link href="/signup">Start Free →</Link>
             </Button>
           </div>
@@ -102,7 +102,7 @@ export default function RefundPage() {
               We built FileCurrent to help freelancers succeed. If it&apos;s not the right fit for your business,
               we want you to get your money back — no hassle, no hard feelings.
             </p>
-            <p className="text-teal-400 text-sm mt-3">billing@filecurrent.io</p>
+            <p className="text-[#635BFF] text-sm mt-3">billing@filecurrent.io</p>
           </div>
         </div>
       </div>

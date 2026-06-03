@@ -11,7 +11,7 @@ interface FaqItemProps {
 export function FaqItem({ question, answer }: FaqItemProps) {
   const [open, setOpen] = useState(false)
   return (
-    <div className="rounded-lg border border-[#1a2a28] bg-[#0d1614]">
+    <div className="rounded-lg border border-[#1A3A5C] bg-[#071929]">
       <button
         className="flex w-full items-center justify-between p-4 text-left"
         onClick={() => setOpen((o) => !o)}

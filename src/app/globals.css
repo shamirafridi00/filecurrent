@@ -4,39 +4,49 @@
 
 @layer base {
   :root {
-    --background: 0 0% 98%;
-    --foreground: 222 47% 8%;
+    /* Stripe-inspired FileCurrent theme */
+    --background: 214 32% 97%;        /* #F6F9FC */
+    --foreground: 213 58% 14%;        /* #0A2540 */
+
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 8%;
+    --card-foreground: 213 58% 14%;
+
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 8%;
-    --primary: 174 77% 24%;
+    --popover-foreground: 213 58% 14%;
+
+    --primary: 245 100% 67%;          /* #635BFF */
     --primary-foreground: 0 0% 100%;
-    --secondary: 240 5% 96%;
-    --secondary-foreground: 240 6% 10%;
-    --muted: 240 5% 96%;
-    --muted-foreground: 240 4% 46%;
-    --accent: 174 55% 95%;
-    --accent-foreground: 174 77% 24%;
-    --destructive: 0 72% 51%;
+
+    --secondary: 214 32% 97%;         /* #F6F9FC */
+    --secondary-foreground: 213 58% 14%;
+
+    --muted: 214 25% 95%;
+    --muted-foreground: 213 22% 55%;  /* #8898AA */
+
+    --accent: 245 100% 97%;           /* #F0EFFF */
+    --accent-foreground: 245 100% 60%;
+
+    --destructive: 349 79% 48%;       /* #DF1B41 */
     --destructive-foreground: 0 0% 100%;
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 174 77% 24%;
-    --radius: 0.625rem;
+
+    --border: 214 28% 90%;            /* #E6EBF1 */
+    --input: 214 20% 82%;             /* #CFD7E0 */
+    --ring: 245 100% 67%;             /* #635BFF */
+
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 222 47% 4%;
+    --background: 213 73% 8%;
     --foreground: 210 40% 98%;
-    --card: 222 47% 6%;
+    --card: 213 73% 10%;
     --card-foreground: 210 40% 98%;
-    --primary: 174 60% 45%;
-    --primary-foreground: 222 47% 4%;
-    --muted: 217 33% 17%;
-    --muted-foreground: 215 20% 65%;
-    --border: 217 33% 17%;
-    --input: 217 33% 17%;
+    --primary: 245 100% 67%;
+    --primary-foreground: 0 0% 100%;
+    --muted: 213 55% 18%;
+    --muted-foreground: 213 22% 55%;
+    --border: 213 55% 18%;
+    --input: 213 55% 18%;
   }
 
   * {
@@ -61,9 +71,7 @@
 
 /* ── Landing page animations ── */
 .hero-bg {
-  background: radial-gradient(ellipse at 20% 50%, rgba(13,51,48,0.8) 0%, transparent 50%),
-              radial-gradient(ellipse at 80% 20%, rgba(10,38,36,0.6) 0%, transparent 50%),
-              #0a0f0e;
+  background: linear-gradient(135deg, #0A2540 0%, #1a1f6e 50%, #0A2540 100%);
 }
 
 .hero-headline {

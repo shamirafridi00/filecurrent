@@ -50,12 +50,12 @@ export default function ContactPage() {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Form */}
           <div className="md:col-span-3">
-            <Card className="bg-[#0d1614] border-[#1a2a28]">
+            <Card className="bg-[#071929] border-[#1A3A5C]">
               <CardContent className="p-6">
                 {status === 'success' ? (
                   <div className="text-center py-8">
-                    <div className="w-12 h-12 rounded-full bg-teal-600/20 flex items-center justify-center mx-auto mb-4">
-                      <PaperPlaneTilt className="h-5 w-5 text-teal-400" />
+                    <div className="w-12 h-12 rounded-full bg-[#635BFF]/20 flex items-center justify-center mx-auto mb-4">
+                      <PaperPlaneTilt className="h-5 w-5 text-[#635BFF]" />
                     </div>
                     <h3 className="text-white font-semibold text-lg mb-2">Message sent!</h3>
                     <p className="text-gray-400 text-sm">Thanks! We&apos;ll be in touch within 24 hours.</p>
@@ -65,17 +65,17 @@ export default function ContactPage() {
                     <div className="space-y-1.5">
                       <Label htmlFor="name" className="text-gray-300">Your Name</Label>
                       <Input id="name" value={name} onChange={e => setName(e.target.value)}
-                        placeholder="Jane Smith" required className="bg-[#0a1410] border-[#1a2a28] text-white" />
+                        placeholder="Jane Smith" required className="bg-[#071929] border-[#1A3A5C] text-white" />
                     </div>
                     <div className="space-y-1.5">
                       <Label htmlFor="email" className="text-gray-300">Email Address</Label>
                       <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
-                        placeholder="you@example.com" required className="bg-[#0a1410] border-[#1a2a28] text-white" />
+                        placeholder="you@example.com" required className="bg-[#071929] border-[#1A3A5C] text-white" />
                     </div>
                     <div className="space-y-1.5">
                       <Label className="text-gray-300">Subject</Label>
                       <Select onValueChange={setSubject}>
-                        <SelectTrigger className="bg-[#0a1410] border-[#1a2a28] text-white">
+                        <SelectTrigger className="bg-[#071929] border-[#1A3A5C] text-white">
                           <SelectValue placeholder="Select a subject" />
                         </SelectTrigger>
                         <SelectContent>
@@ -92,12 +92,12 @@ export default function ContactPage() {
                       <Label htmlFor="message" className="text-gray-300">Message</Label>
                       <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)}
                         placeholder="Tell us how we can help..." rows={5} required
-                        className="bg-[#0a1410] border-[#1a2a28] text-white" />
+                        className="bg-[#071929] border-[#1A3A5C] text-white" />
                     </div>
                     {status === 'error' && (
                       <p className="text-red-400 text-sm">Something went wrong. Email us at support@filecurrent.io</p>
                     )}
-                    <Button type="submit" className="w-full bg-teal-600 hover:bg-teal-700 text-white"
+                    <Button type="submit" className="w-full bg-[#635BFF] hover:bg-[#635BFF] text-white"
                       disabled={status === 'loading' || message.length < 20}>
                       {status === 'loading' ? 'Sending…' : 'Send Message'}
                     </Button>
@@ -111,12 +111,12 @@ export default function ContactPage() {
           <div className="md:col-span-2 space-y-4">
             {[
               {
-                icon: <Envelope className="h-5 w-5 text-teal-400" />,
+                icon: <Envelope className="h-5 w-5 text-[#635BFF]" />,
                 title: 'Email Support',
-                content: <><p className="text-teal-400 font-medium">support@filecurrent.io</p><p className="text-gray-500 text-sm mt-1">For general questions and help</p></>,
+                content: <><p className="text-[#635BFF] font-medium">support@filecurrent.io</p><p className="text-gray-500 text-sm mt-1">For general questions and help</p></>,
               },
               {
-                icon: <Clock className="h-5 w-5 text-teal-400" />,
+                icon: <Clock className="h-5 w-5 text-[#635BFF]" />,
                 title: 'Support Hours',
                 content: (
                   <div className="text-sm text-gray-400 space-y-1">
@@ -128,18 +128,18 @@ export default function ContactPage() {
                 ),
               },
               {
-                icon: <Question className="h-5 w-5 text-teal-400" />,
+                icon: <Question className="h-5 w-5 text-[#635BFF]" />,
                 title: 'Helpful Links',
                 content: (
                   <div className="text-sm space-y-2">
-                    <Link href="/help" className="block text-teal-400 hover:text-teal-300">Help & FAQ →</Link>
-                    <Link href="/pricing" className="block text-teal-400 hover:text-teal-300">Pricing →</Link>
-                    <Link href="/refund" className="block text-teal-400 hover:text-teal-300">Refund Policy →</Link>
+                    <Link href="/help" className="block text-[#635BFF] hover:text-[#A5B4FC]">Help & FAQ →</Link>
+                    <Link href="/pricing" className="block text-[#635BFF] hover:text-[#A5B4FC]">Pricing →</Link>
+                    <Link href="/refund" className="block text-[#635BFF] hover:text-[#A5B4FC]">Refund Policy →</Link>
                   </div>
                 ),
               },
             ].map((card) => (
-              <Card key={card.title} className="bg-[#0d1614] border-[#1a2a28]">
+              <Card key={card.title} className="bg-[#071929] border-[#1A3A5C]">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-3">
                     {card.icon}

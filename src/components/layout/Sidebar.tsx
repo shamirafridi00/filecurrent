@@ -65,13 +65,13 @@ function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
       <Link
         href={entry.href}
         className={cn(
-          'flex w-full items-center gap-2 rounded-md py-1.5 pl-9 pr-3 text-xs transition-colors',
+          'flex w-full items-center gap-2 rounded-md py-1.5 pl-9 pr-3 text-xs transition-colors duration-150',
           active
-            ? 'bg-[#0F766E] text-white font-medium'
-            : 'text-[#a8c5c2] hover:bg-[#162b28] hover:text-white'
+            ? 'bg-[#1A3A5C] text-white font-semibold'
+            : 'text-[#8898AA] hover:bg-[#1A3A5C] hover:text-white'
         )}
       >
-        <Rows size={13} className="shrink-0" />
+        <Rows size={13} className={cn('shrink-0', active && 'text-[#635BFF]')} />
         <span>{entry.label}</span>
       </Link>
     )
@@ -83,13 +83,17 @@ function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
     <Link
       href={entry.href}
       className={cn(
-        'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors',
+        'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150',
         active
-          ? 'bg-[#0F766E] text-white font-medium'
-          : 'text-[#a8c5c2] hover:bg-[#162b28] hover:text-white'
+          ? 'bg-[#1A3A5C] text-white font-semibold'
+          : 'text-[#8898AA] hover:bg-[#1A3A5C] hover:text-white'
       )}
     >
-      <Icon size={18} weight={active ? 'fill' : 'regular'} className="shrink-0" />
+      <Icon
+        size={18}
+        weight={active ? 'fill' : 'regular'}
+        className={cn('shrink-0', active ? 'text-[#635BFF]' : '')}
+      />
       <span>{entry.label}</span>
     </Link>
   )
@@ -104,7 +108,7 @@ function NavSection({ title, items }: { title: string; items: NavEntry[] }) {
 
   return (
     <div>
-      <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-[#4a7c78]">
+      <p className="mb-2 px-3 text-[10px] font-semibold uppercase tracking-widest text-[#4F6B8A]">
         {title}
       </p>
       <nav className="space-y-0.5">
@@ -125,20 +129,20 @@ function TrialUsage({ user }: { user: LayoutUser }) {
   const progress = Math.min((daysUsed / 5) * 100, 100)
 
   return (
-    <div className="rounded-lg border border-[#1a3330] bg-[#0a1917] p-3">
+    <div className="rounded-lg border border-[#0D2D4A] bg-[#071929] p-3">
       <div className="mb-2 flex items-center justify-between">
-        <span className="text-sm font-medium text-[#a8c5c2]">Free Trial</span>
+        <span className="text-sm font-medium text-[#8898AA]">Free Trial</span>
         <span className="text-xs text-white">{daysLeft}d left</span>
       </div>
-      <div className="mb-3 h-1.5 w-full rounded-full bg-[#1a3330]">
+      <div className="mb-3 h-1.5 w-full rounded-full bg-[#1A3A5C]">
         <div
-          className="h-1.5 rounded-full bg-[#0F766E] transition-all"
+          className="h-1.5 rounded-full bg-[#635BFF] transition-all"
           style={{ width: `${progress}%` }}
         />
       </div>
       <Link
         href="/pricing"
-        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#0F766E] py-2 text-sm font-medium text-white transition-colors hover:bg-[#0d6b64]"
+        className="flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#635BFF] py-2 text-sm font-medium text-white transition-colors hover:bg-[#5145E5]"
       >
         <Lightning size={13} weight="fill" />
         Upgrade to Pro
@@ -149,7 +153,7 @@ function TrialUsage({ user }: { user: LayoutUser }) {
 
 export function Sidebar({ user }: { user: LayoutUser }) {
   return (
-    <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r border-[#1a3330] bg-[#0D1F1E]">
+    <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r border-[#0D2D4A] bg-[#0A2540]">
       <div className="sidebar-scroll flex-1 overflow-y-auto p-3">
         <div className="mb-5 px-1">
           <LogoFullInverse />
@@ -160,7 +164,7 @@ export function Sidebar({ user }: { user: LayoutUser }) {
           <NavSection title="Account" items={ACCOUNT_NAV} />
         </div>
       </div>
-      <div className="border-t border-[#1a3330] p-3">
+      <div className="border-t border-[#0D2D4A] p-3">
         <TrialUsage user={user} />
       </div>
     </aside>

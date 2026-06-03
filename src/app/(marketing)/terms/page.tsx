@@ -30,7 +30,7 @@ export default function TermsPage() {
         </div>
         <div className="space-y-8">
           {sections.map((section) => (
-            <div key={section.title} className="border-b border-[#1a2a28] pb-8 last:border-0">
+            <div key={section.title} className="border-b border-[#1A3A5C] pb-8 last:border-0">
               <h2 className="text-lg font-semibold text-white mb-3">{section.title}</h2>
               <p className="text-gray-400 leading-relaxed text-sm">{section.content}</p>
             </div>

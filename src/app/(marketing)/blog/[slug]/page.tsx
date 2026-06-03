@@ -33,7 +33,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         </Link>
 
         <div className="mb-2 flex items-center gap-3">
-          <span className="text-xs text-teal-400 font-medium uppercase tracking-wide">{post.category}</span>
+          <span className="text-xs text-[#635BFF] font-medium uppercase tracking-wide">{post.category}</span>
           <span className="text-xs text-gray-600">{post.readingTime}</span>
         </div>
 
@@ -47,7 +47,7 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             if (line.startsWith('# ')) return <h1 key={i} className="text-2xl font-bold text-white mt-8 mb-3">{line.slice(2)}</h1>
             if (line.startsWith('## ')) return <h2 key={i} className="text-xl font-bold text-white mt-8 mb-3">{line.slice(3)}</h2>
             if (line.startsWith('### ')) return <h3 key={i} className="text-base font-semibold text-white mt-6 mb-2">{line.slice(4)}</h3>
-            if (line.startsWith('> ')) return <blockquote key={i} className="border-l-4 border-teal-700 pl-4 text-gray-400 text-sm italic my-2">{line.slice(2)}</blockquote>
+            if (line.startsWith('> ')) return <blockquote key={i} className="border-l-4 border-[#635BFF] pl-4 text-gray-400 text-sm italic my-2">{line.slice(2)}</blockquote>
             if (line.startsWith('- **')) {
               const match = line.match(/^- \*\*(.+?)\*\*:? ?(.*)$/)
               if (match) return <p key={i} className="text-gray-300 text-sm pl-4">• <strong className="text-white">{match[1]}:</strong> {match[2]}</p>
@@ -55,17 +55,17 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
             if (line.startsWith('- ')) return <p key={i} className="text-gray-400 text-sm pl-4">• {line.slice(2)}</p>
             if (line.startsWith('**Subject:**')) return <p key={i} className="text-white text-sm font-medium">{line}</p>
             if (line.startsWith('**Tone:**') || line.startsWith('**Best for:**') || line.startsWith('**Free tier:**')) {
-              return <p key={i} className="text-teal-300 text-sm">{line}</p>
+              return <p key={i} className="text-[#A5B4FC] text-sm">{line}</p>
             }
             if (line.trim() === '' || line === '---') return <div key={i} className="h-2" />
             return <p key={i} className="text-gray-400 text-sm leading-relaxed">{line}</p>
           })}
         </div>
 
-        <div className="mt-16 rounded-xl border border-teal-800/50 bg-teal-900/20 p-8 text-center">
+        <div className="mt-16 rounded-xl border border-[#5145E5]/50 bg-[#0A2540]/20 p-8 text-center">
           <h3 className="text-white font-bold text-lg mb-1">Start using FileCurrent free</h3>
           <p className="text-gray-400 text-sm mb-5">Create your first contract in minutes. No credit card required.</p>
-          <Button asChild className="bg-teal-600 hover:bg-teal-700 text-white">
+          <Button asChild className="bg-[#635BFF] hover:bg-[#635BFF] text-white">
             <Link href="/signup">Start Free →</Link>
           </Button>
         </div>

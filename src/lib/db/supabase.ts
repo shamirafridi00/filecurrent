@@ -640,7 +640,7 @@ export async function createInvoiceTemplate(
     .from('invoice_templates')
     .insert({
       user_id: userId, name: data.name, description: data.description ?? null,
-      theme: data.theme ?? 'summit', primary_color: data.primaryColor ?? '#0F766E',
+      theme: data.theme ?? 'summit', primary_color: data.primaryColor ?? '#635BFF',
       secondary_color: data.secondaryColor ?? '#111827', brand_name: data.brandName ?? null,
       brand_address: data.brandAddress ?? null, phone: data.phone ?? null,
       website: data.website ?? null, tax_id: data.taxId ?? null,
@@ -663,7 +663,7 @@ export async function updateInvoiceTemplate(
     .from('invoice_templates')
     .update({
       name: data.name, description: data.description ?? null,
-      theme: data.theme ?? 'summit', primary_color: data.primaryColor ?? '#0F766E',
+      theme: data.theme ?? 'summit', primary_color: data.primaryColor ?? '#635BFF',
       secondary_color: data.secondaryColor ?? '#111827', brand_name: data.brandName ?? null,
       brand_address: data.brandAddress ?? null, phone: data.phone ?? null,
       website: data.website ?? null, tax_id: data.taxId ?? null,

@@ -34,8 +34,8 @@ interface ContractPDFProps {
 const s = StyleSheet.create({
   page: { fontFamily: 'Inter', fontSize: 10, color: '#111827', padding: 48, paddingBottom: 60 },
   // header
-  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, paddingBottom: 16, borderBottomWidth: 2, borderBottomColor: '#0F766E' },
-  brand: { fontSize: 16, fontWeight: 700, color: '#0F766E' },
+  header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, paddingBottom: 16, borderBottomWidth: 2, borderBottomColor: '#635BFF' },
+  brand: { fontSize: 16, fontWeight: 700, color: '#635BFF' },
   signedBadge: { fontSize: 9, color: '#16A34A', fontWeight: 600, backgroundColor: '#F0FDF4', padding: 6, borderRadius: 4, borderWidth: 1, borderColor: '#BBF7D0' },
   // title
   docTitle: { fontSize: 18, fontWeight: 700, textAlign: 'center', marginBottom: 6 },
@@ -70,11 +70,11 @@ const s = StyleSheet.create({
   colIp: { flex: 1.5 },
   colTime: { flex: 2 },
   // sig block
-  sigBlock: { marginTop: 32, borderTopWidth: 2, borderTopColor: '#0F766E', paddingTop: 20 },
+  sigBlock: { marginTop: 32, borderTopWidth: 2, borderTopColor: '#635BFF', paddingTop: 20 },
   sigRow: { flexDirection: 'row', gap: 20 },
   sigBox: { flex: 1 },
   sigLabel: { fontSize: 8, color: '#9CA3AF', textTransform: 'uppercase', letterSpacing: 1, marginBottom: 6 },
-  sigName: { fontSize: 13, fontWeight: 700, color: '#0F766E' },
+  sigName: { fontSize: 13, fontWeight: 700, color: '#635BFF' },
   sigDetail: { fontSize: 8, color: '#6B7280', marginTop: 2 },
   // footer
   footer: { position: 'absolute', bottom: 20, left: 48, right: 48, flexDirection: 'row', justifyContent: 'space-between', borderTopWidth: 1, borderTopColor: '#E5E7EB', paddingTop: 8 },
@@ -128,7 +128,7 @@ export function ContractPDF({
           </View>
           <View style={s.partyBox}>
             <Text style={s.partyLabel}>Project Value</Text>
-            <Text style={[s.partyName, { color: '#0F766E' }]}>
+            <Text style={[s.partyName, { color: '#635BFF' }]}>
               {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(Number(amount))}
             </Text>
             {startDate && <Text style={s.partyDetail}>Start: {startDate}</Text>}

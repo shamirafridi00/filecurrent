@@ -65,7 +65,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
     // non-critical — don't block page render
   }
 
-  const primaryColor = invoice.template?.primaryColor ?? '#0F766E'
+  const primaryColor = invoice.template?.primaryColor ?? '#635BFF'
   const brandName = invoice.template?.brandName ?? invoice.freelancerName
 
   return (

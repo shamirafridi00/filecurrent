@@ -15,7 +15,7 @@ export function invoiceOpenedEmail({
 <html>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
   <div style="max-width:520px;margin:40px auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-    <div style="background:#0F766E;padding:20px 28px;">
+    <div style="background:#635BFF;padding:20px 28px;">
       <span style="color:#ffffff;font-size:18px;font-weight:700;">FileCurrent</span>
     </div>
     <div style="padding:28px;">
@@ -30,7 +30,7 @@ export function invoiceOpenedEmail({
       </div>
       <div style="text-align:center;">
         <a href="${dashboardUrl}"
-           style="display:inline-block;background:#0F766E;color:#ffffff;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">
+           style="display:inline-block;background:#635BFF;color:#ffffff;padding:12px 28px;border-radius:8px;text-decoration:none;font-size:14px;font-weight:600;">
           View Invoice →
         </a>
       </div>

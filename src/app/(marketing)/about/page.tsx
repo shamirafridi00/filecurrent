@@ -23,7 +23,7 @@ export default function AboutPage() {
         </div>
 
         {/* Story */}
-        <div className="border-l-4 border-l-teal-600 bg-[#0d1614] rounded-r-xl p-8 mb-12">
+        <div className="border-l-4 border-l-[#635BFF] bg-[#071929] rounded-r-xl p-8 mb-12">
           <h2 className="text-xl font-bold text-white mb-4">The Story</h2>
           <div className="space-y-4 text-gray-400 leading-relaxed">
             <p>
@@ -50,7 +50,7 @@ export default function AboutPage() {
               Our mission is simple: give every freelancer access to professional-grade document tools
               without the enterprise price tag.
             </p>
-            <p className="text-teal-300 font-medium">
+            <p className="text-[#A5B4FC] font-medium">
               Your success should depend on your skills and hard work — not your ability to afford a
               $432/year software subscription.
             </p>
@@ -63,27 +63,27 @@ export default function AboutPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {[
               {
-                icon: <Lightning className="h-5 w-5 text-teal-400" />,
+                icon: <Lightning className="h-5 w-5 text-[#635BFF]" />,
                 title: 'One price, full access',
                 desc: '$9/month or $79/year. No hidden tiers. No feature locks except unlimited volume.',
               },
               {
-                icon: <Users className="h-5 w-5 text-teal-400" />,
+                icon: <Users className="h-5 w-5 text-[#635BFF]" />,
                 title: 'Built for all freelancers',
                 desc: 'Web developers, photographers, consultants, designers, copywriters, marketers — profession-specific templates for all of them.',
               },
               {
-                icon: <ShieldCheck className="h-5 w-5 text-teal-400" />,
+                icon: <ShieldCheck className="h-5 w-5 text-[#635BFF]" />,
                 title: 'ESIGN Act compliant',
                 desc: 'E-signatures that hold up legally. Typed name, audit trail, SHA-256 document hash. No DocuSign account needed.',
               },
               {
-                icon: <FileText className="h-5 w-5 text-teal-400" />,
+                icon: <FileText className="h-5 w-5 text-[#635BFF]" />,
                 title: 'No daily limits',
                 desc: 'Payment reminders run on your schedule, not ours. No 20/day cap. No arbitrary restrictions.',
               },
             ].map((card) => (
-              <div key={card.title} className="rounded-xl border border-[#1a2a28] bg-[#0d1614] p-6">
+              <div key={card.title} className="rounded-xl border border-[#1A3A5C] bg-[#071929] p-6">
                 <div className="flex items-center gap-3 mb-3">
                   {card.icon}
                   <h3 className="font-semibold text-white">{card.title}</h3>
@@ -95,14 +95,14 @@ export default function AboutPage() {
         </div>
 
         {/* CTA */}
-        <div className="text-center rounded-xl border border-teal-800/50 bg-teal-900/20 p-10">
+        <div className="text-center rounded-xl border border-[#5145E5]/50 bg-[#0A2540]/20 p-10">
           <h2 className="text-2xl font-bold text-white mb-2">Ready to simplify your freelance paperwork?</h2>
           <p className="text-gray-400 mb-6">Join thousands of freelancers who&apos;ve made the switch.</p>
           <div className="flex items-center justify-center gap-3">
-            <Button asChild className="bg-teal-600 hover:bg-teal-700 text-white">
+            <Button asChild className="bg-[#635BFF] hover:bg-[#635BFF] text-white">
               <Link href="/signup">Start Free →</Link>
             </Button>
-            <Button asChild variant="outline" className="border-[#1a2a28] text-gray-300 hover:bg-white/5">
+            <Button asChild variant="outline" className="border-[#1A3A5C] text-gray-300 hover:bg-white/5">
               <Link href="/pricing">See Pricing</Link>
             </Button>
           </div>

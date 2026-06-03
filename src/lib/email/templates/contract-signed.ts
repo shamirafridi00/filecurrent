@@ -23,7 +23,7 @@ export function contractSignedEmail({
 <html>
 <body style="margin:0;padding:0;background:#f4f4f4;font-family:Arial,sans-serif;">
   <div style="max-width:600px;margin:40px auto;background:#ffffff;border-radius:8px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-    <div style="background:#0F766E;padding:28px 32px;">
+    <div style="background:#635BFF;padding:28px 32px;">
       <span style="color:#ffffff;font-size:20px;font-weight:700;">FileCurrent</span>
     </div>
     <div style="padding:32px;">
@@ -37,7 +37,7 @@ export function contractSignedEmail({
       ${toFreelancer ? `
       <div style="text-align:center;margin:28px 0;">
         <a href="${dashboardUrl}"
-           style="display:inline-block;background:#0F766E;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">
+           style="display:inline-block;background:#635BFF;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">
           View in FileCurrent →
         </a>
       </div>` : ''}

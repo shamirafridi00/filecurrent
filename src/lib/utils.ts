@@ -80,23 +80,23 @@ export function getInvoiceStatusConfig(status: InvoiceStatus) {
   const configs = {
     draft: {
       label: 'Draft',
-      className: 'bg-slate-100 text-slate-600 border border-slate-200',
+      className: 'bg-[#F6F9FC] text-[#425466] border border-[#CFD7E0]',
     },
     sent: {
       label: 'Sent',
-      className: 'bg-blue-100 text-blue-700 border border-blue-200',
+      className: 'bg-[#F0EFFF] text-[#635BFF] border border-[#C7C4FF]',
     },
     partial: {
       label: 'Partial',
-      className: 'bg-amber-100 text-amber-700 border border-amber-200',
+      className: 'bg-[#FFF9ED] text-[#E6A817] border border-[#FDD87A]',
     },
     paid: {
       label: 'Paid',
-      className: 'bg-[#EEF2FF] text-[#4F6AE6] border border-[#C7D2FE]',
+      className: 'bg-[#F0FBF4] text-[#1DB954] border border-[#A3E6C0]',
     },
     overdue: {
       label: 'Overdue',
-      className: 'bg-red-100 text-red-700 border border-red-200',
+      className: 'bg-[#FFF0F3] text-[#DF1B41] border border-[#FFC4CF]',
     },
   }
   return configs[status]
@@ -106,19 +106,19 @@ export function getContractStatusConfig(status: ContractStatus) {
   const configs = {
     draft: {
       label: 'Draft',
-      className: 'bg-slate-100 text-slate-600 border border-slate-200',
+      className: 'bg-[#F6F9FC] text-[#425466] border border-[#CFD7E0]',
     },
     sent: {
       label: 'Sent',
-      className: 'bg-blue-100 text-blue-700 border border-blue-200',
+      className: 'bg-[#F0EFFF] text-[#635BFF] border border-[#C7C4FF]',
     },
     opened: {
       label: 'Opened',
-      className: 'bg-purple-100 text-purple-700 border border-purple-200',
+      className: 'bg-[#FFF9ED] text-[#E6A817] border border-[#FDD87A]',
     },
     signed: {
       label: 'Signed',
-      className: 'bg-[#EEF2FF] text-[#4F6AE6] border border-[#C7D2FE]',
+      className: 'bg-[#F0FBF4] text-[#1DB954] border border-[#A3E6C0]',
     },
   }
   return configs[status]

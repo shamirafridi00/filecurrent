@@ -456,7 +456,7 @@ interface TrialBannerProps {
 
 export function TrialBanner({ daysRemaining, price, onDismiss, onUpgrade }: TrialBannerProps) {
   return (
-    <div className="mb-6 flex items-center justify-between rounded-lg border border-teal-200 bg-accent p-4">
+    <div className="mb-6 flex items-center justify-between rounded-lg border border-[#C7C4FF] bg-accent p-4">
       <div>
         <p className="font-semibold text-primary">Free trial active</p>
         <p className="text-sm text-muted-foreground">

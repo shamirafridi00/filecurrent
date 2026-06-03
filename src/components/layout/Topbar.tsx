@@ -44,20 +44,29 @@ export function Topbar({ user, onLogout }: TopbarProps) {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-gray-200 bg-white px-4 shadow-sm">
+    <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
       <Link href="/dashboard">
-        <LogoFull className="text-gray-900" />
+        <LogoFull className="text-[#0A2540]" />
       </Link>
 
       <div className="flex items-center gap-3">
-        <Badge variant={user.plan === 'free' ? 'secondary' : 'default'}>
+        <Badge
+          variant="secondary"
+          className={
+            user.plan === 'pro_monthly' || user.plan === 'pro_annual'
+              ? 'bg-[#F0EFFF] text-[#635BFF] border border-[#C7C4FF]'
+              : user.plan === 'lifetime'
+              ? 'bg-[#F0FBF4] text-[#1DB954] border border-[#A3E6C0]'
+              : 'bg-[#FFF9ED] text-[#E6A817] border border-[#FDD87A]'
+          }
+        >
           {planLabels[user.plan]}
         </Badge>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
+          <DropdownMenuTrigger className="rounded-full outline-none ring-offset-background focus-visible:ring-2 focus-visible:ring-[#635BFF] focus-visible:ring-offset-2">
             <Avatar className="h-8 w-8">
-              <AvatarFallback className="bg-primary text-xs font-semibold text-primary-foreground">
+              <AvatarFallback className="bg-[#635BFF] text-xs font-semibold text-white">
                 {getInitials(user.fullName)}
               </AvatarFallback>
             </Avatar>

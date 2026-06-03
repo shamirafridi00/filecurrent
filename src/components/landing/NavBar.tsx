@@ -20,7 +20,7 @@ export function NavBar() {
   return (
     <nav className={cn(
       'fixed inset-x-0 top-0 z-50 transition-all',
-      scrolled ? 'bg-[#0a0f0e]/95 backdrop-blur-sm border-b border-[#1a2a28]' : 'bg-transparent'
+      scrolled ? 'bg-[#0A2540]/95 backdrop-blur-sm border-b border-[#1A3A5C]' : 'bg-transparent'
     )}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/">
@@ -33,7 +33,7 @@ export function NavBar() {
           <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <Link href="/help" className="hover:text-white transition-colors">Help</Link>
           <Link href="/login" className="hover:text-white transition-colors">Login</Link>
-          <Button asChild size="sm" className="bg-teal-600 hover:bg-teal-700 text-white">
+          <Button asChild size="sm" className="bg-[#635BFF] hover:bg-[#635BFF] text-white">
             <Link href="/signup">Start Free →</Link>
           </Button>
         </div>
@@ -47,13 +47,13 @@ export function NavBar() {
       </div>
 
       {mobileOpen && (
-        <div className="md:hidden border-t border-[#1a2a28] bg-[#0a0f0e] px-4 py-4 space-y-3">
+        <div className="md:hidden border-t border-[#1A3A5C] bg-[#0A2540] px-4 py-4 space-y-3">
           <a href="/#features" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Features</a>
           <a href="/#pricing" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Pricing</a>
           <Link href="/blog" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Blog</Link>
           <Link href="/help" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Help</Link>
           <Link href="/login" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Login</Link>
-          <Button asChild size="sm" className="w-full bg-teal-600 hover:bg-teal-700 text-white">
+          <Button asChild size="sm" className="w-full bg-[#635BFF] hover:bg-[#635BFF] text-white">
             <Link href="/signup">Start Free →</Link>
           </Button>
         </div>

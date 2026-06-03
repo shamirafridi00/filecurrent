@@ -42,25 +42,25 @@ export default async function DashboardPage() {
         {isTrial && (
           <div className={`flex items-center justify-between rounded-r-xl border-l-4 p-4 ${
             isUrgent
-              ? 'border-l-amber-500 bg-amber-50'
-              : 'border-l-teal-600 bg-teal-50'
+              ? 'border-l-[#E6A817] bg-[#FFF9ED]'
+              : 'border-l-[#635BFF] bg-[#F0EFFF]'
           }`}>
             <div className="flex items-center gap-3">
-              <Lightning className={`h-5 w-5 shrink-0 ${isUrgent ? 'text-amber-600' : 'text-teal-600'}`} />
+              <Lightning className={`h-5 w-5 shrink-0 ${isUrgent ? 'text-[#E6A817]' : 'text-[#635BFF]'}`} />
               <div>
                 {isUrgent ? (
-                  <p className="font-semibold text-amber-900">
+                  <p className="font-semibold text-[#0A2540]">
                     ⚠ Your trial ends in {daysLeft} day{daysLeft !== 1 ? 's' : ''}. Upgrade to keep access.
                   </p>
                 ) : (
-                  <p className="font-semibold text-teal-900">
+                  <p className="font-semibold text-[#0A2540]">
                     You&apos;re on a free trial — {daysLeft} day{daysLeft !== 1 ? 's' : ''} remaining.
                   </p>
                 )}
               </div>
             </div>
             {isUrgent && (
-              <Button asChild size="sm" className="ml-4 shrink-0 bg-amber-600 hover:bg-amber-700 text-white">
+              <Button asChild size="sm" className="ml-4 shrink-0 bg-[#635BFF] hover:bg-[#5145E5] text-white">
                 <Link href="/pricing">Upgrade Now →</Link>
               </Button>
             )}
@@ -72,21 +72,21 @@ export default async function DashboardPage() {
             label="Total Invoiced"
             value={formatCurrency(stats.totalInvoiced)}
             subValue={`${stats.pendingInvoices} pending`}
-            accent="border-l-slate-400"
+            accent="border-l-[#635BFF]"
           />
           <StatCard
             label="Total Paid"
             value={formatCurrency(stats.totalPaid)}
             subValue={`${formatCurrency(stats.paidLast30Days)} last 30 days`}
-            valueColor="text-[#4F6AE6]"
-            accent="border-l-[#4F6AE6]"
+            valueColor="text-[#1DB954]"
+            accent="border-l-[#1DB954]"
           />
           <StatCard
             label="Outstanding"
             value={formatCurrency(stats.outstanding)}
             subValue={`${stats.overdueCount} overdue`}
-            valueColor="text-amber-600"
-            accent="border-l-amber-500"
+            valueColor="text-[#E6A817]"
+            accent="border-l-[#E6A817]"
           />
         </div>
 
@@ -94,25 +94,25 @@ export default async function DashboardPage() {
           <StatCard
             label="Active Clients"
             value={String(stats.activeClients)}
-            accent="border-t-teal-500"
+            accent="border-t-[#635BFF]"
             accentPosition="top"
           />
           <StatCard
             label="Signed Contracts"
             value={String(stats.signedContracts)}
-            accent="border-t-[#4F6AE6]"
+            accent="border-t-[#1DB954]"
             accentPosition="top"
           />
           <StatCard
             label="Pending"
             value={String(stats.pendingInvoices)}
-            accent="border-t-amber-500"
+            accent="border-t-[#E6A817]"
             accentPosition="top"
           />
           <StatCard
             label="Drafts"
             value={String(stats.draftInvoices)}
-            accent="border-t-slate-400"
+            accent="border-t-[#8898AA]"
             accentPosition="top"
           />
         </div>

@@ -61,9 +61,9 @@ export default function TrialExpiredPage() {
           </div>
 
           {/* Annual */}
-          <div className="bg-white border-2 border-[#0F766E] rounded-2xl p-6 shadow-sm space-y-4 relative">
+          <div className="bg-white border-2 border-[#635BFF] rounded-2xl p-6 shadow-sm space-y-4 relative">
             <div className="absolute -top-3 left-1/2 -translate-x-1/2">
-              <span className="bg-[#0F766E] text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
+              <span className="bg-[#635BFF] text-white text-xs font-semibold px-3 py-1 rounded-full flex items-center gap-1">
                 <Star size={11} weight="fill" />
                 Best Value
               </span>
@@ -80,7 +80,7 @@ export default function TrialExpiredPage() {
               <li>✓ Early access to new features</li>
             </ul>
             <Button
-              className="w-full bg-[#0F766E] hover:bg-[#0d6b64]"
+              className="w-full bg-[#635BFF] hover:bg-[#5145E5]"
               disabled={loading !== null}
               onClick={() => startCheckout('annual')}
             >
@@ -93,7 +93,7 @@ export default function TrialExpiredPage() {
         <div className="text-center space-y-3">
           <p className="text-sm text-slate-500">
             Questions? Contact us at{' '}
-            <a href="mailto:support@filecurrent.com" className="text-[#0F766E] hover:underline">
+            <a href="mailto:support@filecurrent.com" className="text-[#635BFF] hover:underline">
               support@filecurrent.com
             </a>
           </p>

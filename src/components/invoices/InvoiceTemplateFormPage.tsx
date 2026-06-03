@@ -16,7 +16,7 @@ import type { InvoiceTemplateRow } from '@/lib/db/supabase'
 function SummitPreview() {
   return (
     <div className="text-[7px]">
-      <div className="bg-[#0F766E] px-2 py-1.5 flex justify-between">
+      <div className="bg-[#635BFF] px-2 py-1.5 flex justify-between">
         <span className="text-white font-bold text-[8px]">INVOICE</span>
         <span className="text-white/70">#001</span>
       </div>
@@ -31,7 +31,7 @@ function SummitPreview() {
         </div>
         <div className="flex justify-between pt-1 border-t border-slate-200 mt-0.5">
           <span className="font-bold text-slate-800">Total</span>
-          <span className="font-bold text-[#0F766E]">$500</span>
+          <span className="font-bold text-[#635BFF]">$500</span>
         </div>
       </div>
     </div>
@@ -41,22 +41,22 @@ function SummitPreview() {
 function AuroraPreview() {
   return (
     <div className="text-[7px]">
-      <div className="px-2 py-1.5 flex justify-between" style={{ background: 'linear-gradient(135deg, #0F766E 0%, #14b8a6 100%)' }}>
+      <div className="px-2 py-1.5 flex justify-between" style={{ background: 'linear-gradient(135deg, #635BFF 0%, #14b8a6 100%)' }}>
         <span className="text-white font-bold text-[8px]">INVOICE</span>
         <span className="text-white/80">#001</span>
       </div>
       <div className="bg-white px-2 py-1">
-        <div className="flex justify-between py-0.5 bg-teal-50 px-1 rounded">
-          <span className="text-teal-700">Description</span>
-          <span className="text-teal-700">Amount</span>
+        <div className="flex justify-between py-0.5 bg-[#F0EFFF] px-1 rounded">
+          <span className="text-[#635BFF]">Description</span>
+          <span className="text-[#635BFF]">Amount</span>
         </div>
         <div className="flex justify-between py-0.5">
           <span className="text-slate-600">Service</span>
           <span className="text-slate-700">$500</span>
         </div>
-        <div className="bg-teal-50 rounded px-1 py-0.5 mt-0.5 flex justify-between border border-teal-100">
-          <span className="font-bold text-teal-800">Total</span>
-          <span className="font-bold text-[#0F766E]">$500</span>
+        <div className="bg-[#F0EFFF] rounded px-1 py-0.5 mt-0.5 flex justify-between border border-[#E8E7FF]">
+          <span className="font-bold text-[#5145E5]">Total</span>
+          <span className="font-bold text-[#635BFF]">$500</span>
         </div>
       </div>
     </div>
@@ -81,7 +81,7 @@ function LedgerPreview() {
         </div>
         <div className="flex border-t-2 border-slate-800">
           <span className="font-bold text-slate-900 px-2 py-0.5 flex-1">Total</span>
-          <span className="font-bold px-2 py-0.5 w-12 text-right text-[#0F766E]">$500</span>
+          <span className="font-bold px-2 py-0.5 w-12 text-right text-[#635BFF]">$500</span>
         </div>
       </div>
     </div>
@@ -105,7 +105,7 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
   const [saving, setSaving] = useState(false)
   const [name, setName] = useState(initial?.name ?? '')
   const [theme, setTheme] = useState(initial?.theme ?? 'summit')
-  const [primaryColor, setPrimaryColor] = useState(initial?.primaryColor ?? '#0F766E')
+  const [primaryColor, setPrimaryColor] = useState(initial?.primaryColor ?? '#635BFF')
   const [secondaryColor, setSecondaryColor] = useState(initial?.secondaryColor ?? '#111827')
   const [brandName, setBrandName] = useState(initial?.brandName ?? '')
   const [brandAddress, setBrandAddress] = useState(initial?.brandAddress ?? '')
@@ -179,12 +179,12 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
                       onClick={() => setTheme(value)}
                       className={`relative text-left rounded-xl border-2 p-3 transition-all w-full ${
                         theme === value
-                          ? 'border-[#0F766E] bg-teal-50 shadow-sm'
+                          ? 'border-[#635BFF] bg-[#F0EFFF] shadow-sm'
                           : 'border-slate-200 hover:border-slate-300 bg-white'
                       }`}
                     >
                       {theme === value && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#0F766E] flex items-center justify-center">
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#635BFF] flex items-center justify-center">
                           <span className="text-white text-[9px] font-bold">✓</span>
                         </div>
                       )}

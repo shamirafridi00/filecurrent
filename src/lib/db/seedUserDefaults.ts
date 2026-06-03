@@ -7,7 +7,7 @@ export async function seedDefaultInvoiceTemplates(userId: string): Promise<void>
       name: 'Clean',
       description: 'Minimal and professional. Great for most freelancers.',
       theme: 'summit',
-      primary_color: '#0F766E',
+      primary_color: '#635BFF',
       secondary_color: '#111827',
       is_default: true,
     },
@@ -17,7 +17,7 @@ export async function seedDefaultInvoiceTemplates(userId: string): Promise<void>
       description: 'High-contrast dark header. Good for agencies and developers.',
       theme: 'ledger',
       primary_color: '#111827',
-      secondary_color: '#0F766E',
+      secondary_color: '#635BFF',
       is_default: false,
     },
     {
