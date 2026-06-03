@@ -577,3 +577,20 @@ ALTER TABLE invoices ALTER COLUMN share_token SET NOT NULL;
 
 -- Backfill any signing_sessions rows with NULL unique_token
 UPDATE signing_sessions SET unique_token = encode(gen_random_bytes(16), 'hex') WHERE unique_token IS NULL;
+
+-- Create business-assets storage bucket for logos
+INSERT INTO storage.buckets (id, name, public)
+VALUES ('business-assets', 'business-assets', true)
+ON CONFLICT (id) DO NOTHING;
+
+-- Allow authenticated users to upload to their own logo path
+CREATE POLICY IF NOT EXISTS "Users can upload own logo"
+ON storage.objects FOR INSERT
+TO authenticated
+WITH CHECK (bucket_id = 'business-assets' AND name LIKE 'logos/' || auth.uid()::text || '.%');
+
+-- Public read for business assets (logos used on public contract/invoice pages)
+CREATE POLICY IF NOT EXISTS "Public read business assets"
+ON storage.objects FOR SELECT
+TO public
+USING (bucket_id = 'business-assets');

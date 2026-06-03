@@ -67,6 +67,7 @@ export interface ProfileUpdateData {
   timezone?: string
   profession?: Profession
   notificationPrefs?: Record<string, boolean>
+  businessLogo?: string
 }
 
 export async function updateProfile(userId: string, data: ProfileUpdateData): Promise<void> {
@@ -85,6 +86,7 @@ export async function updateProfile(userId: string, data: ProfileUpdateData): Pr
   if (data.timezone !== undefined) update.timezone = data.timezone
   if (data.profession !== undefined) update.profession = data.profession
   if (data.notificationPrefs !== undefined) update.notification_prefs = data.notificationPrefs
+  if (data.businessLogo !== undefined) update.business_logo = data.businessLogo
 
   const { error } = await adminClient.from('profiles').update(update).eq('id', userId)
   if (error) throw new Error(error.message)

@@ -40,6 +40,7 @@ export default async function SettingsPage() {
         plan: profile.plan,
         trialEndsAt: profile.trial_ends_at ?? null,
         planExpiresAt: profile.plan_expires_at ?? null,
+        businessLogo: profile.business_logo ?? '',
       }}
       notificationPrefs={notificationPrefs}
     />

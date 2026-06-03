@@ -58,6 +58,7 @@ interface Props {
     country: string; taxId: string; defaultCurrency: string
     defaultTaxRate: number; timezone: string; profession: Profession | null
     plan: Plan; trialEndsAt: string | null; planExpiresAt: string | null
+    businessLogo: string
   }
   notificationPrefs: Record<string, boolean>
 }
@@ -80,6 +81,8 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
   const [defaultTaxRate, setDefaultTaxRate] = useState(String(initial.defaultTaxRate))
   const [timezone, setTimezone] = useState(initial.timezone)
   const [profession, setProfession] = useState<Profession | ''>(initial.profession ?? '')
+  const [businessLogo, setBusinessLogo] = useState<string>(initial.businessLogo ?? '')
+  const [uploadingLogo, setUploadingLogo] = useState(false)
   const [savingProfile, setSavingProfile] = useState(false)
 
   // Notification prefs
@@ -181,6 +184,66 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
           <Card>
             <CardHeader><CardTitle className="text-base">Business Information</CardTitle></CardHeader>
             <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label>Business Logo</Label>
+                <div className="flex items-center gap-4">
+                  {businessLogo ? (
+                    <img src={businessLogo} alt="Business logo" className="h-14 w-auto max-w-[140px] rounded border object-contain p-1" />
+                  ) : (
+                    <div className="flex h-14 w-14 items-center justify-center rounded border bg-muted text-xs text-muted-foreground">
+                      No logo
+                    </div>
+                  )}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="cursor-pointer">
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        disabled={uploadingLogo}
+                        onChange={async (e) => {
+                          const file = e.target.files?.[0]
+                          if (!file) return
+                          setUploadingLogo(true)
+                          const fd = new FormData()
+                          fd.append('file', file)
+                          try {
+                            const res = await fetch('/api/profile/logo', { method: 'POST', body: fd })
+                            const json = await res.json()
+                            if (json.url) {
+                              setBusinessLogo(json.url)
+                              toast.success('Logo uploaded')
+                            } else {
+                              toast.error(json.error ?? 'Upload failed')
+                            }
+                          } catch {
+                            toast.error('Upload failed')
+                          } finally {
+                            setUploadingLogo(false)
+                          }
+                        }}
+                      />
+                      <Button type="button" variant="outline" size="sm" disabled={uploadingLogo} asChild>
+                        <span>{uploadingLogo ? 'Uploading…' : businessLogo ? 'Replace Logo' : 'Upload Logo'}</span>
+                      </Button>
+                    </label>
+                    {businessLogo && (
+                      <button
+                        type="button"
+                        className="text-xs text-muted-foreground hover:text-destructive"
+                        onClick={async () => {
+                          await fetch('/api/profile', { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ businessLogo: '' }) })
+                          setBusinessLogo('')
+                          toast.success('Logo removed')
+                        }}
+                      >
+                        Remove
+                      </button>
+                    )}
+                    <p className="text-xs text-muted-foreground">PNG or JPG, max 2MB</p>
+                  </div>
+                </div>
+              </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <Label>Business Name</Label>
