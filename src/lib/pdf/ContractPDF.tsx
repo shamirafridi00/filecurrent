@@ -32,7 +32,7 @@ interface ContractPDFProps {
 }
 
 const s = StyleSheet.create({
-  page: { fontFamily: 'Inter', fontSize: 10, color: '#111827', padding: 48, paddingBottom: 60 },
+  page: { fontFamily: 'Helvetica', fontSize: 10, color: '#111827', padding: 48, paddingBottom: 60 },
   // header
   header: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 28, paddingBottom: 16, borderBottomWidth: 2, borderBottomColor: '#635BFF' },
   brand: { fontSize: 16, fontWeight: 700, color: '#635BFF' },
@@ -54,7 +54,7 @@ const s = StyleSheet.create({
   para: { fontSize: 9, color: '#374151', lineHeight: 1.6, marginBottom: 4 },
   hr: { borderTopWidth: 1, borderTopColor: '#E5E7EB', marginVertical: 10 },
   // audit
-  auditPage: { fontFamily: 'Inter', fontSize: 10, color: '#111827', padding: 48 },
+  auditPage: { fontFamily: 'Helvetica', fontSize: 10, color: '#111827', padding: 48 },
   auditHeader: { backgroundColor: '#111827', padding: 20, marginBottom: 24, borderRadius: 4 },
   auditTitle: { fontSize: 16, fontWeight: 700, color: '#FFFFFF' },
   auditSub: { fontSize: 9, color: '#9CA3AF', marginTop: 4 },

@@ -2,7 +2,7 @@ export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
 import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
-import React, { type JSXElementConstructor, type ReactElement } from 'react'
+import React from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { getContract, getCurrentProfile } from '@/lib/db/supabase'
 import { adminClient } from '@/lib/supabase/admin'
@@ -74,13 +74,19 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     signedAt,
     auditEvents,
     documentHash,
-  }) as ReactElement<DocumentProps, string | JSXElementConstructor<unknown>>
+  })
 
-  const buffer = await renderToBuffer(element)
+  let buffer: Buffer
+  try {
+    buffer = await renderToBuffer(element as React.ReactElement<DocumentProps>)
+  } catch (err) {
+    console.error('Contract PDF render error:', err)
+    return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
+  }
 
   const safeTitle = contract.title.replace(/[^a-z0-9]/gi, '-').slice(0, 50)
 
-  return new NextResponse(new Uint8Array(buffer as unknown as ArrayBuffer), {
+  return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
       'Content-Disposition': `attachment; filename="${safeTitle}-signed.pdf"`,
