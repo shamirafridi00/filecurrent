@@ -23,7 +23,7 @@ export default function TrialExpiredPage() {
       <div className="w-full max-w-2xl">
         {/* Logo */}
         <div className="flex justify-center mb-10">
-          <LogoFull />
+          <LogoFull size={36} />
         </div>
 
         {/* Heading */}

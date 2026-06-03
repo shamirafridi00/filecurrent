@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react'
 import { List, X } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { LogoFull } from '@/components/logo/LogoMark'
+import { LogoFullInverse } from '@/components/logo/LogoMark'
 
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false)
@@ -24,7 +24,7 @@ export function NavBar() {
     )}>
       <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
         <Link href="/">
-          <LogoFull className="text-white" />
+          <LogoFullInverse size={28} />
         </Link>
 
         <div className="hidden md:flex items-center gap-6 text-sm text-gray-400">
@@ -33,7 +33,7 @@ export function NavBar() {
           <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
           <Link href="/help" className="hover:text-white transition-colors">Help</Link>
           <Link href="/login" className="hover:text-white transition-colors">Login</Link>
-          <Button asChild size="sm" className="bg-[#635BFF] hover:bg-[#635BFF] text-white">
+          <Button asChild size="sm" className="bg-[#635BFF] hover:bg-[#5145E5] text-white">
             <Link href="/signup">Start Free →</Link>
           </Button>
         </div>
@@ -53,7 +53,7 @@ export function NavBar() {
           <Link href="/blog" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Blog</Link>
           <Link href="/help" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Help</Link>
           <Link href="/login" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Login</Link>
-          <Button asChild size="sm" className="w-full bg-[#635BFF] hover:bg-[#635BFF] text-white">
+          <Button asChild size="sm" className="w-full bg-[#635BFF] hover:bg-[#5145E5] text-white">
             <Link href="/signup">Start Free →</Link>
           </Button>
         </div>

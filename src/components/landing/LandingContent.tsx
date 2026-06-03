@@ -8,7 +8,7 @@ import { APP_TAGLINE } from '@/lib/constants'
 import { FaqItem } from '@/components/landing/FaqItem'
 import { NavBar } from '@/components/landing/NavBar'
 import { AnimatedFeatureCards } from '@/components/landing/AnimatedFeatureCards'
-import { LogoFull } from '@/components/logo/LogoMark'
+import { LogoFull, LogoFullInverse } from '@/components/logo/LogoMark'
 
 const FEATURES = [
   {
@@ -285,7 +285,7 @@ export function LandingContent() {
         <div className="max-w-6xl mx-auto px-6 py-16">
           <div className="grid grid-cols-2 md:grid-cols-5 gap-8">
             <div className="col-span-2 md:col-span-1">
-              <LogoFull className="text-white mb-3" />
+              <LogoFullInverse size={28} className="mb-3" />
               <p className="text-sm text-gray-500 leading-relaxed">{APP_TAGLINE}</p>
               <p className="text-xs text-gray-600 mt-3">Made for freelancers.</p>
             </div>

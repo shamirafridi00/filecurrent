@@ -156,7 +156,7 @@ export function Sidebar({ user }: { user: LayoutUser }) {
     <aside className="fixed bottom-0 left-0 top-14 z-40 flex w-56 flex-col border-r border-[#0D2D4A] bg-[#0A2540]">
       <div className="sidebar-scroll flex-1 overflow-y-auto p-3">
         <div className="mb-5 px-1">
-          <LogoFullInverse />
+          <LogoFullInverse size={28} />
         </div>
         <div className="space-y-6">
           <NavSection title="Main Menu" items={MAIN_NAV} />
