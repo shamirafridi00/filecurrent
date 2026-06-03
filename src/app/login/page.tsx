@@ -1,6 +1,7 @@
 'use client'
 
 import { useState } from 'react'
+import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
@@ -11,6 +12,8 @@ import { LogoFull } from '@/components/logo/LogoMark'
 
 export default function LoginPage() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const errorMsg = searchParams.get('error')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,12 +21,17 @@ export default function LoginPage() {
 
   const handleGoogleSignIn = async () => {
     const supabase = createClient()
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/auth/callback`,
+        redirectTo: `https://www.filecurrent.com/auth/callback`,
+        queryParams: {
+          access_type: 'offline',
+          prompt: 'consent',
+        },
       },
     })
+    if (error) console.error('Google sign in error:', error)
   }
 
   async function handleSubmit(e: React.FormEvent) {
@@ -50,6 +58,12 @@ export default function LoginPage() {
 
         <h1 className="text-2xl font-bold text-[#0A2540] mb-1">Welcome back</h1>
         <p className="text-[#8898AA] text-sm mb-6">Sign in to your FileCurrent account</p>
+
+        {errorMsg && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm mb-4">
+            {errorMsg}
+          </div>
+        )}
 
         <button
           onClick={handleGoogleSignIn}
