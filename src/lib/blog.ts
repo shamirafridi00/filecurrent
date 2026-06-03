@@ -12,6 +12,7 @@ export interface BlogPost {
   category: string
   keywords: string[]
   readingTime: string
+  heroImage?: string
   content: string
 }
 
@@ -32,6 +33,7 @@ export function getAllPosts(): Omit<BlogPost, 'content'>[] {
         category: (data.category as string) ?? 'guides',
         keywords: (data.keywords as string[]) ?? [],
         readingTime: `${Math.ceil(words / 200)} min read`,
+        heroImage: (data.heroImage as string) ?? undefined,
       }
     })
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
@@ -51,6 +53,7 @@ export function getPost(slug: string): BlogPost | null {
     category: (data.category as string) ?? 'guides',
     keywords: (data.keywords as string[]) ?? [],
     readingTime: `${Math.ceil(words / 200)} min read`,
+    heroImage: (data.heroImage as string) ?? undefined,
     content,
   }
 }

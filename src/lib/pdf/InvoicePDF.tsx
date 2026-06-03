@@ -112,6 +112,7 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
   const brandName = template?.brandName ?? freelancerName
 
   const balance = invoice.total - (invoice.paidAmount ?? 0)
+  const items = invoice.items ?? []
 
   return (
     <Document>
@@ -171,13 +172,13 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
             <Text style={[s.tableCell, s.amtCol, { color: theme.tableHeaderText, fontWeight: 600 }]}>AMOUNT</Text>
           </View>
           {/* Rows */}
-          {invoice.items.map((item, i) => (
+          {items.map((item, i) => (
             <View
               key={i}
               style={[
                 s.tableRow,
                 { backgroundColor: i % 2 === 0 ? '#FFFFFF' : theme.tableRowAlt },
-                i < invoice.items.length - 1 ? { borderBottomWidth: 1, borderBottomColor: theme.borderColor } : {},
+                i < items.length - 1 ? { borderBottomWidth: 1, borderBottomColor: theme.borderColor } : {},
               ]}
             >
               <Text style={[s.tableCell, s.descCol]}>{item.description}</Text>

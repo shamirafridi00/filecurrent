@@ -9,7 +9,10 @@ import { APP_NAME } from '@/lib/constants'
 
 export default async function SignPage({ params }: { params: { token: string } }) {
   const session = await getContractForSigning(params.token)
-  if (!session) notFound()
+  if (!session) {
+    console.error('Signing session not found for token:', params.token)
+    notFound()
+  }
 
   if (session.status === 'signed') {
     return (

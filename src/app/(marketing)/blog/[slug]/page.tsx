@@ -15,7 +15,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     title: `${post.title} — FileCurrent Blog`,
     description: post.description,
     keywords: post.keywords,
-    openGraph: { title: post.title, description: post.description },
+    openGraph: {
+      title: post.title,
+      description: post.description,
+      images: post.heroImage ? [{ url: post.heroImage }] : [],
+    },
   }
 }
 
@@ -41,6 +45,14 @@ export default function BlogPostPage({ params }: { params: { slug: string } }) {
         <p className="text-gray-500 text-sm mb-10">
           {new Date(post.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
         </p>
+
+        {post.heroImage && (
+          <img
+            src={post.heroImage}
+            alt={post.title}
+            className="w-full rounded-xl mb-8 aspect-[1200/630] object-cover"
+          />
+        )}
 
         <div className="space-y-3">
           {lines.map((line, i) => {

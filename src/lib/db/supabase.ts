@@ -792,6 +792,8 @@ export async function createInvoice(
     .single()
   const isPro = profile.data?.plan === 'pro_monthly' || profile.data?.plan === 'pro_annual' || profile.data?.plan === 'lifetime'
 
+  const shareToken = crypto.randomUUID()
+
   const { data: row, error } = await adminClient
     .from('invoices')
     .insert({
@@ -805,6 +807,7 @@ export async function createInvoice(
       deposit_amount: data.depositAmount, total: data.total,
       notes: data.notes ?? null, payment_terms: data.paymentTerms ?? null,
       status: 'draft', has_branding_footer: !isPro,
+      share_token: shareToken,
     })
     .select('id')
     .single()

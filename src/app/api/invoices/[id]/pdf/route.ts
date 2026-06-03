@@ -19,6 +19,8 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
 
   if (!invoice) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
+  console.error('PDF generation data:', JSON.stringify(invoice, null, 2))
+
   const isPro = profile.plan !== 'free'
 
   const element = React.createElement(InvoicePDF, {

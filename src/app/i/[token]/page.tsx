@@ -10,7 +10,10 @@ import { APP_NAME } from '@/lib/constants'
 
 export default async function PublicInvoicePage({ params }: { params: { token: string } }) {
   const invoice = await getInvoiceByShareToken(params.token)
-  if (!invoice) notFound()
+  if (!invoice) {
+    console.error('Invoice not found for share token:', params.token)
+    notFound()
+  }
 
   // Notify freelancer that invoice was opened (rate-limited: once per hour per invoice)
   try {
