@@ -25,7 +25,7 @@ export const APP_DESCRIPTION = 'Contracts. Invoices. Signatures. Done.'
 
 export const APP_TAGLINE = 'Contracts. Invoices. Signatures. Done.'
 
-export const APP_URL = 'https://filecurrent.io'
+export const APP_URL = 'https://filecurrent.com'
 
 export const TRIAL_DAYS = 30
 

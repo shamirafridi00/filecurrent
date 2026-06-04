@@ -58,7 +58,7 @@ export default function RefundPage() {
             <h2 className="text-lg font-semibold text-white mb-4">How to Request a Refund</h2>
             <ol className="space-y-4">
               {[
-                ['Contact Us', 'Email billing@filecurrent.io'],
+                ['Contact Us', 'Email billing@filecurrent.com'],
                 ['Include Details', 'Your account email + "Refund Request" in the subject line'],
                 ['Confirmation', 'We confirm within 1–2 business days'],
                 ['Processing', 'Refund processed to your original payment method'],
@@ -102,7 +102,7 @@ export default function RefundPage() {
               We built FileCurrent to help freelancers succeed. If it&apos;s not the right fit for your business,
               we want you to get your money back — no hassle, no hard feelings.
             </p>
-            <p className="text-[#635BFF] text-sm mt-3">billing@filecurrent.io</p>
+            <p className="text-[#635BFF] text-sm mt-3">billing@filecurrent.com</p>
           </div>
         </div>
       </div>

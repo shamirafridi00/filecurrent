@@ -128,7 +128,7 @@ export default async function SignPage({ params }: { params: { token: string } }
 
         {/* Footer branding */}
         <p className="mt-4 text-center text-xs text-muted-foreground">
-          Created with {APP_NAME} — filecurrent.io
+          Created with {APP_NAME} — filecurrent.com
         </p>
       </main>
 

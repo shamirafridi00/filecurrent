@@ -4,7 +4,7 @@ import { Resend } from 'resend'
 const resend = new Resend(process.env.RESEND_API_KEY)
 
 export const FROM = process.env.EMAIL_FROM ?? 'FileCurrent <onboarding@resend.dev>'
-export const REPLY_TO = process.env.EMAIL_REPLY_TO ?? 'support@filecurrent.io'
+export const REPLY_TO = process.env.EMAIL_REPLY_TO ?? 'support@filecurrent.com'
 
 export async function sendEmail({
   to,

@@ -197,7 +197,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
         {/* Viral footer for free tier */}
         {invoice.hasBrandingFooter && (
           <p className="mt-4 text-center text-xs text-gray-400">
-            Created with <a href="https://filecurrent.io" className="text-primary font-medium hover:underline">{APP_NAME}</a> — filecurrent.io
+            Created with <a href="https://filecurrent.com" className="text-primary font-medium hover:underline">{APP_NAME}</a> — filecurrent.com
           </p>
         )}
       </div>

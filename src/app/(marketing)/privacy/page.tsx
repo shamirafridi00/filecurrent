@@ -35,12 +35,12 @@ const sections = [
   {
     icon: <UserCircle className="h-5 w-5 text-[#635BFF]" />,
     title: '6. Your Rights',
-    content: `You have the right to access, correct, and delete your personal data. You can export all your data at any time from the dashboard (Exports section). To request account deletion or data correction, contact privacy@filecurrent.io.`,
+    content: `You have the right to access, correct, and delete your personal data. You can export all your data at any time from the dashboard (Exports section). To request account deletion or data correction, contact privacy@filecurrent.com.`,
   },
   {
     icon: <Envelope className="h-5 w-5 text-[#635BFF]" />,
     title: '7. Contact',
-    content: `For privacy-related inquiries, contact us at privacy@filecurrent.io. We will respond within 5 business days.`,
+    content: `For privacy-related inquiries, contact us at privacy@filecurrent.com. We will respond within 5 business days.`,
   },
 ]
 

@@ -64,8 +64,12 @@ export function SignaturePanel({ token, signerEmail }: Props) {
               className="mt-0.5"
             />
             <Label htmlFor="esign-agree" className="cursor-pointer text-sm leading-snug">
-              I agree to sign this document electronically under the ESIGN Act (15 U.S.C. § 7001).
-              My electronic signature is legally binding.
+              By typing your name and clicking &ldquo;Sign Document&rdquo; you agree to sign this document
+              electronically. Under the ESIGN Act (15 U.S.C. § 7001 et seq.) and UETA, your
+              electronic signature has the same legal effect as a handwritten signature. You
+              consent to conduct this transaction electronically. You may request a paper copy
+              by contacting the service provider. Your IP address, timestamp, and name will be
+              recorded as part of the audit trail.
             </Label>
           </div>
 

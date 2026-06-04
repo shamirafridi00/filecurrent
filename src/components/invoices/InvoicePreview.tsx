@@ -169,7 +169,7 @@ export function InvoicePreview({ data, template }: InvoicePreviewProps) {
         )}
 
         <div className="px-5 py-2 border-t border-slate-100 text-center">
-          <p className="text-[9px] text-slate-300">Created with FileCurrent — filecurrent.io</p>
+          <p className="text-[9px] text-slate-300">Created with FileCurrent — filecurrent.com</p>
         </div>
       </div>
 

@@ -54,7 +54,8 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
 
     const freelancerEmail = profileRow?.email
 
-    // Email to client (signer)
+    // Email to client (signer) — link back to the sign page (shows "Already Signed")
+    const clientSignUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${params.token}`
     sendEmail({
       to: session.signerEmail,
       subject: `Signed: ${session.contractTitle}`,
@@ -62,7 +63,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         signerName: signerName.trim(),
         contractTitle: session.contractTitle,
         signedAt,
-        dashboardUrl,
+        dashboardUrl: clientSignUrl,
         toFreelancer: false,
       }),
     }).catch((err) => console.error('Signed email to client failed:', err))

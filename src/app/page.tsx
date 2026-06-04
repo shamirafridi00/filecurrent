@@ -17,7 +17,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'FileCurrent — Freelance Contracts, Invoices & E-Signatures',
     description: "The freelance document tool that does exactly what you need and nothing you don't. $9/month or free forever.",
-    url: 'https://filecurrent.io',
+    url: 'https://filecurrent.com',
     siteName: APP_NAME,
     type: 'website',
   },
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
     title: 'FileCurrent — Freelance Contracts & Invoices',
     description: 'Cheaper than HoneyBook. Simpler than Bonsai. $9/month.',
   },
-  alternates: { canonical: 'https://filecurrent.io' },
+  alternates: { canonical: 'https://filecurrent.com' },
   icons: { icon: '/favicon.svg', shortcut: '/favicon.svg', apple: '/favicon.svg' },
 }
 

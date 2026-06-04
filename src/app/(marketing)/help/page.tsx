@@ -18,7 +18,7 @@ const FAQ_SECTIONS = [
     title: 'Getting Started',
     items: [
       { q: 'Is FileCurrent free?', a: 'Yes. FileCurrent has a free plan that lets you create up to 3 documents per month (contracts and invoices combined) — forever. No credit card required. Paid plans start at $9/month for unlimited documents.' },
-      { q: 'How do I get started?', a: "Sign up at filecurrent.io, complete the quick onboarding (select your profession, add your business details), and you're ready to create your first contract or invoice." },
+      { q: 'How do I get started?', a: "Sign up at filecurrent.com, complete the quick onboarding (select your profession, add your business details), and you're ready to create your first contract or invoice." },
       { q: 'What professions does FileCurrent support?', a: 'FileCurrent has profession-specific templates for web developers, photographers, consultants, designers, copywriters, and marketers. Each template includes the clauses and line items most relevant to your type of work.' },
       { q: 'Can I import my clients from HoneyBook or Bonsai?', a: 'Yes. Go to Import Clients in your dashboard and upload a CSV file. FileCurrent accepts standard CSV exports from most tools.' },
     ],
@@ -46,7 +46,7 @@ const FAQ_SECTIONS = [
     items: [
       { q: "What's the difference between monthly, annual, and lifetime?", a: 'Monthly ($9/month) is the most flexible. Annual ($79/year) saves 27% compared to monthly. The Lifetime deal ($49 one-time) is available for a limited time — pay once, use forever.' },
       { q: 'How do I cancel my subscription?', a: 'Go to Settings → Plan & Billing and click Cancel Subscription. Your access continues until the end of your current billing period. No cancellation fees.' },
-      { q: 'Do you offer refunds?', a: 'Yes. We offer a 30-day money-back guarantee on all paid plans. Email billing@filecurrent.io within 30 days of purchase.' },
+      { q: 'Do you offer refunds?', a: 'Yes. We offer a 30-day money-back guarantee on all paid plans. Email billing@filecurrent.com within 30 days of purchase.' },
     ],
   },
 ]

@@ -16,6 +16,7 @@ export interface LocalProfile {
   email: string
   fullName: string
   businessName: string | null
+  businessLogo: string | null
   phone: string | null
   plan: Plan
   trialEndsAt: string | null
@@ -33,7 +34,7 @@ export interface OnboardingInput {
 export async function getCurrentProfile(userId: string): Promise<LocalProfile> {
   const { data, error } = await adminClient
     .from('profiles')
-    .select('id, email, full_name, business_name, phone, plan, trial_ends_at, profession, onboarding_complete')
+    .select('id, email, full_name, business_name, business_logo, phone, plan, trial_ends_at, profession, onboarding_complete')
     .eq('id', userId)
     .single()
 
@@ -44,6 +45,7 @@ export async function getCurrentProfile(userId: string): Promise<LocalProfile> {
     email: data.email ?? '',
     fullName: data.full_name || data.email || '',
     businessName: data.business_name,
+    businessLogo: data.business_logo ?? null,
     phone: data.phone,
     plan: (data.plan as Plan) ?? 'trial',
     trialEndsAt: data.trial_ends_at ?? null,

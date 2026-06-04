@@ -68,7 +68,7 @@ export default function FeedbackPage() {
           </Button>
           <p className="text-xs text-center text-muted-foreground">
             Or email us at{' '}
-            <a href="mailto:hello@filecurrent.io" className="text-primary underline">hello@filecurrent.io</a>
+            <a href="mailto:hello@filecurrent.com" className="text-primary underline">hello@filecurrent.com</a>
           </p>
         </CardContent>
       </Card>

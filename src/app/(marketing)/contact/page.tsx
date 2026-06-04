@@ -95,7 +95,7 @@ export default function ContactPage() {
                         className="bg-[#071929] border-[#1A3A5C] text-white" />
                     </div>
                     {status === 'error' && (
-                      <p className="text-red-400 text-sm">Something went wrong. Email us at support@filecurrent.io</p>
+                      <p className="text-red-400 text-sm">Something went wrong. Email us at support@filecurrent.com</p>
                     )}
                     <Button type="submit" className="w-full bg-[#635BFF] hover:bg-[#635BFF] text-white"
                       disabled={status === 'loading' || message.length < 20}>
@@ -113,7 +113,7 @@ export default function ContactPage() {
               {
                 icon: <Envelope className="h-5 w-5 text-[#635BFF]" />,
                 title: 'Email Support',
-                content: <><p className="text-[#635BFF] font-medium">support@filecurrent.io</p><p className="text-gray-500 text-sm mt-1">For general questions and help</p></>,
+                content: <><p className="text-[#635BFF] font-medium">support@filecurrent.com</p><p className="text-gray-500 text-sm mt-1">For general questions and help</p></>,
               },
               {
                 icon: <Clock className="h-5 w-5 text-[#635BFF]" />,

@@ -34,13 +34,12 @@ export function contractSignedEmail({
         <p style="margin:0 0 4px;color:#111827;font-size:16px;font-weight:600;">${contractTitle}</p>
         <p style="margin:0;color:#6B7280;font-size:13px;">Signed by ${signerName} on ${signedAt}</p>
       </div>
-      ${toFreelancer ? `
       <div style="text-align:center;margin:28px 0;">
         <a href="${dashboardUrl}"
            style="display:inline-block;background:#635BFF;color:#ffffff;padding:14px 32px;border-radius:8px;text-decoration:none;font-size:16px;font-weight:600;">
-          View in FileCurrent →
+          ${toFreelancer ? 'View in FileCurrent →' : 'View Signed Document →'}
         </a>
-      </div>` : ''}
+      </div>
       <hr style="border:none;border-top:1px solid #E5E7EB;margin:28px 0;">
       <p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">
         This document was signed electronically via FileCurrent.<br>

@@ -244,7 +244,7 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
         {/* Footer */}
         <View style={s.footer}>
           {!isPro && (
-            <Text style={s.footerBranding}>Created with FileCurrent — filecurrent.io</Text>
+            <Text style={s.footerBranding}>Created with FileCurrent — filecurrent.com</Text>
           )}
           <Text style={s.footerText}>Thank you for your business.</Text>
         </View>

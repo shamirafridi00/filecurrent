@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next'
 import { getAllPosts } from '@/lib/blog'
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const base = 'https://filecurrent.io'
+  const base = 'https://filecurrent.com'
   const now = new Date()
 
   const posts = getAllPosts()

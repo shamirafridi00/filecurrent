@@ -83,7 +83,7 @@ export function invoiceSentEmail({
 
       <hr style="border:none;border-top:1px solid #E5E7EB;margin:28px 0;">
       ${hasBrandingFooter
-        ? `<p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">Sent via <a href="https://filecurrent.io" style="color:#635BFF;">FileCurrent</a> — filecurrent.io</p>`
+        ? `<p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">Sent via <a href="https://filecurrent.com" style="color:#635BFF;">FileCurrent</a> — filecurrent.com</p>`
         : `<p style="color:#9CA3AF;font-size:12px;text-align:center;margin:0;">Thank you for your business.</p>`
       }
     </div>

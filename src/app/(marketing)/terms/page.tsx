@@ -17,7 +17,7 @@ const sections = [
   { title: '9. Limitation of Liability', content: 'FileCurrent is provided "as is" without warranties of any kind. To the maximum extent permitted by law, FileCurrent shall not be liable for indirect, incidental, or consequential damages arising from your use of the service. Our total liability shall not exceed the amount you paid in the 3 months preceding the claim.' },
   { title: '10. Termination', content: 'You may cancel your account at any time from Settings. FileCurrent may suspend or terminate accounts that violate these terms. Upon termination, your access ends and data will be deleted per our privacy policy.' },
   { title: '11. Governing Law', content: 'These terms are governed by the laws of the State of Delaware, USA. Any disputes shall be resolved in the courts of Delaware.' },
-  { title: '12. Contact', content: 'For legal inquiries: legal@filecurrent.io' },
+  { title: '12. Contact', content: 'For legal inquiries: legal@filecurrent.com' },
 ]
 
 export default function TermsPage() {

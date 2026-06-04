@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
 
   try {
     await sendEmail({
-      to: process.env.EMAIL_REPLY_TO ?? 'support@filecurrent.io',
+      to: process.env.EMAIL_REPLY_TO ?? 'support@filecurrent.com',
       subject: `[Contact] ${subject ?? 'General'} — from ${name}`,
       html: `
         <p><strong>From:</strong> ${name} (${email})</p>

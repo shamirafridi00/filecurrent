@@ -67,6 +67,23 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         }
       />
 
+      {/* Document header — mirrors the signing page */}
+      <div className="mb-4 flex items-center justify-between rounded-xl border bg-card px-6 py-4 shadow-sm">
+        <div className="flex items-center gap-3">
+          {profile.businessLogo ? (
+            <img src={profile.businessLogo} alt="Logo" className="h-10 w-auto max-w-[120px] object-contain" />
+          ) : null}
+          <div>
+            <p className="font-semibold text-foreground">{profile.businessName || profile.fullName}</p>
+            <p className="text-xs text-muted-foreground">Service Provider</p>
+          </div>
+        </div>
+        <div className="text-right">
+          <p className="text-sm font-medium text-foreground">{contract.title}</p>
+          <p className="text-sm text-muted-foreground">{formatCurrency(contract.amount, contract.currency)}</p>
+        </div>
+      </div>
+
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_300px]">
         <Card>
           <CardHeader><CardTitle className="text-base">Contract Document</CardTitle></CardHeader>
@@ -127,6 +144,13 @@ export default async function ContractDetailPage({ params }: { params: { id: str
             <Card>
               <CardHeader><CardTitle className="text-base">Payment Terms</CardTitle></CardHeader>
               <CardContent className="text-sm text-muted-foreground">{contract.paymentTerms}</CardContent>
+            </Card>
+          )}
+
+          {contract.additionalTerms && (
+            <Card>
+              <CardHeader><CardTitle className="text-base">Additional Terms</CardTitle></CardHeader>
+              <CardContent className="text-sm text-muted-foreground whitespace-pre-wrap">{contract.additionalTerms}</CardContent>
             </Card>
           )}
         </div>
