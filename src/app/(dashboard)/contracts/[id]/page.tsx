@@ -74,10 +74,33 @@ export default async function ContractDetailPage({ params }: { params: { id: str
             {resolvedContent ? (
               <div className="space-y-2 text-sm leading-relaxed">
                 {resolvedContent.split('\n').map((line, i) => {
-                  if (line.startsWith('## ')) return <h2 key={i} className="mt-4 font-semibold text-base">{line.slice(3)}</h2>
-                  if (line.startsWith('### ')) return <h3 key={i} className="mt-3 font-medium">{line.slice(4)}</h3>
-                  if (line === '---') return <hr key={i} className="my-3 border-border" />
-                  return <p key={i} className="whitespace-pre-wrap">{line}</p>
+                  const trimmed = line.trim()
+                  if (!trimmed) return <div key={i} className="h-2" />
+                  if (trimmed === '---') return <hr key={i} className="my-4 border-border" />
+                  if (trimmed.startsWith('## ')) return (
+                    <h2 key={i} className="mt-6 mb-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">
+                      {trimmed.slice(3).replace(/\*\*/g, '')}
+                    </h2>
+                  )
+                  if (trimmed.startsWith('### ')) return (
+                    <h3 key={i} className="mt-4 mb-0.5 text-sm font-semibold text-foreground">
+                      {trimmed.slice(4).replace(/\*\*/g, '')}
+                    </h3>
+                  )
+                  if (/^\d+\.\s+\S/.test(trimmed) && trimmed.length < 60) return (
+                    <p key={i} className="mt-5 mb-1 text-sm font-semibold text-foreground">{trimmed}</p>
+                  )
+                  if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) return (
+                    <div key={i} className="flex items-start gap-2 ml-4 text-sm text-foreground">
+                      <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/50" />
+                      <span className="leading-relaxed">{renderInlineParts(trimmed.slice(2))}</span>
+                    </div>
+                  )
+                  return (
+                    <p key={i} className="text-sm leading-relaxed text-foreground">
+                      {renderInlineParts(trimmed)}
+                    </p>
+                  )
                 })}
               </div>
             ) : (
@@ -121,8 +144,17 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
+function renderInlineParts(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  return parts.map((part, j) =>
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={j}>{part.slice(2, -2)}</strong>
+      : part
+  )
+}
+
 function resolveContent(template: string, values: Record<string, string>): string {
-  let result = template
+  let result = template.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
   for (const [key, value] of Object.entries(values)) {
     result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value)
   }

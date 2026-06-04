@@ -139,7 +139,7 @@ export default async function SignPage({ params }: { params: { token: string } }
 }
 
 function resolveContent(template: string, values: Record<string, string>): string {
-  let result = template
+  let result = template.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
   for (const [key, value] of Object.entries(values)) {
     result = result.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value)
   }
