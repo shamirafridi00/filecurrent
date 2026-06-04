@@ -37,7 +37,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       month: 'short', day: 'numeric', year: 'numeric',
       hour: 'numeric', minute: '2-digit', timeZoneName: 'short',
     })
-    const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL}/contracts/${session.contractId}`
+    const dashboardUrl = `${process.env.NEXT_PUBLIC_APP_URL ?? 'https://filecurrent.com'}/contracts/${session.contractId}`
 
     // Get freelancer email + profile
     const { data: contractRow } = await adminClient
@@ -55,32 +55,46 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     const freelancerEmail = profileRow?.email
 
     // Email to client (signer) — link back to the sign page (shows "Already Signed")
-    const clientSignUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${params.token}`
-    sendEmail({
-      to: session.signerEmail,
-      subject: `Signed: ${session.contractTitle}`,
-      html: contractSignedEmail({
-        signerName: signerName.trim(),
-        contractTitle: session.contractTitle,
-        signedAt,
-        dashboardUrl: clientSignUrl,
-        toFreelancer: false,
-      }),
-    }).catch((err) => console.error('Signed email to client failed:', err))
-
-    // Email to freelancer
-    if (freelancerEmail) {
-      sendEmail({
-        to: freelancerEmail,
-        subject: `✅ ${signerName.trim()} signed ${session.contractTitle}`,
+    const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://filecurrent.com'
+    const clientSignUrl = `${appUrl}/sign/${params.token}`
+    try {
+      await sendEmail({
+        to: session.signerEmail,
+        subject: `Signed: ${session.contractTitle}`,
         html: contractSignedEmail({
           signerName: signerName.trim(),
           contractTitle: session.contractTitle,
           signedAt,
-          dashboardUrl,
-          toFreelancer: true,
+          dashboardUrl: clientSignUrl,
+          toFreelancer: false,
         }),
-      }).catch((err) => console.error('Signed email to freelancer failed:', err))
+      })
+      console.log('[sign] Client email sent to:', session.signerEmail)
+    } catch (err) {
+      console.error('[sign] Client email failed:', err)
+    }
+
+    // Email to freelancer
+    if (freelancerEmail) {
+      const freelancerDashUrl = `${appUrl}/contracts/${session.contractId}`
+      try {
+        await sendEmail({
+          to: freelancerEmail,
+          subject: `✅ ${signerName.trim()} signed ${session.contractTitle}`,
+          html: contractSignedEmail({
+            signerName: signerName.trim(),
+            contractTitle: session.contractTitle,
+            signedAt,
+            dashboardUrl: freelancerDashUrl,
+            toFreelancer: true,
+          }),
+        })
+        console.log('[sign] Freelancer email sent to:', freelancerEmail)
+      } catch (err) {
+        console.error('[sign] Freelancer email failed:', err)
+      }
+    } else {
+      console.warn('[sign] No freelancer email found for contract:', session.contractId)
     }
 
     // Generate signed PDF and upload to R2 (non-blocking)
