@@ -7,15 +7,19 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
 import { APP_NAME } from '@/lib/constants'
 
-function renderInline(text: string, key: string | number) {
+function renderInlineParts(text: string) {
   const parts = text.split(/(\*\*[^*]+\*\*)/)
+  return parts.map((part, j) =>
+    part.startsWith('**') && part.endsWith('**')
+      ? <strong key={j}>{part.slice(2, -2)}</strong>
+      : part
+  )
+}
+
+function renderInline(text: string, key: string | number) {
   return (
-    <p key={key} className="whitespace-pre-wrap">
-      {parts.map((part, j) =>
-        part.startsWith('**') && part.endsWith('**')
-          ? <strong key={j}>{part.slice(2, -2)}</strong>
-          : part
-      )}
+    <p key={key} className="text-sm leading-relaxed text-foreground">
+      {renderInlineParts(text)}
     </p>
   )
 }
@@ -84,10 +88,31 @@ export default async function SignPage({ params }: { params: { token: string } }
         <div className="rounded-xl border bg-card p-8 shadow-sm">
           <div className="space-y-2 text-sm leading-relaxed text-foreground">
             {resolvedContent.split('\n').map((line, i) => {
-              if (line.startsWith('## ')) return <h2 key={i} className="mt-4 font-semibold text-base">{line.slice(3).replace(/\*\*/g, '')}</h2>
-              if (line.startsWith('### ')) return <h3 key={i} className="mt-3 font-medium">{line.slice(4).replace(/\*\*/g, '')}</h3>
-              if (line === '---') return <hr key={i} className="my-3 border-border" />
-              return renderInline(line, i)
+              const trimmed = line.trim()
+              if (trimmed.startsWith('## ')) return (
+                <h2 key={i} className="mt-6 mb-1 text-sm font-bold uppercase tracking-wide text-muted-foreground">
+                  {trimmed.slice(3).replace(/\*\*/g, '')}
+                </h2>
+              )
+              if (trimmed.startsWith('### ')) return (
+                <h3 key={i} className="mt-4 mb-1 text-sm font-semibold text-foreground">
+                  {trimmed.slice(4).replace(/\*\*/g, '')}
+                </h3>
+              )
+              if (trimmed === '---') return <hr key={i} className="my-4 border-border" />
+              if (trimmed === '') return <div key={i} className="h-2" />
+              if (/^\d+\.\s+\S/.test(trimmed) && trimmed.length < 60) return (
+                <p key={i} className="mt-5 mb-1 font-semibold text-foreground text-sm">
+                  {trimmed}
+                </p>
+              )
+              if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) return (
+                <div key={i} className="flex gap-2 text-sm text-foreground ml-4">
+                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/60 mt-[7px]" />
+                  <span>{renderInlineParts(trimmed.slice(2))}</span>
+                </div>
+              )
+              return renderInline(trimmed, i)
             })}
           </div>
         </div>
