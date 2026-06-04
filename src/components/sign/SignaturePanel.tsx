@@ -21,12 +21,20 @@ export function SignaturePanel({ token, signerEmail }: Props) {
 
   if (signed) {
     return (
-      <div className="fixed inset-x-0 bottom-0 z-20 border-t bg-card shadow-xl">
-        <div className="mx-auto max-w-2xl px-4 py-6 text-center">
-          <CheckCircle className="mx-auto mb-2 h-10 w-10 text-green-500" />
-          <p className="font-semibold text-foreground">Document Signed Successfully</p>
-          <p className="mt-1 text-sm text-muted-foreground">
-            Your signed copy has been recorded. Thank you, {signerName}!
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background px-4">
+        <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-lg">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+            <CheckCircle className="h-9 w-9 text-green-500" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground">Contract Signed</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Thank you, <strong>{signerName}</strong>. Your signature has been recorded.
+          </p>
+          <div className="mt-4 rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            A confirmation email has been sent to <strong>{signerEmail}</strong> with a copy of the signed document.
+          </div>
+          <p className="mt-5 text-xs text-muted-foreground">
+            You may now close this window.
           </p>
         </div>
       </div>

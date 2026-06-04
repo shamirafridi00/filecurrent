@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { FileText, PaperPlaneTilt, DownloadSimple } from '@/components/icons'
+import { FileText, DownloadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge } from '@/components/ui'
@@ -10,6 +10,7 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getContract } from '@/lib/db/supabase'
 import { SendForSignatureButton } from '@/components/contracts/SendForSignatureButton'
+import { PrintButton } from '@/components/contracts/PrintButton'
 
 export default async function ContractDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -48,6 +49,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         action={
           <div className="flex items-center gap-2">
             <ContractBadge status={contract.status as 'draft' | 'sent' | 'opened' | 'signed'} />
+            <PrintButton />
             {(contract.status === 'draft' || contract.status === 'sent') && (
               <SendForSignatureButton
                 contractId={contract.id}
@@ -155,6 +157,13 @@ export default async function ContractDetailPage({ params }: { params: { id: str
           )}
         </div>
       </div>
+
+      <style>{`
+        @media print {
+          header, nav, aside, [data-sidebar], .fixed { display: none !important; }
+          .xl\\:grid-cols-\\[1fr_300px\\] { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </div>
   )
 }

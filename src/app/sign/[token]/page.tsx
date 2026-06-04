@@ -126,6 +126,27 @@ export default async function SignPage({ params }: { params: { token: string } }
           </div>
         )}
 
+        {/* Signature summary block */}
+        <div className="mt-6 rounded-xl border bg-card p-6 shadow-sm">
+          <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Signatures</h3>
+          <div className="grid grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Service Provider</p>
+              <p className="text-sm font-medium text-foreground">{session.freelancerName}</p>
+              {session.freelancerBusiness && <p className="text-xs text-muted-foreground">{session.freelancerBusiness}</p>}
+              <div className="mt-3 border-b border-dashed border-muted-foreground/30 pb-1" />
+              <p className="text-xs text-muted-foreground">Authorized by creating this contract</p>
+            </div>
+            <div className="space-y-2">
+              <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Client</p>
+              <p className="text-sm font-medium text-foreground">{session.clientName}</p>
+              {session.clientCompany && <p className="text-xs text-muted-foreground">{session.clientCompany}</p>}
+              <div className="mt-3 border-b border-dashed border-muted-foreground/30 pb-1" />
+              <p className="text-xs text-muted-foreground">Signing below via electronic signature</p>
+            </div>
+          </div>
+        </div>
+
         {/* Footer branding */}
         <p className="mt-4 text-center text-xs text-muted-foreground">
           Created with {APP_NAME} — filecurrent.com

@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PaperPlaneTilt } from '@phosphor-icons/react'
+import { PaperPlaneTilt, CheckCircle } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -91,16 +91,42 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
             </div>
           ) : (
             <div className="space-y-4">
-              <p className="text-sm text-[#4F6AE6] font-medium">Signing link created successfully!</p>
-              <div className="rounded-md border bg-muted p-3">
-                <p className="break-all text-sm font-mono">{signLink}</p>
+              <div className="flex items-center gap-3 rounded-lg border border-green-200 bg-green-50 p-3">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-green-100">
+                  <CheckCircle className="h-4 w-4 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm font-semibold text-green-800">Signing Link Generated</p>
+                  <p className="text-xs text-green-700">Share this link with {clientName} to sign the contract</p>
+                </div>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Share this link with {clientName} via email or any channel. The link is unique and single-use.
-              </p>
+
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground uppercase tracking-wide">Signing Link</Label>
+                <div className="flex items-center gap-2 rounded-md border bg-muted p-2">
+                  <p className="flex-1 break-all text-xs font-mono text-foreground">{signLink}</p>
+                  <Button size="sm" variant="outline" onClick={copyLink} className="shrink-0">
+                    Copy
+                  </Button>
+                </div>
+              </div>
+
+              <div className="rounded-lg border bg-muted/40 p-3 space-y-1.5">
+                <p className="text-xs font-semibold text-foreground">How to use:</p>
+                <ul className="text-xs text-muted-foreground space-y-1">
+                  <li>• Send this link to {clientName} via email or message</li>
+                  <li>• They can review and sign without creating an account</li>
+                  <li>• You&apos;ll receive an email notification when they sign</li>
+                </ul>
+              </div>
+
+              <div className="rounded-lg border border-amber-200 bg-amber-50 p-3">
+                <p className="text-xs font-semibold text-amber-800">Security Notice</p>
+                <p className="text-xs text-amber-700 mt-0.5">This link is unique to {clientName}. Only share it with the intended signer.</p>
+              </div>
+
               <DialogFooter>
                 <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
-                <Button onClick={copyLink}>Copy Link</Button>
               </DialogFooter>
             </div>
           )}
