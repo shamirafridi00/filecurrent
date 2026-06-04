@@ -83,7 +83,7 @@ export default async function SignPage({ params }: { params: { token: string } }
         </div>
       </header>
 
-      <main className="mx-auto max-w-2xl px-4 pb-48 pt-8">
+      <main className="mx-auto max-w-2xl px-4 pt-8 pb-12">
         {/* Contract content */}
         <div className="rounded-xl border bg-card p-8 shadow-sm">
           <div className="space-y-2 text-sm leading-relaxed text-foreground">
@@ -129,8 +129,8 @@ export default async function SignPage({ params }: { params: { token: string } }
         {/* Signature summary block */}
         <div className="mt-6 rounded-xl border bg-card p-6 shadow-sm">
           <h3 className="mb-4 text-xs font-bold uppercase tracking-widest text-muted-foreground">Signatures</h3>
-          <div className="grid grid-cols-2 gap-6">
-            <div className="space-y-2">
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div className="space-y-2 border-b border-border pb-6 sm:border-b-0 sm:pb-0">
               <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">Service Provider</p>
               <p className="text-sm font-medium text-foreground">{session.freelancerName}</p>
               {session.freelancerBusiness && <p className="text-xs text-muted-foreground">{session.freelancerBusiness}</p>}
@@ -153,7 +153,6 @@ export default async function SignPage({ params }: { params: { token: string } }
         </p>
       </main>
 
-      {/* Signature panel — fixed at bottom on desktop */}
       <SignaturePanel token={params.token} signerEmail={session.signerEmail} />
     </div>
   )
