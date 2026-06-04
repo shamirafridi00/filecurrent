@@ -24,6 +24,11 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'Contract is not signed yet' }, { status: 400 })
   }
 
+  // Fast path: redirect to pre-generated PDF stored in R2
+  if (contract.signedPdfUrl) {
+    return NextResponse.redirect(contract.signedPdfUrl)
+  }
+
   const { data: auditRows } = await adminClient
     .from('audit_events')
     .select('event_type, signer_name, signer_email, ip_address, timestamp')

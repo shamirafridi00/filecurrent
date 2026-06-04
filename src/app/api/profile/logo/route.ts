@@ -3,6 +3,7 @@ export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
+import { uploadToR2 } from '@/lib/r2'
 
 export async function POST(req: NextRequest) {
   const supabase = createClient()
@@ -20,23 +21,21 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Image must be under 2MB' }, { status: 400 })
   }
 
-  const ext = file.name.split('.').pop() ?? 'png'
-  const path = `logos/${user.id}.${ext}`
-  const bytes = await file.arrayBuffer()
+  const ext = file.name.split('.').pop()?.toLowerCase() ?? 'png'
+  const key = `logos/${user.id}.${ext}`
+  const bytes = Buffer.from(await file.arrayBuffer())
 
-  const { error } = await adminClient.storage
-    .from('business-assets')
-    .upload(path, bytes, { contentType: file.type, upsert: true })
+  try {
+    const url = await uploadToR2(key, bytes, file.type)
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    await adminClient
+      .from('profiles')
+      .update({ business_logo: url, updated_at: new Date().toISOString() })
+      .eq('id', user.id)
 
-  const { data: { publicUrl } } = adminClient.storage
-    .from('business-assets')
-    .getPublicUrl(path)
-
-  await adminClient.from('profiles')
-    .update({ business_logo: publicUrl, updated_at: new Date().toISOString() })
-    .eq('id', user.id)
-
-  return NextResponse.json({ url: publicUrl })
+    return NextResponse.json({ url })
+  } catch (err) {
+    console.error('Logo upload error:', err)
+    return NextResponse.json({ error: 'Upload failed' }, { status: 500 })
+  }
 }

@@ -395,6 +395,7 @@ export interface ContractDetailRow extends ContractListRow {
   additionalTerms: string | null
   templateContent: string | null
   signedAt: string | null
+  signedPdfUrl: string | null
   clientEmail: string | null
   clientCompany: string | null
 }
@@ -419,7 +420,7 @@ export async function getContract(id: string, userId: string): Promise<ContractD
     .select(`
       id, title, client_id, amount, currency, status, created_at,
       project_description, payment_terms, start_date, end_date,
-      additional_terms, signed_at,
+      additional_terms, signed_at, signed_pdf_url,
       clients!inner(name, email, company),
       contract_templates(content)
     `)
@@ -439,7 +440,8 @@ export async function getContract(id: string, userId: string): Promise<ContractD
     paymentTerms: data.payment_terms, startDate: data.start_date,
     endDate: data.end_date, additionalTerms: data.additional_terms,
     templateContent: template?.content ?? null,
-    signedAt: data.signed_at, clientEmail: client?.email ?? null,
+    signedAt: data.signed_at, signedPdfUrl: data.signed_pdf_url ?? null,
+    clientEmail: client?.email ?? null,
     clientCompany: client?.company ?? null,
   }
 }

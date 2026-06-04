@@ -107,9 +107,9 @@ export default async function SignPage({ params }: { params: { token: string } }
                 </p>
               )
               if (trimmed.startsWith('* ') || trimmed.startsWith('- ')) return (
-                <div key={i} className="flex gap-2 text-sm text-foreground ml-4">
-                  <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/60 mt-[7px]" />
-                  <span>{renderInlineParts(trimmed.slice(2))}</span>
+                <div key={i} className="flex items-start gap-2 ml-4 text-sm text-foreground">
+                  <span className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-muted-foreground/50" />
+                  <span className="leading-relaxed">{renderInlineParts(trimmed.slice(2))}</span>
                 </div>
               )
               return renderInline(trimmed, i)
