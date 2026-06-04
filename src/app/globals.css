@@ -133,6 +133,46 @@ html::-webkit-scrollbar {
   border-radius: 4px;
 }
 
+/* ── Signing page — visible scrollbar so users know the page is scrollable ── */
+.signing-page {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+.signing-page::-webkit-scrollbar {
+  width: 6px;
+}
+.signing-page::-webkit-scrollbar-track {
+  background: transparent;
+}
+.signing-page::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 9999px;
+}
+.signing-page::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground) / 0.4);
+}
+
+/* The signing page scrolls at the html/body level, so also target html when
+   the signing-page class is present (applied via a wrapper that sets overflow). */
+html:has(.signing-page) {
+  scrollbar-width: thin;
+  scrollbar-color: hsl(var(--border)) transparent;
+}
+html:has(.signing-page)::-webkit-scrollbar {
+  display: block;
+  width: 6px;
+}
+html:has(.signing-page)::-webkit-scrollbar-track {
+  background: transparent;
+}
+html:has(.signing-page)::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--border));
+  border-radius: 9999px;
+}
+html:has(.signing-page)::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--muted-foreground) / 0.4);
+}
+
 /* ── Hide sidebar scrollbar ── */
 .sidebar-scroll {
   scrollbar-width: none;

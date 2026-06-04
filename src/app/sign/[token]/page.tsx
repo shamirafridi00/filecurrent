@@ -64,7 +64,7 @@ export default async function SignPage({ params }: { params: { token: string } }
     : `**${session.contractTitle}**\n\n(No contract content available)`
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="signing-page min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-10 border-b bg-card/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
