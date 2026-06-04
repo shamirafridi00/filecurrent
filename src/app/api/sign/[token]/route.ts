@@ -48,7 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
 
     const { data: profileRow } = await adminClient
       .from('profiles')
-      .select('email, full_name, business_name')
+      .select('email, full_name, business_name, business_logo')
       .eq('id', contractRow?.user_id ?? '')
       .single()
 
@@ -86,7 +86,27 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     // Generate signed PDF and upload to R2 (non-blocking)
     ;(async () => {
       try {
-        const content = session.contractContent ?? session.contractTitle
+        const rawContent = session.contractContent ?? session.contractTitle
+
+        // Resolve template variables before passing to PDF
+        const resolveValues: Record<string, string> = {
+          client_name: session.clientName,
+          client_company: session.clientCompany ?? '',
+          client_email: session.clientEmail ?? '',
+          freelancer_name: profileRow?.full_name ?? session.freelancerName,
+          freelancer_business: profileRow?.business_name ?? session.freelancerBusiness ?? '',
+          project_description: session.projectDescription ?? '',
+          rate: String(session.amount),
+          currency: session.currency,
+          start_date: session.startDate ?? '',
+          end_date: session.endDate ?? '',
+          payment_terms: session.paymentTerms ?? '',
+        }
+        let content = rawContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+        for (const [key, value] of Object.entries(resolveValues)) {
+          content = content.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value)
+        }
+
         const documentHash = createHash('sha256')
           .update(`${session.contractId}:${content}:${signedAt}`)
           .digest('hex')
@@ -97,11 +117,10 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
           contractId: session.contractId,
           freelancerName: profileRow?.full_name ?? session.freelancerName,
           freelancerBusiness: profileRow?.business_name ?? session.freelancerBusiness ?? null,
+          freelancerLogo: profileRow?.business_logo ?? null,
           clientName: session.clientName,
           clientEmail: session.clientEmail ?? null,
-          amount: new Intl.NumberFormat('en-US', {
-            style: 'currency', currency: session.currency,
-          }).format(session.amount),
+          amount: session.amount,
           currency: session.currency,
           startDate: session.startDate ?? null,
           endDate: session.endDate ?? null,

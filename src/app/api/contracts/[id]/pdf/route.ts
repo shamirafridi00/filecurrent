@@ -46,7 +46,27 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     }),
   }))
 
-  const content = contract.templateContent ?? `${contract.title}\n\n(Contract content not available)`
+  const rawContent = contract.templateContent ?? `${contract.title}\n\n(Contract content not available)`
+
+  // Resolve template variables
+  const resolveValues: Record<string, string> = {
+    client_name: contract.clientName,
+    client_company: contract.clientCompany ?? '',
+    client_email: contract.clientEmail ?? '',
+    freelancer_name: profile.fullName,
+    freelancer_business: profile.businessName ?? '',
+    project_description: contract.projectDescription ?? '',
+    rate: String(contract.amount),
+    currency: contract.currency,
+    start_date: contract.startDate ?? '',
+    end_date: contract.endDate ?? '',
+    payment_terms: contract.paymentTerms ?? '',
+  }
+  let content = rawContent.replace(/\r\n/g, '\n').replace(/\r/g, '\n')
+  for (const [key, value] of Object.entries(resolveValues)) {
+    content = content.replace(new RegExp(`\\{\\{${key}\\}\\}`, 'g'), value)
+  }
+
   const documentHash = createHash('sha256')
     .update(`${params.id}:${content}:${contract.signedAt ?? ''}`)
     .digest('hex')
@@ -58,19 +78,16 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
       })
     : 'Unknown'
 
-  const amount = new Intl.NumberFormat('en-US', {
-    style: 'currency', currency: contract.currency,
-  }).format(contract.amount)
-
   const element = React.createElement(ContractPDF, {
     contractTitle: contract.title,
     contractContent: content,
     contractId: params.id,
     freelancerName: profile.fullName,
     freelancerBusiness: profile.businessName,
+    freelancerLogo: profile.businessLogo,
     clientName: contract.clientName,
     clientEmail: contract.clientEmail,
-    amount,
+    amount: contract.amount,
     currency: contract.currency,
     startDate: contract.startDate,
     endDate: contract.endDate,

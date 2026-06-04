@@ -1,5 +1,5 @@
 import React from 'react'
-import { Document, Page, Text, View, StyleSheet } from '@react-pdf/renderer'
+import { Document, Page, Text, View, StyleSheet, Image } from '@react-pdf/renderer'
 import { registerFonts } from './fonts'
 
 registerFonts()
@@ -18,9 +18,10 @@ interface ContractPDFProps {
   contractId: string
   freelancerName: string
   freelancerBusiness: string | null
+  freelancerLogo: string | null
   clientName: string
   clientEmail: string | null
-  amount: string
+  amount: number
   currency: string
   startDate: string | null
   endDate: string | null
@@ -93,20 +94,28 @@ function renderContent(content: string) {
 
 export function ContractPDF({
   contractTitle, contractContent, contractId,
-  freelancerName, freelancerBusiness,
+  freelancerName, freelancerBusiness, freelancerLogo,
   clientName, clientEmail,
   amount, currency,
   startDate, endDate, paymentTerms,
   signerName, signedAt,
   auditEvents, documentHash,
 }: ContractPDFProps) {
+  const formattedAmount = new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(amount)
+  const brandLabel = freelancerBusiness ?? freelancerName
+
   return (
     <Document>
       {/* Page 1: Contract content */}
       <Page size="A4" style={s.page}>
         {/* Header */}
         <View style={s.header}>
-          <Text style={s.brand}>FileCurrent</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+            {freelancerLogo ? (
+              <Image src={freelancerLogo} style={{ height: 28, maxWidth: 80, objectFit: 'contain' }} />
+            ) : null}
+            <Text style={s.brand}>{brandLabel}</Text>
+          </View>
           <Text style={s.signedBadge}>✓ SIGNED DOCUMENT</Text>
         </View>
 
@@ -128,9 +137,7 @@ export function ContractPDF({
           </View>
           <View style={s.partyBox}>
             <Text style={s.partyLabel}>Project Value</Text>
-            <Text style={[s.partyName, { color: '#635BFF' }]}>
-              {new Intl.NumberFormat('en-US', { style: 'currency', currency }).format(Number(amount))}
-            </Text>
+            <Text style={[s.partyName, { color: '#635BFF' }]}>{formattedAmount}</Text>
             {startDate && <Text style={s.partyDetail}>Start: {startDate}</Text>}
             {endDate && <Text style={s.partyDetail}>End: {endDate}</Text>}
           </View>
