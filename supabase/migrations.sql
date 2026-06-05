@@ -23,6 +23,10 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS notification_prefs JSONB DEFAULT '
 ALTER TABLE contract_templates ADD COLUMN IF NOT EXISTS profession TEXT;
 ALTER TABLE contract_templates ADD COLUMN IF NOT EXISTS is_global BOOLEAN DEFAULT FALSE;
 
+-- Niche template content override on contracts
+-- When set, this overrides the template join content (used when a niche preset is applied at creation time)
+ALTER TABLE contracts ADD COLUMN IF NOT EXISTS niche_content TEXT;
+
 -- Invoice templates table (not in base schema)
 CREATE TABLE IF NOT EXISTS invoice_templates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

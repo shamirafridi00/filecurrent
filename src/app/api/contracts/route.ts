@@ -8,7 +8,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const body = await req.json()
-  const { clientId, templateId, title, projectDescription, amount, currency, paymentTerms, startDate, endDate, additionalTerms } = body
+  const { clientId, templateId, title, projectDescription, amount, currency, paymentTerms, startDate, endDate, additionalTerms, nicheContent } = body
 
   if (!clientId || !templateId || !title) {
     return NextResponse.json({ error: 'clientId, templateId, title required' }, { status: 400 })
@@ -22,6 +22,7 @@ export async function POST(req: NextRequest) {
   const id = await createContract(user.id, {
     clientId, templateId, title, projectDescription, amount: Number(amount), currency,
     paymentTerms, startDate, endDate, additionalTerms,
+    nicheContent: nicheContent ?? undefined,
   })
   return NextResponse.json({ id })
 }

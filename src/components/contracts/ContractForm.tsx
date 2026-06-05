@@ -3,7 +3,7 @@
 import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Sparkle, FloppyDisk, X } from '@phosphor-icons/react'
+import { Sparkle, FloppyDisk, X, Shapes } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -18,9 +18,11 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
 import { UpgradePrompt } from '@/components/upgrade/UpgradePrompt'
+import { TemplateSelector } from '@/components/contracts/TemplateSelector'
 import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
 import type { ClientRow, ContractTemplateRow } from '@/lib/db/supabase'
+import type { NicheContractTemplate } from '@/lib/contracts/templates'
 
 interface Props {
   clients: ClientRow[]
@@ -39,6 +41,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
 
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(false)
   const [clientId, setClientId] = useState(defaultClientId ?? '')
   const [templateId, setTemplateId] = useState(defaultTemplateId ?? allTemplates[0]?.id ?? '')
   const [title, setTitle] = useState('')
@@ -49,9 +52,25 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState('')
   const [additionalTerms, setAdditionalTerms] = useState('')
+  const [nicheTemplate, setNicheTemplate] = useState<NicheContractTemplate | null>(null)
 
   const selectedClient = clients.find((c) => c.id === clientId)
   const selectedTemplate = allTemplates.find((t) => t.id === templateId)
+
+  const handleNicheSelect = (template: NicheContractTemplate | null) => {
+    if (!template) {
+      setNicheTemplate(null)
+      return
+    }
+    if ((title.trim() || nicheTemplate) && title !== nicheTemplate?.suggestedTitle) {
+      if (!window.confirm('This will replace your current title and payment terms with the template defaults. Continue?')) return
+    }
+    setNicheTemplate(template)
+    setTitle(template.suggestedTitle)
+    setPaymentTerms(template.suggestedPaymentTerms)
+  }
+
+  const activeContent = nicheTemplate?.content ?? selectedTemplate?.content ?? null
 
   const previewValues: Record<string, string> = useMemo(() => ({
     client_name: selectedClient?.name ?? '',
@@ -78,7 +97,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
       const res = await fetch('/api/contracts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ clientId, templateId, title, projectDescription, amount: Number(amount) || 0, currency, paymentTerms, startDate, endDate, additionalTerms }),
+        body: JSON.stringify({ clientId, templateId, title, projectDescription, amount: Number(amount) || 0, currency, paymentTerms, startDate, endDate, additionalTerms, nicheContent: nicheTemplate?.content ?? undefined }),
       })
       if (res.status === 402) { setShowUpgrade(true); return }
       if (!res.ok) throw new Error()
@@ -96,6 +115,11 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
   return (
     <>
     <UpgradePrompt open={showUpgrade} onClose={() => setShowUpgrade(false)} />
+    <TemplateSelector
+      open={showTemplateSelector}
+      onClose={() => setShowTemplateSelector(false)}
+      onSelect={handleNicheSelect}
+    />
     <div>
       <PageHeader
         title="New Contract"
@@ -129,8 +153,40 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
                 )}
               </div>
 
+              {/* Niche template picker */}
               <div className="space-y-1.5">
-                <Label>Template</Label>
+                <Label>Niche Contract Template</Label>
+                <Button
+                  type="button"
+                  variant="outline"
+                  className="w-full justify-start gap-2 h-auto py-2.5 px-3 text-left"
+                  onClick={() => setShowTemplateSelector(true)}
+                >
+                  <Shapes className="h-4 w-4 shrink-0 text-muted-foreground" />
+                  <div className="flex-1 min-w-0">
+                    {nicheTemplate ? (
+                      <span className="text-sm font-medium text-foreground">{nicheTemplate.label}</span>
+                    ) : (
+                      <span className="text-sm text-muted-foreground">Choose a niche-specific template…</span>
+                    )}
+                  </div>
+                  {nicheTemplate && (
+                    <button
+                      type="button"
+                      className="text-muted-foreground hover:text-foreground"
+                      onClick={(e) => { e.stopPropagation(); setNicheTemplate(null) }}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                </Button>
+                <p className="text-xs text-muted-foreground">
+                  7 professional templates for web, photo, design, copy, video &amp; social.
+                </p>
+              </div>
+
+              <div className="space-y-1.5">
+                <Label>Base Template</Label>
                 <Select value={templateId} onValueChange={setTemplateId}>
                   <SelectTrigger>
                     <SelectValue placeholder="Select a template" />
@@ -151,7 +207,10 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
                   </SelectContent>
                 </Select>
                 <p className="text-xs text-muted-foreground">
-                  <Link href="/contracts/templates" className="text-primary underline">Manage templates →</Link>
+                  {nicheTemplate
+                    ? 'Niche template overrides this content in the final contract.'
+                    : <Link href="/contracts/templates" className="text-primary underline">Manage templates →</Link>
+                  }
                 </p>
               </div>
 
@@ -263,11 +322,18 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
         <div>
           <Card className="sticky top-20">
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm text-muted-foreground">Live Preview</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-sm text-muted-foreground">Live Preview</CardTitle>
+                {nicheTemplate && (
+                  <span className="text-xs font-medium text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                    {nicheTemplate.label}
+                  </span>
+                )}
+              </div>
             </CardHeader>
             <CardContent className="max-h-[70vh] overflow-y-auto">
-              {selectedTemplate ? (
-                <ContractPreview content={selectedTemplate.content} values={previewValues} />
+              {activeContent ? (
+                <ContractPreview content={activeContent} values={previewValues} />
               ) : (
                 <p className="text-sm text-muted-foreground">Select a template to see preview</p>
               )}
