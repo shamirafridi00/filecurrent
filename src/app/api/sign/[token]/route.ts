@@ -129,13 +129,17 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       try {
         const rawContent = session.contractContent ?? session.contractTitle
 
+        // Strip markdown heading syntax from free-text fields so they don't
+        // inject raw `#` characters when substituted into contract prose.
+        const stripHeadings = (s: string) => s.replace(/^#{1,6}\s+/gm, '')
+
         const resolveValues: Record<string, string> = {
           client_name: session.clientName,
           client_company: session.clientCompany ?? '',
           client_email: session.clientEmail ?? '',
           freelancer_name: profileRow?.full_name ?? session.freelancerName,
           freelancer_business: profileRow?.business_name ?? session.freelancerBusiness ?? '',
-          project_description: session.projectDescription ?? '',
+          project_description: stripHeadings(session.projectDescription ?? ''),
           rate: String(session.amount),
           currency: session.currency,
           start_date: session.startDate ?? '',

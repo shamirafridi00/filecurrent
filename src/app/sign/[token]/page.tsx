@@ -48,13 +48,15 @@ export default async function SignPage({ params }: { params: { token: string } }
     )
   }
 
+  const stripHeadings = (str: string) => str.replace(/^#{1,6}\s+/gm, '')
+
   const values: Record<string, string> = {
     client_name: session.clientName,
     client_company: session.clientCompany ?? '',
     client_email: session.clientEmail ?? '',
     freelancer_name: session.freelancerName,
     freelancer_business: session.freelancerBusiness ?? '',
-    project_description: session.projectDescription ?? '',
+    project_description: stripHeadings(session.projectDescription ?? ''),
     rate: String(session.amount),
     currency: session.currency,
     start_date: session.startDate ? formatDate(session.startDate) : '',

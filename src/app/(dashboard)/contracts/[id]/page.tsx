@@ -30,7 +30,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         client_email: contract.clientEmail ?? '',
         freelancer_name: profile.fullName,
         freelancer_business: profile.businessName ?? '',
-        project_description: contract.projectDescription ?? '',
+        project_description: (contract.projectDescription ?? '').replace(/^#{1,6}\s+/gm, ''),
         rate: String(contract.amount),
         currency: contract.currency,
         start_date: contract.startDate ? formatDate(contract.startDate) : '',
@@ -57,7 +57,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
               />
             )}
             {contract.status === 'signed' && contract.signedPdfUrl && (
-              <Button asChild variant="outline" size="sm">
+              <Button asChild size="sm">
                 <a href={`/api/contracts/${contract.id}/pdf`} target="_blank" rel="noreferrer">
                   <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
                   Download Signed PDF
