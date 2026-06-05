@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { FloppyDisk, ArrowSquareOut, Lightning, Star, ShieldCheck } from '@phosphor-icons/react'
 import { useCheckout } from '@/hooks/useCheckout'
@@ -83,6 +82,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
   const [profession, setProfession] = useState<Profession | ''>(initial.profession ?? '')
   const [businessLogo, setBusinessLogo] = useState<string>(initial.businessLogo ?? '')
   const [uploadingLogo, setUploadingLogo] = useState(false)
+  const [logoError, setLogoError] = useState<string | null>(null)
   const [savingProfile, setSavingProfile] = useState(false)
 
   // Notification prefs
@@ -198,26 +198,40 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                     <label className="cursor-pointer">
                       <input
                         type="file"
-                        accept="image/*"
+                        accept="image/png,image/jpeg"
                         className="hidden"
                         disabled={uploadingLogo}
                         onChange={async (e) => {
                           const file = e.target.files?.[0]
                           if (!file) return
+                          setLogoError(null)
+                          if (file.type !== 'image/png' && file.type !== 'image/jpeg') {
+                            setLogoError('Only PNG or JPG files are supported.')
+                            return
+                          }
+                          if (file.size > 2 * 1024 * 1024) {
+                            setLogoError('Logo must be under 2MB. Please choose a smaller image.')
+                            return
+                          }
                           setUploadingLogo(true)
                           const fd = new FormData()
                           fd.append('file', file)
                           try {
                             const res = await fetch('/api/profile/logo', { method: 'POST', body: fd })
+                            if (!res.ok) {
+                              const json = await res.json().catch(() => ({}))
+                              setLogoError(json.error ?? 'Upload failed. Please check your connection and try again.')
+                              return
+                            }
                             const json = await res.json()
                             if (json.url) {
                               setBusinessLogo(json.url)
-                              toast.success('Logo uploaded')
+                              toast.success('Logo updated successfully')
                             } else {
-                              toast.error(json.error ?? 'Upload failed')
+                              setLogoError(json.error ?? 'Upload failed. Please check your connection and try again.')
                             }
                           } catch {
-                            toast.error('Upload failed')
+                            setLogoError('Upload failed. Please check your connection and try again.')
                           } finally {
                             setUploadingLogo(false)
                           }
@@ -243,6 +257,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                     <p className="text-xs text-muted-foreground">PNG or JPG, max 2MB</p>
                   </div>
                 </div>
+                {logoError && <p className="text-sm text-destructive mt-1">{logoError}</p>}
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -276,7 +291,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
           </Card>
 
           <Card>
-            <CardHeader><CardTitle className="text-base">Defaults</CardTitle></CardHeader>
+            <CardHeader><CardTitle className="text-base">Invoice &amp; Payment Defaults</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-3 gap-4">
                 <div className="space-y-1.5">
@@ -291,6 +306,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                 <div className="space-y-1.5">
                   <Label>Default Tax Rate (%)</Label>
                   <Input type="number" min="0" max="100" step="0.1" value={defaultTaxRate} onChange={(e) => setDefaultTaxRate(e.target.value)} />
+                  <p className="text-xs text-muted-foreground">Applied automatically when creating new invoices.</p>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Timezone</Label>
@@ -311,18 +327,6 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
               {savingProfile ? 'Saving…' : 'Save Profile'}
             </Button>
           </div>
-
-          <Card>
-            <CardContent className="flex items-start gap-3 p-4">
-              <div className="text-sm text-muted-foreground">
-                <p className="font-medium text-foreground">Invoice appearance moved</p>
-                Invoice templates (logo, colors, business info) are now managed under{' '}
-                <Link href="/invoices/templates" className="text-primary underline">
-                  Invoices → Templates →
-                </Link>
-              </div>
-            </CardContent>
-          </Card>
         </TabsContent>
 
         {/* ── Plan & Billing Tab ── */}
