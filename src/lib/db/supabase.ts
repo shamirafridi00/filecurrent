@@ -422,7 +422,7 @@ export async function getContract(id: string, userId: string): Promise<ContractD
     .select(`
       id, title, client_id, amount, currency, status, created_at,
       project_description, payment_terms, start_date, end_date,
-      additional_terms, signed_at, signed_pdf_url,
+      additional_terms, signed_at, signed_pdf_url, niche_content,
       clients!inner(name, email, company),
       contract_templates(content)
     `)
@@ -433,6 +433,7 @@ export async function getContract(id: string, userId: string): Promise<ContractD
 
   const client = data.clients as unknown as { name: string; email: string | null; company: string | null }
   const template = data.contract_templates as unknown as { content: string } | null
+  const nicheContent = (data as unknown as { niche_content: string | null }).niche_content
 
   return {
     id: data.id, title: data.title, clientId: data.client_id,
@@ -441,7 +442,7 @@ export async function getContract(id: string, userId: string): Promise<ContractD
     projectDescription: data.project_description,
     paymentTerms: data.payment_terms, startDate: data.start_date,
     endDate: data.end_date, additionalTerms: data.additional_terms,
-    templateContent: template?.content ?? null,
+    templateContent: nicheContent ?? template?.content ?? null,
     signedAt: data.signed_at, signedPdfUrl: data.signed_pdf_url ?? null,
     clientEmail: client?.email ?? null,
     clientCompany: client?.company ?? null,
@@ -470,6 +471,7 @@ export async function createContract(
       start_date: data.startDate,
       end_date: data.endDate ?? null,
       additional_terms: data.additionalTerms ?? null,
+      niche_content: data.nicheContent ?? null,
       status: 'draft',
       has_branding_footer: true,
     })
@@ -521,7 +523,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
       unique_token, contract_id, signer_email, signer_name, status,
       contracts(
         title, amount, currency, start_date, end_date, payment_terms,
-        project_description, user_id, additional_terms,
+        project_description, user_id, additional_terms, niche_content,
         contract_templates(content),
         clients!inner(name, email, company)
       )
@@ -535,6 +537,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     end_date: string | null; payment_terms: string | null; project_description: string | null
     user_id: string
     additional_terms: string | null
+    niche_content: string | null
     contract_templates: { content: string } | null
     clients: { name: string; email: string | null; company: string | null }
   }
@@ -551,7 +554,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     token: data.unique_token,
     contractId: data.contract_id,
     contractTitle: contract.title,
-    contractContent: contract.contract_templates?.content ?? null,
+    contractContent: contract.niche_content ?? contract.contract_templates?.content ?? null,
     signerEmail: data.signer_email,
     signerName: data.signer_name,
     status: data.status,

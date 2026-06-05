@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useMemo } from 'react'
+import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Sparkle, FloppyDisk, X, Shapes } from '@phosphor-icons/react'
@@ -34,27 +34,72 @@ interface Props {
 }
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD']
+const DRAFT_KEY = 'filecurrent_contract_draft'
+
+interface DraftState {
+  clientId: string
+  templateId: string
+  title: string
+  contractContent: string
+  projectDescription: string
+  amount: string
+  currency: string
+  paymentTerms: string
+  startDate: string
+  endDate: string
+  additionalTerms: string
+  appliedTemplateId: string | null
+  appliedTemplateLabel: string | null
+}
+
+function loadDraft(): DraftState | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(DRAFT_KEY)
+    return raw ? (JSON.parse(raw) as DraftState) : null
+  } catch {
+    return null
+  }
+}
 
 export function ContractForm({ clients, templates, defaultTemplateId, defaultClientId, returnTo, profile }: Props) {
   const router = useRouter()
   const allTemplates = [...templates.my, ...templates.global]
 
+  // Restore draft from localStorage on first render
+  const draft = typeof window !== 'undefined' ? loadDraft() : null
+
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  // Open by default so the selector appears immediately when the page loads
-  const [showTemplateSelector, setShowTemplateSelector] = useState(true)
-  const [clientId, setClientId] = useState(defaultClientId ?? '')
-  const [templateId, setTemplateId] = useState(defaultTemplateId ?? allTemplates[0]?.id ?? '')
-  const [title, setTitle] = useState('')
-  const [contractContent, setContractContent] = useState('')
-  const [projectDescription, setProjectDescription] = useState('')
-  const [amount, setAmount] = useState('')
-  const [currency, setCurrency] = useState('USD')
-  const [paymentTerms, setPaymentTerms] = useState('50% upfront, 50% on delivery')
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0])
-  const [endDate, setEndDate] = useState('')
-  const [additionalTerms, setAdditionalTerms] = useState('')
-  const [appliedTemplate, setAppliedTemplate] = useState<ContractTemplate | null>(null)
+  // Open by default only if there is no saved draft (draft means user already chose a template)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(!draft)
+  const [clientId, setClientId] = useState(draft?.clientId ?? defaultClientId ?? '')
+  const [templateId, setTemplateId] = useState(draft?.templateId ?? defaultTemplateId ?? allTemplates[0]?.id ?? '')
+  const [title, setTitle] = useState(draft?.title ?? '')
+  const [contractContent, setContractContent] = useState(draft?.contractContent ?? '')
+  const [projectDescription, setProjectDescription] = useState(draft?.projectDescription ?? '')
+  const [amount, setAmount] = useState(draft?.amount ?? '')
+  const [currency, setCurrency] = useState(draft?.currency ?? 'USD')
+  const [paymentTerms, setPaymentTerms] = useState(draft?.paymentTerms ?? '50% upfront, 50% on delivery')
+  const [startDate, setStartDate] = useState(draft?.startDate ?? new Date().toISOString().split('T')[0])
+  const [endDate, setEndDate] = useState(draft?.endDate ?? '')
+  const [additionalTerms, setAdditionalTerms] = useState(draft?.additionalTerms ?? '')
+  const [appliedTemplate, setAppliedTemplate] = useState<ContractTemplate | null>(
+    draft?.appliedTemplateId
+      ? { id: draft.appliedTemplateId as ContractTemplate['id'], label: draft.appliedTemplateLabel ?? '', description: '', icon: '', suggestedTitle: '', suggestedPaymentTerms: '', content: draft.contractContent }
+      : null
+  )
+
+  // Persist draft to localStorage whenever any field changes
+  useEffect(() => {
+    const draftState: DraftState = {
+      clientId, templateId, title, contractContent, projectDescription,
+      amount, currency, paymentTerms, startDate, endDate, additionalTerms,
+      appliedTemplateId: appliedTemplate?.id ?? null,
+      appliedTemplateLabel: appliedTemplate?.label ?? null,
+    }
+    try { localStorage.setItem(DRAFT_KEY, JSON.stringify(draftState)) } catch { /* ignore */ }
+  }, [clientId, templateId, title, contractContent, projectDescription, amount, currency, paymentTerms, startDate, endDate, additionalTerms, appliedTemplate])
 
   const selectedClient = clients.find((c) => c.id === clientId)
   const selectedDbTemplate = allTemplates.find((t) => t.id === templateId)
@@ -127,6 +172,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
       if (res.status === 402) { setShowUpgrade(true); return }
       if (!res.ok) throw new Error()
       const { id } = await res.json()
+      try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
       toast.success('Contract created')
       router.push(`/contracts/${id}`)
       router.refresh()
@@ -344,7 +390,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
             </Card>
 
             <div className="flex justify-end gap-3">
-              <Button variant="outline" onClick={() => router.push('/contracts')}>
+              <Button variant="outline" onClick={() => { try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ } router.push('/contracts') }}>
                 <X className="mr-1 h-4 w-4" /> Cancel
               </Button>
               <Button onClick={handleSubmit} disabled={saving}>

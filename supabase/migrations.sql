@@ -23,6 +23,11 @@ ALTER TABLE profiles ADD COLUMN IF NOT EXISTS notification_prefs JSONB DEFAULT '
 ALTER TABLE contract_templates ADD COLUMN IF NOT EXISTS profession TEXT;
 ALTER TABLE contract_templates ADD COLUMN IF NOT EXISTS is_global BOOLEAN DEFAULT FALSE;
 
+-- Stores the full niche template prose when a user selects a niche template at
+-- contract creation time. Overrides the template_id join content at render time.
+-- Run this once in Supabase SQL Editor.
+ALTER TABLE contracts ADD COLUMN IF NOT EXISTS niche_content TEXT;
+
 -- Invoice templates table (not in base schema)
 CREATE TABLE IF NOT EXISTS invoice_templates (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),

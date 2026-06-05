@@ -30,7 +30,8 @@ export function SignaturePanel({ token, signerEmail }: Props) {
         body: JSON.stringify({ signerName }),
       })
       if (!res.ok) throw new Error((await res.json()).error || 'Failed')
-      router.refresh()
+      // Hard reload so the server component re-fetches with updated status
+      window.location.reload()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to sign document')
       setSigning(false)
