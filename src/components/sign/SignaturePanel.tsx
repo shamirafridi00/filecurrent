@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { CheckCircle } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,10 +14,10 @@ interface Props {
 }
 
 export function SignaturePanel({ token, signerEmail }: Props) {
-  const router = useRouter()
   const [agreed, setAgreed] = useState(false)
   const [signerName, setSignerName] = useState('')
   const [signing, setSigning] = useState(false)
+  const [signed, setSigned] = useState(false)
 
   const handleSign = async () => {
     if (!agreed) { toast.error('Please agree to sign electronically'); return }
@@ -30,12 +30,40 @@ export function SignaturePanel({ token, signerEmail }: Props) {
         body: JSON.stringify({ signerName }),
       })
       if (!res.ok) throw new Error((await res.json()).error || 'Failed')
-      // Navigate to same URL with ?signed=1 so the server component shows success state
-      window.location.href = window.location.pathname + '?signed=1'
+      setSigned(true)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to sign document')
       setSigning(false)
     }
+  }
+
+  if (signed) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/95 px-4 backdrop-blur-sm">
+        <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-lg">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+            <CheckCircle className="h-9 w-9 text-green-500" weight="fill" />
+          </div>
+          <h1 className="text-xl font-bold text-foreground">Contract Signed!</h1>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Thank you, <strong>{signerName}</strong>. Your signature has been recorded.
+          </p>
+          <div className="mt-4 rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
+            A confirmation email has been sent to <strong>{signerEmail}</strong> with a copy of the signed document.
+          </div>
+          <p className="mt-5 text-xs text-muted-foreground">
+            You may now close this window.
+          </p>
+          <Button
+            className="mt-4 w-full"
+            variant="outline"
+            onClick={() => window.close()}
+          >
+            Close Window
+          </Button>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -67,7 +95,7 @@ export function SignaturePanel({ token, signerEmail }: Props) {
                 placeholder="Type your full legal name"
                 value={signerName}
                 onChange={(e) => setSignerName(e.target.value)}
-                disabled={!agreed}
+                disabled={!agreed || signing}
               />
             </div>
             <Button
@@ -80,7 +108,7 @@ export function SignaturePanel({ token, signerEmail }: Props) {
           </div>
 
           <p className="text-xs text-muted-foreground">
-            Signing as: {signerEmail} · Powered by {' '}
+            Signing as: {signerEmail} · Powered by{' '}
             <span className="text-primary font-medium">FileCurrent</span>
           </p>
         </div>

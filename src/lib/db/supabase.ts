@@ -523,7 +523,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
       unique_token, contract_id, signer_email, signer_name, status,
       contracts(
         title, amount, currency, start_date, end_date, payment_terms,
-        project_description, user_id, additional_terms, niche_content,
+        project_description, user_id, additional_terms,
         contract_templates(content),
         clients!inner(name, email, company)
       )
@@ -537,7 +537,6 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     end_date: string | null; payment_terms: string | null; project_description: string | null
     user_id: string
     additional_terms: string | null
-    niche_content: string | null
     contract_templates: { content: string } | null
     clients: { name: string; email: string | null; company: string | null }
   }
@@ -554,7 +553,7 @@ export async function getContractForSigning(token: string): Promise<SigningSessi
     token: data.unique_token,
     contractId: data.contract_id,
     contractTitle: contract.title,
-    contractContent: contract.niche_content ?? contract.contract_templates?.content ?? null,
+    contractContent: contract.contract_templates?.content ?? null,
     signerEmail: data.signer_email,
     signerName: data.signer_name,
     status: data.status,

@@ -25,13 +25,7 @@ function renderInline(text: string, key: string | number) {
   )
 }
 
-export default async function SignPage({
-  params,
-  searchParams,
-}: {
-  params: { token: string }
-  searchParams: { signed?: string }
-}) {
+export default async function SignPage({ params }: { params: { token: string } }) {
   const session = await getContractForSigning(params.token)
   if (!session) {
     console.error('Signing session not found for token:', params.token)
@@ -40,24 +34,14 @@ export default async function SignPage({
 
   if (session.status === 'signed') {
     const pdfUrl = `/api/contracts/${session.contractId}/pdf`
-    const justSigned = searchParams.signed === '1'
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-sm">
           <CheckCircle className="mx-auto mb-4 h-14 w-14 text-green-500" />
-          <h1 className="text-xl font-bold text-foreground">
-            {justSigned ? 'Contract Signed!' : 'Document Already Signed'}
-          </h1>
+          <h1 className="text-xl font-bold text-foreground">Document Already Signed</h1>
           <p className="mt-2 text-sm text-muted-foreground">
-            {justSigned
-              ? `Thank you, ${session.signerName ?? 'your signature has been recorded'}.`
-              : 'This contract has been signed. Thank you!'}
+            This contract has been signed. Thank you, {session.signerName ?? ''}!
           </p>
-          {justSigned && (
-            <div className="mt-4 rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-              A confirmation email has been sent to <strong>{session.signerEmail}</strong> with a copy of the signed document.
-            </div>
-          )}
           <SignedActions pdfUrl={pdfUrl} />
         </div>
       </div>
