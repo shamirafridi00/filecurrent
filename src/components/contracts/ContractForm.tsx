@@ -45,6 +45,7 @@ interface Props {
 
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD']
 const DRAFT_KEY = 'filecurrent_contract_draft'
+const LAST_TEMPLATE_KEY = 'filecurrent_last_template'
 
 interface DraftState {
   clientId: string
@@ -72,16 +73,34 @@ function loadDraft(): DraftState | null {
   }
 }
 
+interface SavedTemplate { id: ContractTemplate['id']; label: string }
+
+function loadLastTemplate(): SavedTemplate | null {
+  if (typeof window === 'undefined') return null
+  try {
+    const raw = localStorage.getItem(LAST_TEMPLATE_KEY)
+    return raw ? (JSON.parse(raw) as SavedTemplate) : null
+  } catch {
+    return null
+  }
+}
+
+function saveLastTemplate(t: ContractTemplate) {
+  try { localStorage.setItem(LAST_TEMPLATE_KEY, JSON.stringify({ id: t.id, label: t.label })) } catch { /* ignore */ }
+}
+
 export function ContractForm({ clients, templates, defaultTemplateId, defaultClientId, returnTo, profile }: Props) {
   const router = useRouter()
   const allTemplates = [...templates.my, ...templates.global]
 
   // Restore draft from localStorage on first render
   const draft = typeof window !== 'undefined' ? loadDraft() : null
+  // Last-used niche template survives draft clearing (persists across contracts)
+  const lastTemplate = typeof window !== 'undefined' ? loadLastTemplate() : null
 
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  const [showTemplateSelector, setShowTemplateSelector] = useState(!draft)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(!draft && !lastTemplate)
   const [pendingTemplate, setPendingTemplate] = useState<ContractTemplate | null>(null)
   const [clientId, setClientId] = useState(draft?.clientId ?? defaultClientId ?? '')
   const [templateId, setTemplateId] = useState(draft?.templateId ?? defaultTemplateId ?? allTemplates[0]?.id ?? '')
@@ -97,7 +116,9 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
   const [appliedTemplate, setAppliedTemplate] = useState<ContractTemplate | null>(
     draft?.appliedTemplateId
       ? { id: draft.appliedTemplateId as ContractTemplate['id'], label: draft.appliedTemplateLabel ?? '', description: '', icon: '', suggestedTitle: '', suggestedPaymentTerms: '', content: draft.contractContent }
-      : null
+      : lastTemplate
+        ? { id: lastTemplate.id, label: lastTemplate.label, description: '', icon: '', suggestedTitle: '', suggestedPaymentTerms: '', content: '' }
+        : null
   )
 
   // Persist draft to localStorage whenever any field changes
@@ -120,6 +141,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
     setPaymentTerms(template.suggestedPaymentTerms)
     setContractContent(template.id === 'blank' ? '' : template.content)
     if (template.id !== 'blank') {
+      saveLastTemplate(template)
       toast.success(`${template.label} template applied`, {
         description: 'This will be pre-selected next time you create a contract.',
         action: {
@@ -282,31 +304,33 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
                   )}
                 </div>
 
-                <div className="space-y-1.5">
-                  <Label>Base Template</Label>
-                  <Select value={templateId} onValueChange={setTemplateId}>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a template" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {templates.my.length > 0 && (
-                        <>
-                          <SelectItem value="_heading_my" disabled>— My Templates —</SelectItem>
-                          {templates.my.map((t) => (
-                            <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-                          ))}
-                        </>
-                      )}
-                      <SelectItem value="_heading_global" disabled>— Template Library —</SelectItem>
-                      {templates.global.map((t) => (
-                        <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    <Link href="/contracts/templates" className="text-primary underline">Manage templates →</Link>
-                  </p>
-                </div>
+                {!appliedTemplate || appliedTemplate.id === 'blank' ? (
+                  <div className="space-y-1.5">
+                    <Label>Base Template</Label>
+                    <Select value={templateId} onValueChange={setTemplateId}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a template" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {templates.my.length > 0 && (
+                          <>
+                            <SelectItem value="_heading_my" disabled>— My Templates —</SelectItem>
+                            {templates.my.map((t) => (
+                              <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                            ))}
+                          </>
+                        )}
+                        <SelectItem value="_heading_global" disabled>— Template Library —</SelectItem>
+                        {templates.global.map((t) => (
+                          <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      <Link href="/contracts/templates" className="text-primary underline">Manage templates →</Link>
+                    </p>
+                  </div>
+                ) : null}
 
                 <div className="space-y-1.5">
                   <Label htmlFor="title">Contract Title</Label>
