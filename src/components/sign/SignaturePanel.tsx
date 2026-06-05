@@ -48,19 +48,12 @@ export function SignaturePanel({ token, signerEmail }: Props) {
           <p className="mt-2 text-sm text-muted-foreground">
             Thank you, <strong>{signerName}</strong>. Your signature has been recorded.
           </p>
-          <div className="mt-4 rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-            A confirmation email has been sent to <strong>{signerEmail}</strong> with a copy of the signed document.
+          <div className="mt-4 rounded-lg border bg-green-50 border-green-200 px-4 py-3 text-sm text-green-800">
+            We will send a signed copy of this contract to <strong>{signerEmail}</strong>. Please check your inbox.
           </div>
           <p className="mt-5 text-xs text-muted-foreground">
             You may now close this window.
           </p>
-          <Button
-            className="mt-4 w-full"
-            variant="outline"
-            onClick={() => window.close()}
-          >
-            Close Window
-          </Button>
         </div>
       </div>
     )

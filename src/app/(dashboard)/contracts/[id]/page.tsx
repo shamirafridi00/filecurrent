@@ -11,6 +11,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getContract } from '@/lib/db/supabase'
 import { SendForSignatureButton } from '@/components/contracts/SendForSignatureButton'
 import { PrintButton } from '@/components/contracts/PrintButton'
+import { ContractStatusPoller } from '@/components/contracts/ContractStatusPoller'
 
 export default async function ContractDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -49,7 +50,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         action={
           <div className="flex items-center gap-2">
             <ContractBadge status={contract.status as 'draft' | 'sent' | 'opened' | 'signed'} />
-            <PrintButton />
+            <PrintButton signedPdfUrl={contract.signedPdfUrl} />
             {(contract.status === 'draft' || contract.status === 'sent') && (
               <SendForSignatureButton
                 contractId={contract.id}
@@ -57,13 +58,17 @@ export default async function ContractDetailPage({ params }: { params: { id: str
                 clientName={contract.clientName}
               />
             )}
-            {contract.status === 'signed' && (
+            {contract.status === 'signed' && contract.signedPdfUrl && (
               <Button asChild variant="outline" size="sm">
                 <a href={`/api/contracts/${contract.id}/pdf`} target="_blank" rel="noreferrer">
                   <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
                   Download Signed PDF
                 </a>
               </Button>
+            )}
+            {/* Polls every 10s and reloads the page when contract becomes signed */}
+            {contract.status !== 'signed' && (
+              <ContractStatusPoller contractId={contract.id} currentStatus={contract.status} />
             )}
           </div>
         }
