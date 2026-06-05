@@ -127,7 +127,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
               </div>
 
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setOpen(false)}>Close</Button>
+                <Button variant="outline" className="border-border text-foreground hover:bg-muted" onClick={() => setOpen(false)}>Close</Button>
               </DialogFooter>
             </div>
           )}

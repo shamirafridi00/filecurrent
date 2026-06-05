@@ -84,7 +84,7 @@ export function UpgradePrompt({ open, onClose }: Props) {
           Questions? Email support@filecurrent.com
         </p>
 
-        <Button variant="ghost" size="sm" className="w-full" onClick={onClose}>
+        <Button variant="outline" size="sm" className="w-full border-border text-muted-foreground hover:text-foreground hover:bg-muted" onClick={onClose}>
           Maybe later
         </Button>
       </DialogContent>
