@@ -10,7 +10,6 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getContract } from '@/lib/db/supabase'
 import { SendForSignatureButton } from '@/components/contracts/SendForSignatureButton'
-import { PrintButton } from '@/components/contracts/PrintButton'
 import { ContractStatusPoller } from '@/components/contracts/ContractStatusPoller'
 
 export default async function ContractDetailPage({ params }: { params: { id: string } }) {
@@ -50,7 +49,6 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         action={
           <div className="flex items-center gap-2">
             <ContractBadge status={contract.status as 'draft' | 'sent' | 'opened' | 'signed'} />
-            <PrintButton signedPdfUrl={contract.signedPdfUrl} />
             {(contract.status === 'draft' || contract.status === 'sent') && (
               <SendForSignatureButton
                 contractId={contract.id}

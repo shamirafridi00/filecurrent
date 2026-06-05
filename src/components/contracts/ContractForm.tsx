@@ -15,6 +15,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
 import { UpgradePrompt } from '@/components/upgrade/UpgradePrompt'
@@ -71,8 +81,8 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
 
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  // Open by default only if there is no saved draft (draft means user already chose a template)
   const [showTemplateSelector, setShowTemplateSelector] = useState(!draft)
+  const [pendingTemplate, setPendingTemplate] = useState<ContractTemplate | null>(null)
   const [clientId, setClientId] = useState(draft?.clientId ?? defaultClientId ?? '')
   const [templateId, setTemplateId] = useState(draft?.templateId ?? defaultTemplateId ?? allTemplates[0]?.id ?? '')
   const [title, setTitle] = useState(draft?.title ?? '')
@@ -104,23 +114,30 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
   const selectedClient = clients.find((c) => c.id === clientId)
   const selectedDbTemplate = allTemplates.find((t) => t.id === templateId)
 
-  const handleTemplateSelect = (template: ContractTemplate) => {
-    setShowTemplateSelector(false)
-    if (template.id === 'blank') {
-      setAppliedTemplate(template)
-      setTitle(template.suggestedTitle)
-      setPaymentTerms(template.suggestedPaymentTerms)
-      setContractContent('')
-      return
-    }
-    // If user already typed content, confirm before overwriting
-    if (contractContent.trim() && appliedTemplate?.id !== template.id) {
-      if (!window.confirm('This will replace your current contract content with the template. Continue?')) return
-    }
+  const applyTemplate = (template: ContractTemplate) => {
     setAppliedTemplate(template)
     setTitle(template.suggestedTitle)
     setPaymentTerms(template.suggestedPaymentTerms)
-    setContractContent(template.content)
+    setContractContent(template.id === 'blank' ? '' : template.content)
+    if (template.id !== 'blank') {
+      toast.success(`${template.label} template applied`, {
+        description: 'This will be pre-selected next time you create a contract.',
+        action: {
+          label: 'Change',
+          onClick: () => setShowTemplateSelector(true),
+        },
+        duration: 5000,
+      })
+    }
+  }
+
+  const handleTemplateSelect = (template: ContractTemplate) => {
+    setShowTemplateSelector(false)
+    if (contractContent.trim() && appliedTemplate?.id !== template.id) {
+      setPendingTemplate(template)
+      return
+    }
+    applyTemplate(template)
   }
 
   const handleChangeTemplate = () => {
@@ -191,6 +208,28 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
         onSelect={handleTemplateSelect}
         onSkip={() => setShowTemplateSelector(false)}
       />
+      <AlertDialog open={!!pendingTemplate} onOpenChange={(v) => { if (!v) setPendingTemplate(null) }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Replace contract content?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This will replace your current contract content with the{' '}
+              <strong>{pendingTemplate?.label}</strong> template. Any edits you&apos;ve made will be lost.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setPendingTemplate(null)}>Keep current</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (pendingTemplate) applyTemplate(pendingTemplate)
+                setPendingTemplate(null)
+              }}
+            >
+              Replace with template
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       <div>
         <PageHeader
           title="New Contract"
@@ -433,8 +472,8 @@ function ContractPreview({ content, values }: { content: string; values: Record<
   return (
     <div className="space-y-1.5 text-xs leading-relaxed text-foreground">
       {lines.map((line, i) => {
-        if (line.startsWith('## ')) return <h2 key={i} className="mt-3 font-semibold text-sm">{line.slice(3)}</h2>
         if (line.startsWith('### ')) return <h3 key={i} className="mt-2 font-medium">{line.slice(4)}</h3>
+        if (line.startsWith('## ')) return <h2 key={i} className="mt-3 font-semibold text-sm">{line.slice(3)}</h2>
         if (line.startsWith('# ')) return <h1 key={i} className="mt-4 font-bold text-base">{line.slice(2)}</h1>
         if (line === '---') return <hr key={i} className="my-2 border-border" />
         return <p key={i} className="whitespace-pre-wrap">{renderLine(line, values)}</p>
