@@ -22,16 +22,33 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     'unknown'
 
   console.log('[sign] 1 — fetching signing session for token:', params.token)
-  const session = await getContractForSigning(params.token)
-  console.log('[sign] 2 — session fetched:', session ? `contractId=${session.contractId}` : 'null')
+  let session = null
+  try {
+    session = await getContractForSigning(params.token)
+    console.log('[sign] 2 — session fetched:', session ? `contractId=${session.contractId}` : 'NULL — token not found')
+  } catch (err) {
+    console.error('[sign] 2 — getContractForSigning CRASHED:', String(err))
+  }
 
   try {
     await submitContractSignature(params.token, signerName.trim(), ip)
+    console.log('[sign] 3 — signature submitted')
   } catch (err) {
+    console.error('[sign] 3 — submitContractSignature failed:', String(err))
     return NextResponse.json(
       { error: err instanceof Error ? err.message : 'Signing failed' },
       { status: 400 }
     )
+  }
+
+  // Fallback: if pre-fetch failed or returned null, try again now that signing succeeded
+  if (!session) {
+    try {
+      session = await getContractForSigning(params.token)
+      console.log('[sign] 3b — fallback session fetch:', session ? `contractId=${session.contractId}` : 'still null')
+    } catch (err) {
+      console.error('[sign] 3b — fallback getContractForSigning CRASHED:', String(err))
+    }
   }
 
   if (session) {
@@ -41,7 +58,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     })
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://filecurrent.com'
 
-    console.log('[sign] 3 — fetching freelancer profile for contractId:', session.contractId)
+    console.log('[sign] 4 — fetching freelancer profile for contractId:', session.contractId)
     const { data: contractRow } = await adminClient
       .from('contracts')
       .select('user_id')
@@ -55,11 +72,11 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       .single()
 
     const freelancerEmail = profileRow?.email
-    console.log('[sign] 4 — freelancerEmail:', freelancerEmail ?? 'none')
+    console.log('[sign] 5 — freelancerEmail:', freelancerEmail ?? 'none')
 
     // Client confirmation email
     const clientSignUrl = `${appUrl}/sign/${params.token}`
-    console.log('[sign] 5 — sending client email to:', session.signerEmail)
+    console.log('[sign] 6 — sending client email to:', session.signerEmail)
     try {
       const result = await sendEmail({
         to: session.signerEmail,
@@ -72,9 +89,9 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
           toFreelancer: false,
         }),
       })
-      console.log('[sign] 6 — client email sent, messageId:', result?.messageId)
+      console.log('[sign] 7 — client email sent, messageId:', result?.messageId)
     } catch (err: unknown) {
-      console.error('[sign] 6 — CLIENT EMAIL FAILED to:', session.signerEmail,
+      console.error('[sign] 7 — CLIENT EMAIL FAILED to:', session.signerEmail,
         '| error:', String(err),
         '| detail:', JSON.stringify(err, Object.getOwnPropertyNames(err instanceof Error ? err : Object(err))))
     }
@@ -82,7 +99,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     // Freelancer notification email
     if (freelancerEmail) {
       const freelancerDashUrl = `${appUrl}/contracts/${session.contractId}`
-      console.log('[sign] 7 — sending freelancer email to:', freelancerEmail)
+      console.log('[sign] 8 — sending freelancer email to:', freelancerEmail)
       try {
         const result = await sendEmail({
           to: freelancerEmail,
@@ -95,17 +112,17 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
             toFreelancer: true,
           }),
         })
-        console.log('[sign] 8 — freelancer email sent, messageId:', result?.messageId)
+        console.log('[sign] 9 — freelancer email sent, messageId:', result?.messageId)
       } catch (err: unknown) {
-        console.error('[sign] 8 — FREELANCER EMAIL FAILED to:', freelancerEmail,
+        console.error('[sign] 9 — FREELANCER EMAIL FAILED to:', freelancerEmail,
           '| error:', String(err),
           '| detail:', JSON.stringify(err, Object.getOwnPropertyNames(err instanceof Error ? err : Object(err))))
       }
     } else {
-      console.warn('[sign] 7 — no freelancer email found for contract:', session.contractId)
+      console.warn('[sign] 8 — no freelancer email found for contract:', session.contractId)
     }
 
-    console.log('[sign] 9 — emails done, queuing PDF generation')
+    console.log('[sign] 10 — emails done, queuing PDF generation')
 
     // PDF generation runs after response is sent — waitUntil keeps the function alive
     waitUntil((async () => {
