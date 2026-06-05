@@ -31,6 +31,9 @@ export function SignaturePanel({ token, signerEmail }: Props) {
       })
       if (!res.ok) throw new Error((await res.json()).error || 'Failed')
       setSigned(true)
+      // Reload after a short delay so the server re-renders with the signed
+      // state. Any future visit to this URL will also show the signed screen.
+      setTimeout(() => { window.location.reload() }, 2500)
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to sign document')
       setSigning(false)
