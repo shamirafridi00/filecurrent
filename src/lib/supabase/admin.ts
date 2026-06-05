@@ -6,7 +6,7 @@ export const adminClient = createClient(
   process.env.SUPABASE_SERVICE_ROLE_KEY!,
   {
     global: {
-      fetch: (url, options) =>
+      fetch: (url: RequestInfo | URL, options?: RequestInit) =>
         fetch(url, { ...options, cache: 'no-store' }),
     },
   }
