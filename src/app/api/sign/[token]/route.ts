@@ -58,27 +58,23 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://filecurrent.com'
     const clientSignUrl = `${appUrl}/sign/${params.token}`
     console.log('[sign] signerEmail:', session.signerEmail, '| contractTitle:', session.contractTitle)
-    // Always send client confirmation — no condition on signerEmail truthiness
-    const clientEmailResult = await sendEmail({
-      to: session.signerEmail,
-      subject: `Signed: ${session.contractTitle}`,
-      html: contractSignedEmail({
-        signerName: signerName.trim(),
-        contractTitle: session.contractTitle,
-        signedAt,
-        dashboardUrl: clientSignUrl,
-        toFreelancer: false,
-      }),
-    }).then((data) => {
-      console.log('[sign] Client email sent to:', session.signerEmail, '| id:', data?.id)
-      return data
-    }).catch((err: unknown) => {
-      const msg = err instanceof Error ? err.message : String(err)
-      const detail = JSON.stringify(err, Object.getOwnPropertyNames(err instanceof Error ? err : {}))
-      console.error('[sign] CLIENT EMAIL FAILED to:', session.signerEmail, '| msg:', msg, '| detail:', detail)
-      return null
-    })
-    console.log('[sign] Client email result:', clientEmailResult ? 'ok' : 'failed')
+    try {
+      const result = await sendEmail({
+        to: session.signerEmail,
+        subject: `Signed: ${session.contractTitle}`,
+        html: contractSignedEmail({
+          signerName: signerName.trim(),
+          contractTitle: session.contractTitle,
+          signedAt,
+          dashboardUrl: clientSignUrl,
+          toFreelancer: false,
+        }),
+      })
+      console.log('[sign] Client email sent to:', session.signerEmail, '| messageId:', result?.messageId)
+    } catch (err: unknown) {
+      console.error('[sign] CLIENT EMAIL FAILED to:', session.signerEmail,
+        '| error:', JSON.stringify(err, Object.getOwnPropertyNames(err instanceof Error ? err : Object(err))))
+    }
 
     // Email to freelancer
     if (freelancerEmail) {
