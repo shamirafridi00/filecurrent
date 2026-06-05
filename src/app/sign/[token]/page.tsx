@@ -5,7 +5,6 @@ import { CheckCircle } from '@/components/icons'
 import { getContractForSigning } from '@/lib/db/supabase'
 import { formatCurrency, formatDate, stripMarkdown, slugifyTitle } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
-import { SignedActions } from '@/components/sign/SignedActions'
 import { APP_NAME } from '@/lib/constants'
 
 function renderInlineParts(text: string) {
@@ -48,7 +47,9 @@ export default async function SignPage({ params }: { params: { token: string } }
           <p className="mt-2 text-sm text-muted-foreground">
             This contract has been signed. Thank you, {session.signerName ?? ''}!
           </p>
-          <SignedActions pdfUrl={pdfUrl} />
+          <p className="mt-6 text-xs text-muted-foreground/60">
+            Powered by <a href="https://filecurrent.com" target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">filecurrent.com</a>
+          </p>
         </div>
       </div>
     )
