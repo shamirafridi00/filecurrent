@@ -96,15 +96,20 @@ export default async function ContractDetailPage({ params }: { params: { id: str
                   const trimmed = line.trim()
                   if (!trimmed) return <div key={i} className="h-2" />
                   if (trimmed === '---') return <hr key={i} className="my-4 border-border" />
+                  if (trimmed.startsWith('### ')) return (
+                    <h3 key={i} className="mt-4 mb-0.5 text-sm font-semibold text-foreground">
+                      {trimmed.slice(4).replace(/\*\*/g, '')}
+                    </h3>
+                  )
                   if (trimmed.startsWith('## ')) return (
                     <h2 key={i} className="mt-6 mb-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">
                       {trimmed.slice(3).replace(/\*\*/g, '')}
                     </h2>
                   )
-                  if (trimmed.startsWith('### ')) return (
-                    <h3 key={i} className="mt-4 mb-0.5 text-sm font-semibold text-foreground">
-                      {trimmed.slice(4).replace(/\*\*/g, '')}
-                    </h3>
+                  if (trimmed.startsWith('# ')) return (
+                    <h1 key={i} className="mb-4 text-xl font-bold text-foreground">
+                      {trimmed.slice(2).replace(/\*\*/g, '')}
+                    </h1>
                   )
                   if (/^\d+\.\s+\S/.test(trimmed) && trimmed.length < 60) return (
                     <p key={i} className="mt-5 mb-1 text-sm font-semibold text-foreground">{trimmed}</p>
