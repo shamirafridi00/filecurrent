@@ -2,25 +2,24 @@
 
 import { useState } from 'react'
 import {
-  Monitor, Camera, Heart, PaintBrush, PencilLine,
-  VideoCamera, ChartBar, FileText, X,
+  Globe, Camera, Heart, PenNib, PencilLine,
+  VideoCamera, ChartBar, FileText, Check,
   type Icon,
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { NICHE_CONTRACT_TEMPLATES, type NicheContractTemplate } from '@/lib/contracts/templates'
+import { CONTRACT_TEMPLATES, type ContractTemplate } from '@/lib/contracts/templates'
 
 const ICON_MAP: Record<string, Icon> = {
-  Monitor,
+  Globe,
   Camera,
   Heart,
-  PaintBrush,
+  PenNib,
   PencilLine,
   VideoCamera,
   ChartBar,
@@ -29,99 +28,128 @@ const ICON_MAP: Record<string, Icon> = {
 
 interface Props {
   open: boolean
-  onClose: () => void
-  onSelect: (template: NicheContractTemplate | null) => void
+  onSelect: (template: ContractTemplate) => void
+  onSkip: () => void
 }
 
-export function TemplateSelector({ open, onClose, onSelect }: Props) {
-  const [hovered, setHovered] = useState<string | null>(null)
+export function TemplateSelector({ open, onSelect, onSkip }: Props) {
+  const [selected, setSelected] = useState<ContractTemplate | null>(null)
 
-  const handleSelect = (template: NicheContractTemplate | null) => {
-    onSelect(template)
-    onClose()
+  const handleUse = () => {
+    if (!selected) return
+    onSelect(selected)
+    setSelected(null)
   }
 
+  const handleSkip = () => {
+    setSelected(null)
+    onSkip()
+  }
+
+  const nicheTemplates = CONTRACT_TEMPLATES.filter((t) => t.id !== 'blank')
+  const blankTemplate = CONTRACT_TEMPLATES.find((t) => t.id === 'blank')!
+
   return (
-    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto p-0">
-        <DialogHeader className="px-6 pt-6 pb-4 border-b">
-          <div className="flex items-center justify-between">
-            <div>
-              <DialogTitle className="text-lg font-semibold">Choose a Contract Template</DialogTitle>
-              <p className="mt-1 text-sm text-muted-foreground">
-                Start with a niche-specific template — all clauses written for US freelancers.
-              </p>
-            </div>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 shrink-0" onClick={onClose}>
-              <X className="h-4 w-4" />
-            </Button>
-          </div>
+    <Dialog open={open} onOpenChange={(v) => { if (!v) handleSkip() }}>
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto p-0">
+        <DialogHeader className="px-6 pt-6 pb-4 border-b sticky top-0 bg-background z-10">
+          <DialogTitle className="text-xl font-semibold">Choose a Contract Template</DialogTitle>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Start with a professionally written template for your niche, or begin from scratch.
+          </p>
         </DialogHeader>
 
-        <div className="p-6">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-            {/* Start from scratch */}
-            <button
-              type="button"
-              className={`group relative flex items-start gap-4 rounded-xl border-2 p-4 text-left transition-all ${
-                hovered === '__scratch'
-                  ? 'border-primary bg-primary/5'
-                  : 'border-border bg-card hover:border-primary/50 hover:bg-muted/40'
-              }`}
-              onMouseEnter={() => setHovered('__scratch')}
-              onMouseLeave={() => setHovered(null)}
-              onClick={() => handleSelect(null)}
-            >
-              <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-muted">
-                <FileText className="h-5 w-5 text-muted-foreground" />
-              </div>
-              <div className="min-w-0">
-                <p className="font-semibold text-foreground text-sm">Start from Scratch</p>
-                <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
-                  Blank contract — write your own clauses from the ground up.
-                </p>
-              </div>
-            </button>
-
-            {/* Niche templates */}
-            {NICHE_CONTRACT_TEMPLATES.map((template) => {
+        <div className="p-6 space-y-4">
+          {/* Niche templates — 2 cols mobile, 3 cols desktop */}
+          <div className="grid grid-cols-2 gap-3 lg:grid-cols-3 xl:grid-cols-4">
+            {nicheTemplates.map((template) => {
               const IconComp = ICON_MAP[template.icon] ?? FileText
-              const isHovered = hovered === template.id
+              const isSelected = selected?.id === template.id
               return (
                 <button
                   key={template.id}
                   type="button"
-                  className={`group relative flex items-start gap-4 rounded-xl border-2 p-4 text-left transition-all ${
-                    isHovered
-                      ? 'border-primary bg-primary/5'
-                      : 'border-border bg-card hover:border-primary/50 hover:bg-muted/40'
+                  onClick={() => setSelected(template)}
+                  className={`relative flex flex-col items-start gap-3 rounded-xl border-2 p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                    isSelected
+                      ? 'border-primary bg-primary/5 shadow-md'
+                      : 'border-border bg-card hover:border-primary/60 hover:bg-muted/40 hover:shadow-sm'
                   }`}
-                  onMouseEnter={() => setHovered(template.id)}
-                  onMouseLeave={() => setHovered(null)}
-                  onClick={() => handleSelect(template)}
                 >
-                  <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg transition-colors ${
-                    isHovered ? 'bg-primary/10' : 'bg-muted'
+                  {isSelected && (
+                    <span className="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                      <Check className="h-3 w-3 text-white" weight="bold" />
+                    </span>
+                  )}
+                  <div className={`flex h-10 w-10 items-center justify-center rounded-lg transition-colors ${
+                    isSelected ? 'bg-primary/15' : 'bg-muted'
                   }`}>
-                    <IconComp className={`h-5 w-5 transition-colors ${isHovered ? 'text-primary' : 'text-muted-foreground'}`} />
+                    <IconComp
+                      className={`h-5 w-5 transition-colors ${isSelected ? 'text-primary' : 'text-muted-foreground'}`}
+                    />
                   </div>
                   <div className="min-w-0 flex-1">
-                    <div className="flex items-start justify-between gap-2">
-                      <p className="font-semibold text-foreground text-sm leading-snug">{template.label}</p>
-                      <Badge variant="secondary" className="shrink-0 text-[10px] px-1.5 py-0">Full</Badge>
-                    </div>
-                    <p className="mt-0.5 text-xs text-muted-foreground leading-relaxed">
+                    <p className={`text-sm font-semibold leading-snug ${isSelected ? 'text-primary' : 'text-foreground'}`}>
+                      {template.label}
+                    </p>
+                    <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
                       {template.description}
                     </p>
                   </div>
                 </button>
               )
             })}
+
+            {/* Start from scratch — dashed, muted */}
+            <button
+              type="button"
+              onClick={() => setSelected(blankTemplate)}
+              className={`relative flex flex-col items-start gap-3 rounded-xl border-2 border-dashed p-4 text-left transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                selected?.id === 'blank'
+                  ? 'border-primary bg-primary/5 shadow-md'
+                  : 'border-border bg-muted/20 hover:border-muted-foreground/40 hover:bg-muted/40'
+              }`}
+            >
+              {selected?.id === 'blank' && (
+                <span className="absolute top-2.5 right-2.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary">
+                  <Check className="h-3 w-3 text-white" weight="bold" />
+                </span>
+              )}
+              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-muted">
+                <FileText className="h-5 w-5 text-muted-foreground" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold text-muted-foreground leading-snug">
+                  {blankTemplate.label}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground leading-relaxed">
+                  {blankTemplate.description}
+                </p>
+              </div>
+            </button>
           </div>
 
-          <p className="mt-4 text-center text-xs text-muted-foreground">
-            All templates include professional US-compliant clauses. You can edit any field after selecting.
-          </p>
+          {/* Footer */}
+          <div className="flex items-center justify-between pt-2 border-t">
+            <button
+              type="button"
+              onClick={handleSkip}
+              className="text-sm text-muted-foreground underline-offset-4 hover:underline focus:outline-none"
+            >
+              Skip for now
+            </button>
+            <Button
+              onClick={handleUse}
+              disabled={!selected}
+              className="min-w-36"
+            >
+              {selected
+                ? selected.id === 'blank'
+                  ? 'Start from Scratch'
+                  : `Use ${selected.label}`
+                : 'Select a Template'}
+            </Button>
+          </div>
         </div>
       </DialogContent>
     </Dialog>

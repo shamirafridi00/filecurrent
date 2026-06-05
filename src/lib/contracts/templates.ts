@@ -1,6 +1,8 @@
 // Niche-specific contract templates for FileCurrent.
-// Each template is full professional US-compliant contract prose, not a skeleton.
-// Variables use {{variable_name}} syntax matched to the app's resolver.
+// Pure pre-fill data — no DB storage. Content flows into the contract content field.
+// Variables: {{client_name}}, {{client_company}}, {{client_email}},
+//            {{freelancer_name}}, {{freelancer_business}}, {{rate}}, {{currency}},
+//            {{start_date}}, {{end_date}}, {{payment_terms}}, {{project_description}}
 
 export type ContractNiche =
   | 'web-designer'
@@ -10,18 +12,20 @@ export type ContractNiche =
   | 'copywriter'
   | 'videographer'
   | 'social-media-manager'
+  | 'blank'
 
-export interface NicheContractTemplate {
+export interface ContractTemplate {
   id: ContractNiche
   label: string
   description: string
   icon: string
-  suggestedPaymentTerms: string
   suggestedTitle: string
+  suggestedPaymentTerms: string
   content: string
 }
 
-export const NICHE_CONTRACT_TEMPLATES: NicheContractTemplate[] = [
+export const CONTRACT_TEMPLATES: ContractTemplate[] = [
+
   // ─────────────────────────────────────────────────────────────────────────
   // 1. WEB DESIGNER / WEB DEVELOPER
   // ─────────────────────────────────────────────────────────────────────────
@@ -29,82 +33,81 @@ export const NICHE_CONTRACT_TEMPLATES: NicheContractTemplate[] = [
     id: 'web-designer',
     label: 'Web Designer / Developer',
     description: 'For website builds, redesigns, and web app development projects.',
-    icon: 'Monitor',
-    suggestedPaymentTerms: '50% deposit due at project start, 25% at design approval, 25% upon final delivery',
-    suggestedTitle: 'Website Design & Development Agreement',
-    content: `# Website Design & Development Agreement
+    icon: 'Globe',
+    suggestedTitle: 'Web Design & Development Agreement',
+    suggestedPaymentTerms: '50% deposit due before work begins. Remaining 50% due upon final delivery before site launch.',
+    content: `# Web Design & Development Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (operating as {{freelancer_business}}, hereinafter "the Designer") and {{client_name}} of {{client_company}} (hereinafter "the Client"). The parties agree to the following terms and conditions governing the design and development services described herein.
-
----
-
-## 1. Project Scope and Deliverables
-
-The Designer agrees to design and develop a website for the Client as described in this Agreement. The specific deliverables for this project are as follows: {{project_description}}. The scope of work is limited exclusively to the deliverables listed above. The following are expressly excluded from this Agreement unless separately contracted in writing: search engine optimization (SEO) beyond basic on-page meta tags, copywriting or content creation, logo design or brand identity work, e-commerce functionality beyond what is specified, mobile application development, and any integrations not explicitly listed. Any work outside the agreed scope constitutes a change order and is subject to separate pricing and written approval.
-
-## 2. Milestone-Based Payment Schedule
-
-The total contract value is {{currency}} {{rate}}, payable as follows: (a) a non-refundable deposit of fifty percent (50%), equal to {{currency}} {{rate}} × 50%, is due upon execution of this Agreement and before any work begins; (b) twenty-five percent (25%) is due upon the Client's written approval of the design mockups; and (c) the remaining twenty-five percent (25%) is due upon delivery of the completed website files or launch, whichever occurs first. The Designer shall not be obligated to proceed to the next milestone until the corresponding payment has cleared. Payment terms are {{payment_terms}}.
-
-## 3. Scope Changes and Change Orders
-
-Any additions to, deletions from, or modifications of the agreed project scope — including changes to functionality, design direction, number of pages, or feature set — must be documented in a written Change Order signed by both parties before work on the change commences. Verbal agreements, emails, text messages, or other informal communications do not constitute authorization for scope changes. Change Orders will be priced at the Designer's current hourly rate of $[HOURLY_RATE] per hour or at a mutually agreed fixed price, and the project timeline will be adjusted accordingly. The Designer reserves the right to decline scope changes that would materially alter the nature of the project.
-
-## 4. Third-Party Costs
-
-The quoted contract price does not include third-party costs. The Client is solely responsible for all fees associated with: web hosting and domain registration, content management system (CMS) licenses or plugin fees, stock photography, icons, fonts, or other licensed assets, third-party API subscriptions, SSL certificates, and any other external services required for the project. The Designer will inform the Client of any anticipated third-party costs before incurring them on the Client's behalf. If the Designer pays for third-party services on the Client's behalf, the Client agrees to reimburse the Designer within seven (7) business days of invoice.
-
-## 5. Browser and Device Compatibility
-
-The Designer will test and optimize the website for the following browsers and environments: the latest two major versions of Google Chrome, Mozilla Firefox, Apple Safari, and Microsoft Edge, on both desktop (Windows and macOS) and mobile viewports. The Designer does not warrant compatibility with older browser versions, legacy Internet Explorer versions, or non-standard browsers. Minor rendering differences between browsers are inherent to web development and do not constitute defects. The Designer is not responsible for issues arising from the Client's use of unsupported browsers.
-
-## 6. Content Provision Deadline
-
-The Client agrees to provide all necessary content — including written copy, images, logos, brand assets, and any other materials required for the project — by {{start_date}} plus fourteen (14) calendar days, or as otherwise agreed in writing. If the Client fails to provide required content by the agreed deadline, the project timeline will be extended by a period equal to the delay, and the Designer reserves the right to invoice for any idle time exceeding five (5) business days at the Designer's hourly rate.
-
-## 7. Revision Policy
-
-This Agreement includes two (2) rounds of revisions per major deliverable. A "revision round" is defined as one consolidated set of changes submitted by the Client at one time. Each revision request must be submitted as a single, comprehensive document or message — not incrementally. Additional revision rounds beyond the included two (2) will be billed at the Designer's hourly rate of $[HOURLY_RATE] per hour, invoiced separately. Revision requests must be submitted within seven (7) business days of each deliverable being presented. Requests submitted after that period may be treated as new work.
-
-## 8. Intellectual Property Transfer
-
-All original design work, code, and other deliverables created by the Designer under this Agreement are the intellectual property of the Designer until full payment of the contract price has been received. Upon receipt of final payment in full, the Designer assigns and transfers to the Client all ownership rights, including copyright, in the final deliverables specifically created for this project. This transfer excludes: (a) any third-party assets subject to their own licenses; (b) the Designer's pre-existing tools, frameworks, libraries, and development methodologies; and (c) general design concepts, techniques, or processes that are not unique to this project.
-
-## 9. Designer Portfolio Rights
-
-Notwithstanding any confidentiality provisions herein, the Designer retains the perpetual, irrevocable right to display the completed work — including screenshots, mockups, and descriptions of the project — in the Designer's portfolio, case studies, website, social media profiles, and award submissions. If the Client requires the work to remain confidential and not appear in the Designer's portfolio, the Client must notify the Designer in writing at the time of signing, and the parties will negotiate a separate confidentiality fee.
-
-## 10. Confidentiality
-
-Each party agrees to keep confidential all non-public information received from the other party in connection with this project, including but not limited to business strategies, client data, proprietary systems, and pricing information. This obligation survives termination of this Agreement for a period of three (3) years. The Designer may disclose the existence of the Client relationship (but not confidential details) for general marketing purposes unless the Client opts out in writing.
-
-## 11. Hosting and Maintenance
-
-This Agreement covers the design and development of the website only. Ongoing website maintenance, security monitoring, software updates, content updates, hosting management, and technical support are not included and constitute a separate service agreement. The Designer will not be liable for issues arising after project completion, including but not limited to plugin conflicts, hosting failures, security breaches, or compatibility issues resulting from third-party updates.
-
-## 12. Termination and Kill Fee
-
-Either party may terminate this Agreement upon fourteen (14) days' written notice. In the event of termination by the Client for any reason other than the Designer's material breach, the Client agrees to pay: (a) all fees for work completed to the date of termination, calculated at the pro-rated contract rate; and (b) a kill fee equal to twenty-five percent (25%) of the remaining unpaid contract balance, as compensation for the Designer's reserved capacity and opportunity cost. In the event of termination due to the Designer's material breach, the Client's sole remedy is a refund of fees paid for work not yet delivered.
-
-## 13. Late Payment Penalties
-
-Invoices not paid within the due date specified on the invoice shall accrue interest at the rate of 1.5% per month (18% per annum) on the outstanding balance. The Designer reserves the right to suspend all work, withhold deliverables, and/or take down any live work until the account is current. The Client agrees to reimburse the Designer for all reasonable costs of collection, including attorney's fees, in the event that legal action is required to recover unpaid amounts.
-
-## 14. Governing Law
-
-This Agreement shall be governed by and construed in accordance with the laws of the State of [STATE], without regard to its conflict of law provisions. Any disputes arising out of or related to this Agreement shall be resolved in the state or federal courts located in [COUNTY], [STATE], and both parties consent to the personal jurisdiction of such courts.
-
-## 15. Entire Agreement
-
-This Agreement, together with any attached schedules or change orders, constitutes the entire agreement between the parties with respect to the subject matter herein and supersedes all prior negotiations, representations, warranties, and understandings. This Agreement may be amended only by a written instrument signed by both parties.
+This Web Design and Development Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}}, operating as {{freelancer_business}} ("I," "me," or "the Freelancer"), and {{client_name}} of {{client_company}} ("you" or "the Client"). By proceeding with this project, both parties agree to be bound by the terms set forth below.
 
 ---
 
-**Designer:** {{freelancer_name}} ({{freelancer_business}})
-**Client:** {{client_name}} ({{client_company}})
-**Project Start Date:** {{start_date}}
-**Project End Date:** {{end_date}}
-**Contract Value:** {{currency}} {{rate}}`,
+## 1. PARTIES AND PROJECT OVERVIEW
+
+I, {{freelancer_name}} of {{freelancer_business}}, agree to provide web design and development services to you, {{client_name}} of {{client_company}}, as described in this Agreement. The project description is as follows: {{project_description}}. This Agreement is effective as of {{start_date}} and covers all work performed through {{end_date}} or until project completion, whichever comes later.
+
+## 2. PROJECT SCOPE AND DELIVERABLES
+
+I will design and develop the website and digital deliverables as described in the project overview above. The scope of this project is limited exclusively to the features, pages, and functionality described in that overview. Any items not explicitly mentioned are out of scope. I want to be clear: if a feature, page, integration, or design element is not listed, it is not included. Any additions or changes to the agreed scope must be submitted as a written change order, signed by both parties, before I begin the additional work. I reserve the right to quote additional fees for any change order.
+
+## 3. MILESTONE-BASED PAYMENT SCHEDULE
+
+The total fee for this project is {{currency}} {{rate}}. Payment is structured as follows: a deposit of fifty percent (50%) of the total project fee is due before any work begins — no work will commence until this deposit is received and cleared. A second payment is due upon your written approval of the design mockups or design phase deliverables. The final remaining balance is due upon project completion, before the completed site files are transferred to you or the site goes live. I retain ownership of all work product until full payment is received. Payment terms are {{payment_terms}}.
+
+## 4. SCOPE CHANGES AND CHANGE ORDERS
+
+Any request to add pages, features, third-party integrations, design revisions beyond the agreed revision rounds, or any other change to the project as originally described constitutes a scope change. Scope changes are not covered by this Agreement and are not binding on me until a written change order has been prepared and signed by both of us. I do not accept verbal scope changes, and no email or message exchange constitutes authorization to proceed with additional work unless a signed change order exists. Additional scope is billed at my standard hourly rate, which will be specified in the change order.
+
+## 5. THIRD-PARTY COSTS
+
+My project fee covers design and development labor only. The following costs are your responsibility and are not included in the quoted price unless explicitly stated otherwise: web hosting and server fees, domain name registration and renewal, premium plugins, CMS licenses, theme licenses, stock photography, licensed fonts, third-party API fees, payment processing fees, and any other software subscriptions required for the project. I will notify you in advance of any third-party costs I am aware of, but I am not responsible for costs you incur independently.
+
+## 6. CONTENT PROVISION DEADLINE
+
+You agree to provide all content required for this project — including written copy, images, logos, brand guidelines, video files, and any other assets — by a date we will agree upon in writing. If content is not delivered on time, the project timeline will shift accordingly, and I will not be penalized for delays caused by late content delivery. I am not responsible for writing, photographing, or sourcing content unless we have separately contracted for those services.
+
+## 7. BROWSER AND DEVICE COMPATIBILITY
+
+I will test and optimize the completed project for current major versions of Google Chrome, Mozilla Firefox, Apple Safari, and Microsoft Edge, on both standard desktop and mobile screen sizes. I do not guarantee compatibility with outdated or legacy browser versions, enterprise-specific browser configurations, or non-standard environments. Minor visual differences between browsers are inherent to web development and do not constitute defects requiring correction under this Agreement.
+
+## 8. REVISION LIMIT
+
+This Agreement includes two (2) rounds of revisions per design phase. A revision round means one consolidated set of feedback submitted by you in a single communication — not a running series of individual requests over multiple messages. Once I have addressed one round of revisions, the next round begins fresh. If you require additional revision rounds beyond the two included, those are billed at my standard hourly rate and invoiced separately. Revision requests must be submitted within seven (7) business days of each deliverable being presented to you.
+
+## 9. INTELLECTUAL PROPERTY
+
+All work product, designs, code, and deliverables created by me under this Agreement remain my intellectual property until I have received full and final payment. Upon receipt of final payment, I assign all intellectual property rights in the final deliverables to you. This transfer does not include my pre-existing tools, frameworks, libraries, boilerplate code, or development methodologies, which remain my property. I retain the right to display the completed work — including screenshots, mockups, and project descriptions — in my portfolio, on my website, and in my marketing materials, regardless of any other terms of this Agreement.
+
+## 10. CONFIDENTIALITY
+
+I agree to keep confidential any proprietary business information, trade secrets, customer data, or sensitive information you share with me in connection with this project. You agree to keep confidential any information I share about my rates, methods, tools, or proprietary processes. These confidentiality obligations survive the termination of this Agreement for a period of three (3) years.
+
+## 11. HOSTING AND MAINTENANCE DISCLAIMER
+
+This Agreement covers the design and development of your project only. Once the project is delivered and final payment is received, my obligations under this Agreement are complete. Ongoing web hosting, server maintenance, software updates, security monitoring, content updates, and technical support after launch are not included and are not my responsibility. If you would like ongoing maintenance services, we will need to negotiate a separate maintenance agreement.
+
+## 12. TERMINATION AND KILL FEE
+
+Either party may terminate this Agreement with fourteen (14) days written notice. If you terminate this Agreement after work has begun, you agree to pay me for all work completed through the date of termination, calculated at the pro-rated contract rate, plus a kill fee equal to twenty-five percent (25%) of the remaining unpaid contract balance. The kill fee compensates me for time I have reserved for your project and opportunities I have declined. If I terminate due to your material breach, I will retain all fees paid and deliver work completed to the payment level received.
+
+## 13. LATE PAYMENT PENALTIES
+
+Invoices not paid within seven (7) days of the due date will incur a late fee of one and one-half percent (1.5%) per month on the outstanding balance, compounding monthly. I reserve the right to suspend all work and withhold all deliverables until your account is brought current. You agree to reimburse me for any reasonable costs I incur in collecting overdue payments, including attorney's fees.
+
+## 14. LIMITATION OF LIABILITY
+
+My total liability to you under this Agreement, for any claim of any kind, shall not exceed the total fees you have actually paid to me under this Agreement. I am not liable for any lost profits, lost business opportunities, consequential damages, incidental damages, or special damages, even if I have been advised of the possibility of such damages.
+
+## 15. GOVERNING LAW
+
+This Agreement is governed by the laws of the United States and the state in which I am domiciled. Any disputes arising out of or related to this Agreement shall be resolved in the courts of my state of domicile, and you consent to personal jurisdiction in that venue.
+
+---
+
+**Freelancer:** {{freelancer_name}} / {{freelancer_business}}
+**Client:** {{client_name}} / {{client_company}}
+**Project Start:** {{start_date}} | **Project End:** {{end_date}}
+**Total Fee:** {{currency}} {{rate}}`,
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -115,76 +118,75 @@ This Agreement, together with any attached schedules or change orders, constitut
     label: 'Photographer',
     description: 'For commercial, portrait, product, and general photography sessions.',
     icon: 'Camera',
-    suggestedPaymentTerms: '50% non-refundable deposit to book, 50% due 48 hours before session',
     suggestedTitle: 'Photography Services Agreement',
+    suggestedPaymentTerms: '50% non-refundable retainer due at booking. Remaining balance due 48 hours before the session.',
     content: `# Photography Services Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (operating as {{freelancer_business}}, hereinafter "the Photographer") and {{client_name}} of {{client_company}} (hereinafter "the Client"). This Agreement governs all photography services described below.
+This Photography Services Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}}, operating as {{freelancer_business}} ("I," "me," or "the Freelancer"), and {{client_name}} of {{client_company}} ("you" or "the Client"). Both parties agree to the following terms governing the photography services described below.
 
 ---
 
-## 1. Session Details
+## 1. PARTIES AND SESSION DETAILS
 
-The Photographer agrees to provide photography services as follows: {{project_description}}. The session is scheduled to begin on {{start_date}} and is expected to conclude by {{end_date}}. The deliverables will include the number of final edited images specified in the project description above. The number of final images is an estimate and may vary based on session conditions, subject matter, and the Photographer's editorial judgment.
+I, {{freelancer_name}} of {{freelancer_business}}, agree to provide professional photography services to you, {{client_name}} of {{client_company}}, as follows: {{project_description}}. The session is scheduled for {{start_date}}. The total fee for this engagement is {{currency}} {{rate}}, payable under the terms stated in Section 2. All session details — including location, duration, and final image count — are as described in the project overview above.
 
-## 2. Compensation and Payment Terms
+## 2. COMPENSATION AND PAYMENT TERMS
 
-The total fee for services under this Agreement is {{currency}} {{rate}}, payable as follows: {{payment_terms}}. The deposit is non-refundable and is required to reserve the Photographer's time and hold the session date. No date is considered confirmed until the deposit has been received.
+The total fee for this session is {{currency}} {{rate}}, payable as follows: {{payment_terms}}. The retainer required to reserve your session date is non-refundable under all circumstances, including illness, scheduling conflicts, or change of plans on your part. No session date is confirmed until the retainer has cleared. The remaining balance is due as specified in the payment terms above; failure to pay the balance by the due date may result in cancellation of the session with forfeiture of the retainer.
 
-## 3. Copyright Ownership
+## 3. COPYRIGHT OWNERSHIP
 
-The Photographer is and shall remain the sole author and copyright owner of all photographs produced under this Agreement, pursuant to the United States Copyright Act (17 U.S.C. § 101 et seq.). The Client does not acquire any ownership rights in the photographs. The Client receives only the limited license granted below. Any use of the photographs outside the scope of that license requires a separate written agreement and additional licensing fees.
+I retain full copyright ownership of all photographs produced under this Agreement. This is my right as the author of these works under the United States Copyright Act (17 U.S.C. § 101 et seq.), and it is non-negotiable. You do not own the images — you receive a license to use them as described below. You may not sell, sublicense, transfer, or assign usage rights to any third party without my prior written permission. Any unauthorized use of my images constitutes copyright infringement and may subject you to legal liability.
 
-## 4. Usage Rights and License
+## 4. USAGE RIGHTS AND LICENSE
 
-Upon receipt of full payment, the Photographer grants the Client a non-exclusive, non-transferable license to use the delivered photographs for the following purposes: {{project_description}}. This license is limited to the specific uses described. Commercial use beyond personal or internal business purposes, print publication, advertising, resale, sublicensing, or any other use not explicitly described requires a separate written license agreement and additional fees. The Photographer retains the right to license the same images to other parties unless an exclusivity agreement has been separately contracted in writing.
+Upon receipt of full payment, I grant you a non-exclusive, non-transferable license to use the delivered photographs for the purposes described in the project overview. Personal use includes family sharing, printing for personal display, and sharing on personal social media accounts with credit to me. Commercial use — including advertising, product promotion, editorial use, stock licensing, and any use intended to generate revenue — requires a separate commercial license at an additional cost. If you intend to use the images commercially, you must disclose this before booking so I can quote the appropriate commercial license fee.
 
-## 5. Model and Property Releases
+## 5. MODEL RELEASE REQUIREMENT
 
-If identifiable persons appear in the photographs, the Client is solely responsible for obtaining signed model releases from all such individuals before the session date, unless the Photographer has explicitly agreed in writing to obtain releases as a paid add-on service. If identifiable private property appears in the photographs, the Client is similarly responsible for obtaining written property releases. The Client warrants that all required releases will be obtained and agrees to indemnify and hold the Photographer harmless from any claims arising from the Client's failure to obtain necessary releases.
+If identifiable people appear in the photographs, you are solely responsible for obtaining signed model releases from each such individual before the session. I am not responsible for obtaining releases on your behalf unless we have separately agreed to that as a paid service. You agree to indemnify and hold me harmless from any claims, damages, or legal actions arising from the use of images containing people who have not signed valid model releases.
 
-## 6. Post-Processing and Editing
+## 6. LIMITED EDITS INCLUDED
 
-The Photographer's standard post-processing includes color correction, exposure adjustment, and basic retouching to maintain a consistent, professional look. The following are not included in the standard fee and are available as add-ons at an additional cost: heavy skin retouching, body modification, background removal or replacement, compositing or image manipulation, and object removal. The Client acknowledges that the Photographer will apply their professional editing judgment to each image, and that the final edited images will reflect the Photographer's established aesthetic style.
+My session fee includes standard post-processing on all delivered images: color correction, exposure adjustment, contrast balancing, and light retouching to ensure a consistent, polished look. The following are not included in the standard fee and are available at an additional per-image rate: heavy skin retouching, blemish or scar removal, body modification or reshaping, background removal or replacement, object removal, and compositing or digital manipulation. I will not deliver images in a style inconsistent with my published portfolio work.
 
-## 7. Aesthetic Disclaimer
+## 7. RAW FILES NOT DELIVERED
 
-The Photographer's photographic style, editing approach, and artistic choices are as represented in the Photographer's portfolio, which the Client has had the opportunity to review prior to booking. By signing this Agreement, the Client confirms that they are familiar with and approve of the Photographer's style. Dissatisfaction with the Photographer's artistic style, editing style, or creative choices is not grounds for a refund, re-shoot, or reduction in fees.
+Raw, unedited image files are my exclusive property and will not be delivered under any circumstances as part of a standard session booking. Raw files represent my unfinished, proprietary work product and are not a deliverable. If you require raw files, this must be contracted separately in a written addendum at an additional fee, and even then delivery is at my sole discretion.
 
-## 8. Raw Files
+## 8. IMAGE DELIVERY TIMELINE
 
-Unedited raw or source files are the exclusive property of the Photographer and are not included in any standard package or delivery. Raw files will not be delivered unless explicitly contracted in a separate written addendum and at an additional fee. This policy is standard in the photography industry and reflects the Photographer's professional judgment regarding quality control.
+I will deliver your final edited images within fourteen (14) business days of the session date via an online gallery link. This timeline assumes I have received full payment before or on the session date. Rush delivery — within five (5) business days — is available at an additional fee. You are responsible for downloading all images within thirty (30) days of gallery delivery; I am not obligated to re-deliver or store images after the gallery access period expires.
 
-## 9. Image Delivery Timeline
+## 9. AESTHETIC DISCLAIMER
 
-The Photographer will deliver the final edited images within the timeframe specified in the project description above, measured in business days from the date of the session (or from the date of final payment, whichever is later). The Photographer will deliver images via an online gallery, file transfer service, or other digital delivery method. The Client is responsible for downloading and backing up all delivered images within thirty (30) days of delivery notification. The Photographer is not responsible for storing or re-delivering images after the gallery access period expires.
+My editing style is consistent with my published portfolio, which you have had the opportunity to review before booking. By signing this Agreement, you confirm that you are engaging me on the basis of my established style. Dissatisfaction with my artistic choices, editing style, color treatment, or creative direction does not constitute grounds for a refund, a reshoot, or any reduction in fees. I do not alter my editing style to match other photographers' work.
 
-## 10. Cancellation and Rescheduling
+## 10. CANCELLATION AND RESCHEDULING
 
-The deposit paid to reserve the session date is non-refundable under all circumstances, including illness, scheduling conflicts, or change of mind. If the Client requests a reschedule more than seventy-two (72) hours before the session, the Photographer will make reasonable efforts to accommodate the request, subject to availability, and the deposit will be applied to the rescheduled date. If the Client requests a reschedule within seventy-two (72) hours of the session, or fails to appear at the scheduled session, the deposit is forfeited and a new deposit is required to rebook. If the Photographer must cancel due to circumstances within the Photographer's control, the Client will receive a full refund of all amounts paid.
+The retainer paid to reserve your session date is non-refundable under all circumstances. If you cancel your session more than seven (7) days before the scheduled date, you forfeit only the retainer and owe no additional amount. If you cancel within seven (7) days of the session, or fail to appear at the scheduled time and location, you forfeit one hundred percent (100%) of the total session fee. I will permit one (1) reschedule with at least seventy-two (72) hours advance notice, subject to my availability; the retainer will be applied to the rescheduled date.
 
-## 11. Incapacitation and Backup Clause
+## 11. ILLNESS AND INCAPACITATION BACKUP CLAUSE
 
-In the unlikely event that the Photographer is unable to perform services due to illness, injury, family emergency, or circumstances beyond the Photographer's control, the Photographer will make reasonable good-faith efforts to arrange a qualified substitute photographer at no additional cost to the Client. If no suitable substitute can be found, the Photographer's liability shall be limited to a full refund of all amounts paid by the Client. The Photographer shall not be liable for any consequential, incidental, or special damages arising from the Photographer's inability to perform.
+If I am unable to perform the session due to sudden illness, injury, or personal emergency, I will make every reasonable effort to find a qualified substitute photographer to fulfill the booking. If no qualified substitute is available, you will receive a full refund of all payments made to me. This represents my sole liability to you in the event I cannot perform. I am not responsible for any consequential damages, including travel costs or event costs you have incurred.
 
-## 12. Non-Disparagement
+## 12. NON-DISPARAGEMENT
 
-Each party agrees not to publicly disparage, defame, or make false statements about the other party, their business, or their work, whether online, in print, or in any other medium. This includes social media posts, review platforms, and professional networks. Honest, good-faith reviews based on actual experience are not prohibited by this clause.
+Both parties agree not to make false, misleading, or defamatory statements about the other in any public forum, including but not limited to social media, Google reviews, Yelp, or professional networks. Honest feedback based on genuine experience is not restricted by this clause; however, knowingly false or maliciously exaggerated statements are prohibited.
 
-## 13. Equipment Liability
+## 13. EQUIPMENT LIABILITY
 
-The Photographer maintains professional-grade equipment and insurance. If the session takes place in a hazardous environment, an outdoor location with unpredictable conditions, or involves client-directed activities that may expose the Photographer's equipment to damage, the Client acknowledges and accepts that the Photographer is not responsible for any equipment damage, malfunction, or failure arising from such conditions. The Photographer reserves the right to decline to place equipment in conditions that, in the Photographer's professional judgment, create unreasonable risk of damage.
+You and your representatives may not handle my camera equipment, lighting, or accessories at any time. I am not responsible for damage to my equipment caused by venue conditions, adverse weather, third-party interference, or client-directed activities. If a venue or shoot location poses a risk to my equipment that I deem unreasonable, I reserve the right to decline to use equipment in that location without penalty.
 
-## 14. Governing Law
+## 14. GOVERNING LAW
 
-This Agreement shall be governed by and construed in accordance with the laws of the State of [STATE]. Any disputes arising out of or in connection with this Agreement shall be subject to the exclusive jurisdiction of the state or federal courts in [COUNTY], [STATE].
+This Agreement is governed by the laws of the United States and the state in which I operate my business. Any dispute arising under this Agreement shall be resolved in the courts of my state of operation, and you consent to jurisdiction in that venue.
 
 ---
 
-**Photographer:** {{freelancer_name}} ({{freelancer_business}})
-**Client:** {{client_name}} ({{client_company}})
-**Session Date:** {{start_date}}
-**Contract Value:** {{currency}} {{rate}}`,
+**Freelancer:** {{freelancer_name}} / {{freelancer_business}}
+**Client:** {{client_name}} / {{client_company}}
+**Session Date:** {{start_date}} | **Total Fee:** {{currency}} {{rate}}`,
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -193,94 +195,89 @@ This Agreement shall be governed by and construed in accordance with the laws of
   {
     id: 'wedding-photographer',
     label: 'Wedding Photographer',
-    description: 'Comprehensive contract for full-day wedding photography coverage.',
+    description: 'Full-day wedding coverage with retainer, cancellation tiers, and gallery terms.',
     icon: 'Heart',
-    suggestedPaymentTerms: '30% non-refundable retainer at booking, remaining balance due 30 days before wedding',
     suggestedTitle: 'Wedding Photography Agreement',
+    suggestedPaymentTerms: '30% non-refundable retainer due at signing. 70% balance due 30 days before the wedding date.',
     content: `# Wedding Photography Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (operating as {{freelancer_business}}, hereinafter "the Photographer") and {{client_name}} (hereinafter "the Client" or "the Couple"). Together, the parties agree to the following terms governing wedding photography services.
+This Wedding Photography Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}}, operating as {{freelancer_business}} ("I," "me," or "the Freelancer"), and {{client_name}} ("you," "the Client," or "the Couple"). Both parties agree to be bound by every term set forth in this Agreement.
 
 ---
 
-## 1. Event Details
+## 1. PARTIES AND EVENT DETAILS
 
-The Photographer is engaged to provide photography coverage for the wedding event as follows: {{project_description}}. The wedding is scheduled for {{start_date}}. Coverage will begin at the agreed call time and conclude at the agreed wrap time, as communicated in the pre-wedding planning session. Ceremony location and reception location will be confirmed no later than thirty (30) days before the wedding date.
+I, {{freelancer_name}} of {{freelancer_business}}, agree to provide wedding photography services for your event as follows: {{project_description}}. The wedding is scheduled for {{start_date}}. My coverage will begin at the agreed call time and conclude at the agreed wrap time as confirmed in our planning communications. Ceremony and reception locations will be confirmed in writing no later than thirty (30) days before the wedding date. The total fee for this engagement is {{currency}} {{rate}}.
 
-## 2. Non-Refundable Retainer
+## 2. NON-REFUNDABLE RETAINER
 
-A retainer equal to thirty percent (30%) of the total contract price is due upon execution of this Agreement. This retainer is NON-REFUNDABLE under all circumstances, including but not limited to cancellation by the Client, postponement of the wedding, illness, change of mind, or any event beyond either party's control. The retainer represents the Photographer's reservation of the wedding date, forgoing all other bookings for that date. The total contract value is {{currency}} {{rate}}, and payment terms are {{payment_terms}}.
+A retainer equal to thirty percent (30%) of the total contract fee is due upon execution of this Agreement. This retainer is NON-REFUNDABLE under all circumstances, without exception. This means that if you postpone, cancel, change your mind, experience a personal emergency, or encounter any other circumstance — regardless of how unforeseen — the retainer will not be returned. The retainer represents my reservation of your wedding date, during which I decline all other bookings. The financial loss I suffer by holding that date exclusively for you is what the retainer compensates. Payment terms are: {{payment_terms}}.
 
-## 3. Payment Schedule
+## 3. PAYMENT SCHEDULE
 
-The remaining balance is due no later than thirty (30) days before the wedding date. Failure to remit the remaining balance by this deadline may result in the Photographer treating the booking as cancelled, in which case the retainer is forfeited and the Photographer is released from any obligation to provide services. The Photographer will provide a written reminder of the payment deadline no later than forty-five (45) days before the wedding.
+The remaining seventy percent (70%) balance of the total fee is due no later than thirty (30) days before the wedding date. I will send you a reminder no later than forty-five (45) days before the wedding. If the balance is not received by the thirty-day deadline, I reserve the right to treat the booking as cancelled, retain all payments received, and release the date to other clients. I will not begin preparing for your wedding — reviewing timelines, scouting locations, preparing equipment — until the balance is paid in full.
 
-## 4. Exclusive Photographer Clause
+## 4. EXCLUSIVE PHOTOGRAPHER CLAUSE
 
-The Photographer is engaged as the exclusive professional photographer for the wedding event. The Client agrees not to hire any other professional photographers or videographers without the prior written consent of the Photographer. "Professional photographer" means any person who is engaged for compensation or who uses professional-grade equipment. Guests are welcome to take casual photographs with personal devices, but the Client agrees to ask guests to refrain from obstructing the Photographer's access to key moments during the ceremony and formal portrait sessions.
+I am the exclusive contracted professional photographer for your wedding event. You agree not to engage any other professional photographer — meaning any person hired for compensation or using professional-grade equipment — to photograph your event without my prior written consent. Guests are welcome to take casual photographs with their personal phones and cameras, but I ask that you communicate to your guests and officiant that they should not step into the aisle, position themselves in front of me, or interfere with my access to key moments during the ceremony and portrait sessions.
 
-## 5. Force Majeure
+## 5. SECOND SHOOTER
 
-Neither party shall be liable for failure to perform obligations under this Agreement due to circumstances beyond their reasonable control, including but not limited to: acts of God, extreme weather events, natural disasters, pandemics, government-mandated restrictions, venue closure, transportation disruptions, sudden serious illness or injury, or death in the immediate family. In the event that the Photographer cannot perform due to a qualifying force majeure event, the Photographer's liability shall be limited to a full refund of all amounts paid. The retainer is non-refundable only if the Client cancels due to a force majeure event. The parties agree to act in good faith to reschedule when possible.
+If a second photographer is included in your package, I will arrange for a qualified associate photographer. The specific second shooter may vary based on availability, but all second shooters I work with meet my professional standards. Second shooter images will be included in your final gallery. I reserve the right to substitute the second shooter with a comparably qualified professional if circumstances require.
 
-## 6. Second Shooter
+## 6. FORCE MAJEURE
 
-If a second photographer is included in the contracted package, their role is to provide supplemental coverage — including guest candids, alternate angles, and coverage of parallel events (e.g., separate getting-ready rooms). The second shooter's deliverables are included in the main gallery. The Photographer reserves the right to substitute the second shooter with a comparably qualified photographer. The second shooter is contracted by and reports to the Photographer, and is not a party to this Agreement.
+If I am unable to perform my services due to circumstances beyond my reasonable control — including but not limited to sudden serious illness, hospitalization, death in my immediate family, natural disaster, extreme weather that makes travel impossible, government-mandated event restrictions, or venue closure — my liability to you is limited to a full refund of all payments I have received from you. I will make every reasonable effort to find a qualified replacement photographer and will assist with the transition at no cost to you. I am not liable for any other costs you may incur, including vendor fees, travel expenses, or event costs.
 
-## 7. Meal and Break Policy
+## 7. MEAL AND BREAK POLICY
 
-If wedding coverage extends beyond six (6) consecutive hours, the Client agrees to arrange and provide a hot vendor meal for the Photographer (and second shooter, if applicable) during a natural break in coverage, typically during the dinner service. The Photographer is entitled to a minimum thirty (30)-minute uninterrupted break during events lasting more than six (6) hours. The Photographer will coordinate the timing of this break with the Client to minimize impact on coverage.
+For any wedding coverage extending beyond six (6) consecutive hours, you agree to provide me — and my second shooter, if applicable — with a hot vendor meal at the same time as the wedding party or catering staff meal is served, typically during dinner service. I am entitled to a minimum thirty (30)-minute uninterrupted break during the reception. I will coordinate the timing of this break with you to ensure no key moments are missed. If a vendor meal is not provided, my fee will not be reduced, but I reserve the right to take a break as needed regardless.
 
-## 8. Safety and Harassment Policy
+## 8. SAFETY AND HARASSMENT CLAUSE
 
-The Photographer reserves the right to immediately cease services and leave the event without refund of any fees paid if the Photographer or their assistants are subjected to physical violence, credible threats of violence, sustained harassment, verbal abuse, or unsafe working conditions from the Client, wedding party, guests, venue staff, or any other person at the event. Disagreement about shot selection, direction, or scheduling does not constitute grounds to invoke this clause; however, abusive, threatening, or physically dangerous conduct does.
+I take my personal safety seriously. I reserve the right to cease services and leave the event immediately, without refund of any fees paid, if I am subjected to physical violence, credible threats of physical harm, sustained verbal abuse, racial or sexual harassment, or any other conduct that creates an unsafe working environment. This includes conduct directed at me by you, members of your wedding party, your guests, or venue staff. Disagreements about shot selection or scheduling are not harassment; abusive, threatening, or physically dangerous conduct is.
 
-## 9. Timeline Cooperation
+## 9. TIMELINE COOPERATION
 
-The Client agrees to provide the Photographer with a detailed wedding day timeline no later than fourteen (14) days before the wedding. The timeline should include all key events, locations, travel times, and portrait session windows. The Photographer is not responsible for missing key moments, events, or portrait sessions caused by delays attributable to the Client, the wedding party, the venue, vendors, or other factors outside the Photographer's control. The Photographer will make all reasonable efforts to adapt and capture moments as they occur.
+You agree to provide me with a detailed, written wedding day timeline no later than fourteen (14) days before your wedding date. This timeline should include all locations, travel times, ceremony time, portrait session windows, and reception schedule. I will use this timeline to plan coverage and ensure no key moments are missed. I am not responsible for missing moments, portraits, or events caused by late starts, schedule overruns, uncooperative guests or vendors, or timeline changes made without adequate notice to me.
 
-## 10. Editing Style and Expectations
+## 10. EDITING STYLE AND EXPECTATIONS
 
-The delivered photographs will be edited in the Photographer's established style as reflected in the Photographer's portfolio, which the Client has reviewed and approved by entering into this Agreement. The Photographer's editing process includes color correction, exposure adjustment, and stylistic tone-mapping. Specific editing requests — including but not limited to extensive skin retouching, body modification, background replacement, or heavy compositing — are available as add-ons at an additional fee. The Client may not request that the Photographer convert color images to black and white after the gallery has been delivered, as this constitutes a rework of the edited files. The Client may request black-and-white versions of specific images during the ordering phase at an additional cost.
+All images will be edited in my signature style, consistent with my published portfolio, which you have reviewed and approved by entering into this Agreement. My editing process includes color correction, exposure adjustment, and stylistic tone treatment. Specific requests — including heavy skin retouching, body modification, background removal, or major compositing — are available as add-on services at an additional per-image rate. After the gallery has been delivered, I do not convert color images to black and white, re-edit images in a different style, or make other retrospective changes as part of this Agreement.
 
-## 11. Image Delivery Timeline
+## 11. IMAGE DELIVERY TIMELINE
 
-The Photographer will deliver the completed online gallery within eight (8) to twelve (12) weeks of the wedding date, depending on the volume of photographs and current workload. The Photographer will provide periodic updates if delivery is expected to exceed this range. Expedited delivery may be available at an additional rush fee.
+Your final edited wedding gallery will be delivered within eight (8) weeks of your wedding date. I will send you a notification when the gallery is ready. Rush delivery — within four (4) weeks — is available at an additional fee. I appreciate your patience; editing a full wedding gallery to my quality standards takes significant time.
 
-## 12. Online Gallery Access
+## 12. ONLINE GALLERY ACCESS
 
-The online gallery will be accessible for a period of ninety (90) days from the date of delivery. The Client is solely responsible for downloading all images and creating personal backups within this period. The Photographer is not obligated to store or re-deliver images after the gallery expires. Re-uploading or re-delivering an expired gallery may be available at an additional fee, subject to the Photographer's file retention policies.
+Your online gallery will remain accessible for twelve (12) months from the date of delivery. You are solely responsible for downloading all images and creating your own backups within that twelve-month period. After the gallery expires, I am not obligated to store or re-deliver your images, though I may be able to do so for an archival retrieval fee at my discretion.
 
-## 13. Cancellation Policy
+## 13. CANCELLATION POLICY
 
-If the Client cancels this Agreement, the following cancellation fees apply: (a) if cancellation occurs more than six (6) months before the wedding date, the Client forfeits the non-refundable retainer only; (b) if cancellation occurs between three (3) and six (6) months before the wedding date, the Client forfeits fifty percent (50%) of the total contract value; (c) if cancellation occurs within three (3) months of the wedding date, the Client forfeits one hundred percent (100%) of the total contract value. These fees reflect the Photographer's inability to rebook the date on short notice.
+All cancellations must be communicated in writing. If you cancel more than six (6) months before the wedding date, you forfeit only the non-refundable retainer; no additional amount is owed. If you cancel between three (3) and six (6) months before the wedding date, fifty percent (50%) of the total contract fee is owed to me regardless of payments already made. If you cancel within three (3) months of the wedding date, one hundred percent (100%) of the total contract fee is owed. These fees reflect the reality that close-in cancellations make it impossible for me to rebook that date.
 
-## 14. Postponement Policy
+## 14. POSTPONEMENT POLICY
 
-The Client may request one (1) complimentary date change, provided the Photographer is available on the new date and written notice of postponement is received at least sixty (60) days before the original wedding date. If the Photographer is not available on the new requested date, the postponement will be treated as a cancellation under the schedule above. A second date change, or a date change with less than sixty (60) days' notice, will be treated as a cancellation and new booking, requiring a new retainer.
+I will accommodate one (1) date change at no additional charge, provided the new date is available on my calendar and you notify me in writing at least sixty (60) days before the original wedding date. If the new date is not available on my calendar, the postponement will be treated as a cancellation under the policy above. A second date change, or a change requested with fewer than sixty (60) days notice, will be treated as a cancellation and new booking, requiring a fresh retainer.
 
-## 15. Venue Access
+## 15. VENUE ACCESS
 
-The Client is responsible for ensuring that the Photographer has full, unrestricted access to all ceremony and reception venues at the contracted times, including any restricted areas needed for portrait sessions, detail shots, or special moments. If a venue imposes restrictions on photography — including flash restrictions, location bans, or equipment limitations — the Client must notify the Photographer in writing no later than fourteen (14) days before the wedding so that the Photographer can prepare accordingly.
+You are responsible for ensuring I have full, unrestricted access to all ceremony and reception spaces at the contracted coverage times. If a venue has photography restrictions — including flash restrictions, location limitations, or timing restrictions — you must notify me in writing at least fourteen (14) days before the wedding so I can plan accordingly. Venue-imposed restrictions that limit my ability to photograph your event are not grounds for a refund or fee reduction.
 
-## 16. Social Media and Marketing
+## 16. SOCIAL MEDIA AND PORTFOLIO USAGE
 
-The Photographer reserves the right to post selected wedding images on the Photographer's website, social media platforms, blog, and marketing materials. Images will be used in a tasteful and professional manner. If the Client wishes to restrict the Photographer's use of wedding images for marketing purposes, the Client must submit a written opt-out request at the time of signing. Opt-out of marketing use does not entitle the Client to a discount or rebate.
+I may publish your wedding images on my website, social media accounts, blog, and in my marketing and promotional materials. If you would like a temporary social media embargo — meaning you want to share the images yourself first — I will honor up to a forty-eight (48)-hour embargo from your wedding date if you request it in writing before the wedding. If you wish to opt out of portfolio use entirely, you must request this in writing before the wedding date, and we will discuss whether a portfolio opt-out fee applies.
 
-## 17. Backup Equipment
+## 17. GOVERNING LAW
 
-The Photographer uses professional-grade camera equipment and carries backup camera bodies, lenses, memory cards, and batteries at all times. In the event of equipment malfunction during the event, the Photographer will immediately switch to backup equipment. All memory cards will be duplicated as soon as reasonably possible after the event to protect against data loss.
-
-## 18. Governing Law
-
-This Agreement shall be governed by and construed in accordance with the laws of the State of [STATE]. Any disputes arising hereunder shall be submitted to binding arbitration in [COUNTY], [STATE], before a single arbitrator under the rules of the American Arbitration Association.
+This Agreement is governed by the laws of the United States and the state in which I am domiciled. Any disputes shall be resolved in the courts of my state of domicile.
 
 ---
 
-**Photographer:** {{freelancer_name}} ({{freelancer_business}})
+**Freelancer:** {{freelancer_name}} / {{freelancer_business}}
 **Client(s):** {{client_name}}
-**Wedding Date:** {{start_date}}
-**Contract Value:** {{currency}} {{rate}}`,
+**Wedding Date:** {{start_date}} | **Total Fee:** {{currency}} {{rate}}`,
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -290,81 +287,84 @@ This Agreement shall be governed by and construed in accordance with the laws of
     id: 'graphic-designer',
     label: 'Graphic Designer',
     description: 'For logos, brand kits, print materials, and visual identity projects.',
-    icon: 'PaintBrush',
-    suggestedPaymentTerms: '50% deposit at project start, 50% upon final file delivery',
+    icon: 'PenNib',
     suggestedTitle: 'Graphic Design Services Agreement',
+    suggestedPaymentTerms: '50% deposit due before work begins. Remaining 50% due upon delivery of final files.',
     content: `# Graphic Design Services Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (operating as {{freelancer_business}}, hereinafter "the Designer") and {{client_name}} of {{client_company}} (hereinafter "the Client"). This Agreement governs the graphic design services described herein.
+This Graphic Design Services Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}}, operating as {{freelancer_business}} ("I," "me," or "the Freelancer"), and {{client_name}} of {{client_company}} ("you" or "the Client"). Both parties agree to the terms below.
 
 ---
 
-## 1. Project Scope and Deliverables
+## 1. PARTIES AND PROJECT OVERVIEW
 
-The Designer agrees to create and deliver the following design work: {{project_description}}. Final files will be delivered in the formats specified in Section 6 below. Any deliverable not explicitly listed in the project description above is outside the scope of this Agreement and will require a written change order. Design work is created exclusively for the intended use described herein; any adaptation for use in additional formats, markets, or media requires a separate agreement.
+I, {{freelancer_name}} of {{freelancer_business}}, agree to provide graphic design services to you, {{client_name}} of {{client_company}}, as described in this Agreement. The project description is as follows: {{project_description}}. This Agreement is effective as of {{start_date}} with an anticipated completion of {{end_date}}. The total fee is {{currency}} {{rate}}, payable per the terms stated below.
 
-## 2. Revision Policy
+## 2. PROJECT SCOPE AND DELIVERABLES
 
-This Agreement includes three (3) rounds of revisions per deliverable. A "revision round" is defined as one complete, consolidated set of changes communicated by the Client in a single document or message. Piecemeal revision requests submitted across multiple messages or sessions will be treated as multiple revision rounds. Revision requests must be submitted within seven (7) business days of each deliverable being presented. After three (3) revision rounds have been exhausted, any further revisions will be billed at the Designer's hourly rate of $[HOURLY_RATE] per hour, invoiced separately and due upon completion.
+The deliverables for this project are those described in the project overview above, including the specific design items, quantities, and file formats listed therein. Any deliverable type, format, size, or design element not explicitly included in the project description is out of scope and is not covered by this Agreement. Out-of-scope requests will be quoted separately and require a written change order before I begin work on them.
 
-## 3. Approval Deadline and Deemed Approval
+## 3. INITIAL CONCEPTS
 
-The Client has five (5) business days to review and respond to each deliverable presented for approval. If the Client does not provide written feedback or approval within five (5) business days of a deliverable being submitted, that deliverable shall be deemed approved by the Client, and the Designer may proceed to the next phase of work. The Designer is not responsible for design decisions made under deemed approval. The Designer will send one reminder before the approval deadline expires.
+I will present two (2) initial design concepts in the first round of work. You will select one (1) concept direction to develop further. Non-selected concepts are not carried forward, developed further, or available for purchase separately. The concept presentation round is not a revision round — it is an exploratory phase, and only the selected concept proceeds to refinement.
 
-## 4. Concept Presentation
+## 4. REVISION ROUNDS LIMIT
 
-The Designer will present two (2) initial design concepts for the Client's review. The Client will select one (1) concept direction to develop further. Revisions and refinements will be applied to the selected concept only. The non-selected concept(s) are not carried forward and are not subject to further development under this Agreement.
+This Agreement includes three (3) rounds of revisions on the selected design direction. A revision round is defined as one consolidated set of feedback submitted by you in a single document or message — it is not a back-and-forth conversation or a running series of individual change requests. Each round of revisions is addressed in full before the next round begins. If you require more than three (3) revision rounds, additional rounds are billed at my standard hourly rate. You must submit revision requests within five (5) business days of receiving each deliverable.
 
-## 5. File Delivery Formats
+## 5. APPROVAL DEADLINE AND DEEMED APPROVAL
 
-Upon receipt of final payment, the Designer will deliver final files in the following formats: PNG (high-resolution, transparent background where applicable), PDF (print-ready), and SVG (vector format). Layered source files — including Adobe Illustrator (.ai), Adobe Photoshop (.PSD), or other native application files — will be delivered only upon receipt of full payment, and only if source file delivery was explicitly included in the agreed project scope. If source files were not included in the agreed scope, they may be purchased separately.
+You have five (5) business days to review and respond to each deliverable I submit for your approval. If I do not receive written feedback or written approval from you within five (5) business days, the deliverable shall be considered approved and I may proceed to the next phase of the project. I will send one reminder before the deadline. I am not responsible for design decisions made under deemed approval.
 
-## 6. Payment Structure and Terms
+## 6. FILE DELIVERY FORMATS
 
-The total contract value is {{currency}} {{rate}}, payable as follows: {{payment_terms}}. The deposit is non-refundable and is required before any design work commences. The deposit compensates the Designer for creative time, research, and opportunity cost associated with reserving capacity for this project.
+Final files will be delivered in the following formats: PNG (high-resolution with transparent background where applicable), PDF (print-ready), and SVG (vector format for scalability). Layered source files — including Adobe Illustrator (.ai), Adobe Photoshop (.psd), or other native application files — will be delivered only upon receipt of full and final payment, and only if source file delivery was included in the agreed project scope. If source files were not included in the scope, they are available for purchase separately at an additional fee.
 
-## 7. Intellectual Property Transfer
+## 7. PAYMENT STRUCTURE
 
-All design concepts, artwork, and deliverables created by the Designer under this Agreement remain the intellectual property of the Designer until the total contract price has been paid in full. Upon receipt of full payment, the Designer assigns to the Client all copyright and ownership rights in the final approved deliverables. This transfer is limited to the final deliverables as approved and does not include preliminary concepts, unused design directions, or design elements not incorporated into the final deliverables.
+The total project fee is {{currency}} {{rate}}, payable as follows: {{payment_terms}}. The deposit is non-refundable and must be received before I begin any design work. The deposit compensates me for the creative research, planning, and opportunity cost of reserving time for your project.
 
-## 8. Exclusivity and Non-Resale
+## 8. INTELLECTUAL PROPERTY TRANSFER
 
-The Designer will not sell or license the final approved design to any direct competitor of the Client within the same primary industry or geographic market for a period of two (2) years following the completion of this Agreement. The Designer may, however, use similar design techniques, color palettes, or general stylistic approaches in work for other clients, as these reflect the Designer's professional craft and cannot be exclusively owned by the Client.
+All designs, artwork, and deliverables created by me under this Agreement remain my intellectual property until full payment has been received. Upon receipt of final payment in full, I assign to you all copyright and ownership rights in the final approved deliverables specifically created for this project. Preliminary concepts, unused directions, rejected designs, and my pre-existing design assets, fonts, textures, and tools remain my property and are not transferred.
 
-## 9. Portfolio and Self-Promotion Rights
+## 9. EXCLUSIVITY CLAUSE
 
-The Designer retains the perpetual right to display the final deliverables — including process work, mockups, and case study descriptions — in the Designer's portfolio, website, social media profiles, industry publications, and award submissions. If the Client requires that the work remain confidential and not be displayed publicly, the Client must request this in writing at the time of signing, and the parties will negotiate a separate confidentiality fee reflecting the loss of portfolio value to the Designer.
+To protect the value of your investment, I will not sell, license, or otherwise provide the final approved designs to any direct competitor of yours operating in the same primary industry and geographic market for a period of two (2) years from the date of final delivery. This exclusivity applies to the final approved deliverables only — not to design techniques, color approaches, or general stylistic methods that reflect my professional craft.
 
-## 10. Print and Production Disclaimer
+## 10. PORTFOLIO RIGHTS
 
-The Designer provides digital design files optimized to industry standards. Colors in the final files are specified using standard color systems (e.g., CMYK, Pantone, RGB). However, the Designer cannot guarantee that printed output will exactly match the colors displayed on any particular screen or monitor, as color rendering varies significantly between displays and printing devices. The Client is solely responsible for obtaining and approving physical proofs before authorizing any production run. The Designer is not liable for print errors, color variation, or production defects after the Client has approved proofs.
+I retain the permanent right to display the final deliverables — including mockups, screenshots, and written case study descriptions — in my portfolio, on my website, on social media, in award submissions, and in any other professional or marketing context. If you need the work to remain confidential and not appear publicly in my portfolio, you must request this in writing at the time of signing this Agreement, and we will negotiate a confidentiality premium that reflects the loss of portfolio value to me.
 
-## 11. Client-Provided Materials
+## 11. PRINT AND PRODUCTION DISCLAIMER
 
-If the Client provides logos, photographs, text, or other materials for use in the design work, the Client warrants that they own or have obtained all necessary rights, licenses, and permissions to use such materials, and that the use of such materials in the design work will not infringe any third-party intellectual property rights. The Client agrees to indemnify and hold the Designer harmless from any claims, losses, or damages arising from the Client's breach of this warranty.
+I design to industry-standard color specifications, and final files are prepared for both screen and print use. However, I cannot guarantee that colors displayed on your screen will match the output of any particular printing device, as color rendering varies significantly based on printer type, paper stock, ink profile, and monitor calibration. Before you authorize any print production run, you must obtain and approve physical proofs from your print vendor. I am not responsible for print errors, color variations, or production defects after you have approved proofs and authorized production.
 
-## 12. Confidentiality
+## 12. CLIENT-PROVIDED CONTENT WARRANTY
 
-The Designer agrees to keep confidential all non-public information provided by the Client in connection with this project, including but not limited to business strategies, product plans, proprietary data, and financial information. This obligation survives termination of this Agreement for three (3) years.
+If you provide me with logos, photographs, written content, or any other materials to incorporate into the design work, you represent and warrant that you own or have obtained all necessary rights, licenses, and permissions to use those materials, and that incorporating them into the design work will not infringe any third-party intellectual property rights. You agree to indemnify and hold me harmless from any claims, losses, or legal costs arising from your breach of this warranty.
 
-## 13. Termination and Kill Fee
+## 13. CONFIDENTIALITY
 
-Either party may terminate this Agreement upon written notice. If the Client terminates for any reason other than the Designer's material breach, the Client agrees to pay: (a) fees for all work completed to the date of termination, at the pro-rated contract rate; and (b) a kill fee of twenty-five percent (25%) of the remaining contract balance. If the Designer terminates due to the Client's failure to pay or material breach, the Designer will retain all fees paid and transfer only the work already paid for.
+I agree to keep confidential all non-public information you share with me in connection with this project — including business strategies, unreleased products, pricing, and competitive information — for a period of three (3) years from the date of this Agreement.
 
-## 14. Late Payment Penalties
+## 14. TERMINATION AND KILL FEE
 
-Balances not paid by the invoice due date will accrue interest at 1.5% per month (18% per annum) on the outstanding balance. The Designer reserves the right to withhold final file delivery until the account is paid in full. The Client agrees to reimburse the Designer for all reasonable collection costs, including attorney's fees, in the event payment must be pursued through legal action.
+Either party may terminate this Agreement with written notice. If you terminate after work has begun, you owe me: (a) payment for all work completed to date, at the pro-rated contract rate; and (b) a kill fee equal to twenty-five percent (25%) of the remaining unpaid contract balance. The kill fee compensates me for reserved capacity and foregone opportunities. Final files will be delivered only for phases that have been paid in full.
 
-## 15. Governing Law
+## 15. LATE PAYMENT PENALTIES
 
-This Agreement shall be governed by the laws of the State of [STATE]. Any disputes shall be resolved by binding arbitration in [COUNTY], [STATE], under the rules of the American Arbitration Association, with costs shared equally by both parties.
+Balances not paid by the invoice due date will accrue interest at one and one-half percent (1.5%) per month on the outstanding amount. I reserve the right to withhold final file delivery until the account is paid in full and to pursue legal action for collection of overdue amounts, including attorney's fees.
+
+## 16. GOVERNING LAW
+
+This Agreement is governed by the laws of the United States and the state in which I am domiciled. Disputes shall be resolved in the courts of my state of domicile.
 
 ---
 
-**Designer:** {{freelancer_name}} ({{freelancer_business}})
-**Client:** {{client_name}} ({{client_company}})
-**Project Start:** {{start_date}}
-**Contract Value:** {{currency}} {{rate}}`,
+**Freelancer:** {{freelancer_name}} / {{freelancer_business}}
+**Client:** {{client_name}} / {{client_company}}
+**Project Start:** {{start_date}} | **Total Fee:** {{currency}} {{rate}}`,
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -375,80 +375,71 @@ This Agreement shall be governed by the laws of the State of [STATE]. Any disput
     label: 'Copywriter / Content Writer',
     description: 'For blog posts, web copy, email sequences, and content strategy.',
     icon: 'PencilLine',
-    suggestedPaymentTerms: '50% deposit upfront, 50% upon delivery of final drafts',
-    suggestedTitle: 'Copywriting & Content Services Agreement',
-    content: `# Copywriting & Content Services Agreement
+    suggestedTitle: 'Copywriting Services Agreement',
+    suggestedPaymentTerms: 'Net 14 — payment due within 14 days of invoice date upon delivery of each piece.',
+    content: `# Copywriting Services Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (hereinafter "the Copywriter") and {{client_name}} of {{client_company}} (hereinafter "the Client"). This Agreement governs the copywriting and content creation services described herein.
-
----
-
-## 1. Project Scope and Deliverables
-
-The Copywriter agrees to produce the following written content: {{project_description}}. Deliverables are as specified above, including the number of pieces, approximate word counts per piece, and content types. Any additional content pieces, additional word count significantly exceeding the specified range, or new content types not listed above constitute out-of-scope work and require a written addendum and additional compensation.
-
-## 2. Research Scope
-
-The Copywriter will conduct research using publicly available sources — including industry publications, the Client's existing materials, and general reference resources — to inform the content. The Client is responsible for providing: access to proprietary data, internal reports, subject matter experts for interviews (if interviews are part of the agreed scope), specific statistics or claims the Client requires in the content, brand voice guidelines, target audience profiles, and any confidential company information relevant to the project. Research beyond publicly available sources is available as a billable add-on.
-
-## 3. Revision Policy
-
-Each deliverable includes two (2) rounds of revisions. A revision round consists of one complete set of changes communicated in a single, consolidated document. Revisions must be limited to refinements within the original creative brief — significant changes to topic, angle, tone, or audience that amount to starting over will be treated as new work. Revision requests must be submitted within seven (7) business days of delivery. Requests submitted after that period may incur additional fees. Additional revision rounds beyond the included two (2) will be billed at $[HOURLY_RATE] per hour.
-
-## 4. Originality and Plagiarism Warranty
-
-The Copywriter warrants that all content delivered under this Agreement: (a) is wholly original and created by the Copywriter; (b) does not infringe any third-party copyright, trademark, or other intellectual property right; and (c) has not been previously published or sold to any other party. The Copywriter further warrants that all content passes standard plagiarism detection software. If the Client specifically requires that content pass AI-detection tools, this must be stated in writing as part of the project scope, as it may affect the Copywriter's process and pricing.
-
-## 5. Indemnification
-
-The Client agrees to indemnify, defend, and hold harmless the Copywriter from and against any and all claims, damages, losses, liabilities, costs, and expenses (including reasonable attorney's fees) arising from: (a) information, facts, data, claims, or instructions provided by the Client that are inaccurate, misleading, defamatory, or legally problematic; (b) the Client's use of the delivered content in a manner not contemplated by this Agreement; or (c) the Client's failure to obtain required legal review before publishing content that makes regulated claims (e.g., medical, financial, legal advice). The Copywriter is not a lawyer, financial advisor, or licensed professional, and content should not be relied upon as professional advice.
-
-## 6. Copyright and Ownership
-
-Copyright in all delivered content vests in the Client upon receipt of full and final payment. Before full payment is received, all copyright remains with the Copywriter, and the Client has no right to publish, distribute, or otherwise use the content. The Copywriter retains the right to retain a copy of the delivered content as a portfolio sample unless the Client has requested confidentiality in writing. If the Client requests that the work remain confidential (i.e., not displayed in the Copywriter's portfolio), a confidentiality premium may apply.
-
-## 7. Confidentiality
-
-The Copywriter agrees to keep confidential all non-public information disclosed by the Client during this engagement, including but not limited to business strategies, target audience research, proprietary data, internal processes, product roadmaps, and financial information. This confidentiality obligation survives termination of this Agreement for a period of three (3) years. The Copywriter may disclose the existence of the client relationship for general marketing purposes unless the Client expressly requests otherwise in writing.
-
-## 8. Content Approval and Client Responsibility for Publication
-
-The Copywriter delivers content based on the creative brief and information provided by the Client. The Client is solely responsible for reviewing all delivered content for legal compliance, factual accuracy, regulatory requirements (including industry-specific disclosure requirements), and suitability for publication. The Copywriter is not responsible for how the content is edited, used, or distributed after delivery. The Client bears full responsibility for ensuring that published content complies with applicable laws, including FTC guidelines, healthcare regulations, financial services regulations, and any other industry-specific requirements.
-
-## 9. Fact-Checking Responsibility
-
-The Copywriter writes based on information and facts provided by the Client or sourced from publicly available references. The Client is responsible for reviewing all factual claims in the delivered content before publication. If specific statistics, data points, or claims are required in the content, the Client must provide verified source material. The Copywriter is not liable for inaccuracies in content that arose from incorrect or incomplete information provided by the Client.
-
-## 10. Payment Terms
-
-The total contract value is {{currency}} {{rate}}, payable as follows: {{payment_terms}}. Invoices are due upon receipt unless otherwise specified. The Copywriter will not begin work until the deposit has been received. Content deliverables will be withheld until payment has been received in full for each invoice cycle.
-
-## 11. Rush Fee
-
-Projects requiring delivery within fewer than five (5) business days from the date of the signed Agreement and complete creative brief constitute rush projects and are subject to a rush surcharge of twenty-five percent (25%) of the applicable project fee. Rush delivery is subject to the Copywriter's availability and must be confirmed in writing before the rush fee is invoiced.
-
-## 12. Competitive Exclusivity
-
-During the term of this Agreement, the Copywriter will not write content for a direct competitor of the Client in the same primary product or service category, unless the Client explicitly waives this restriction in writing. A "direct competitor" is a business offering substantially similar products or services to the same target audience within the same geographic market. This exclusivity applies only to content in the same category or topic area as the work described in this Agreement.
-
-## 13. Kill Fee and Cancellation
-
-If the Client cancels this Agreement after work has begun, the Client agrees to pay: (a) fees for all work completed and delivered to the date of cancellation; and (b) a kill fee of twenty-five percent (25%) of the remaining contract balance, as compensation for reserved creative time and opportunity cost. If the Copywriter cancels due to circumstances within the Copywriter's control, the Client will receive a full refund of any amounts paid for work not yet delivered.
-
-## 14. Late Payment
-
-Invoices not paid by the due date shall accrue interest at 1.5% per month (18% per annum). The Copywriter reserves the right to suspend all work until overdue invoices are paid and to pursue legal remedies for collection. The Client agrees to pay reasonable attorney's fees if collection action is required.
-
-## 15. Governing Law
-
-This Agreement is governed by the laws of the State of [STATE]. Disputes arising hereunder shall be resolved by binding arbitration in [COUNTY], [STATE].
+This Copywriting Services Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}} ("I," "me," or "the Freelancer"), and {{client_name}} of {{client_company}} ("you" or "the Client"). Both parties agree to the following terms governing the copywriting and content creation services described herein.
 
 ---
 
-**Copywriter:** {{freelancer_name}}
-**Client:** {{client_name}} ({{client_company}})
-**Project Start:** {{start_date}}
-**Contract Value:** {{currency}} {{rate}}`,
+## 1. PARTIES AND PROJECT SCOPE
+
+I, {{freelancer_name}}, agree to write and deliver the following content for you, {{client_name}} of {{client_company}}: {{project_description}}. The specific deliverables — including the number of pieces, content type, approximate word count per piece, and delivery schedule — are as described above. This Agreement is effective as of {{start_date}} with completion anticipated by {{end_date}}. The total fee for this project is {{currency}} {{rate}}, payable per {{payment_terms}}.
+
+## 2. RESEARCH SCOPE
+
+My fee includes research using publicly available sources — including industry publications, government sources, academic summaries, and other freely accessible reference materials. I will also incorporate information you provide directly. Research that is not included in the standard fee includes: commissioning original surveys or studies, purchasing proprietary industry reports, conducting interviews beyond what you facilitate, or any specialized research that requires paid access to proprietary databases or expert consultants. If specialized research is needed, we will agree on the scope and cost separately before I proceed.
+
+## 3. REVISION ROUNDS
+
+Each deliverable includes two (2) rounds of revisions. A revision round means one complete, consolidated set of feedback submitted in a single document or message — not a running series of individual changes made over multiple conversations. Revisions must stay within the original creative brief; significant changes to topic, audience, tone, or direction that amount to starting over will be treated as new work and invoiced separately. Revision requests must be submitted within seven (7) business days of delivery. Additional revision rounds beyond the two included are billed at my hourly rate.
+
+## 4. ORIGINALITY AND PLAGIARISM WARRANTY
+
+I warrant that all content I deliver under this Agreement is original work written by me, is not plagiarized from any source, does not infringe any third-party copyright or intellectual property rights, and has not been previously published or sold to any other party. I do not use AI-generated text as a substitute for my own writing unless we have explicitly agreed otherwise in writing. If you require that delivered content pass specific AI detection tools, you must state this requirement in writing before work begins, as it affects my process and timeline.
+
+## 5. INDEMNIFICATION
+
+You agree to indemnify, defend, and hold me harmless from and against any claims, damages, losses, liabilities, costs, and expenses — including reasonable attorney's fees — arising from: (a) factual claims, data, statistics, or instructions you have provided that are inaccurate, misleading, or defamatory; (b) your use of the delivered content in a manner not described in this Agreement; or (c) your failure to have the content reviewed by qualified legal, medical, financial, or regulatory counsel before publishing content that makes regulated claims. I am a writer, not a licensed attorney, doctor, financial advisor, or compliance officer, and nothing I write constitutes professional advice in any regulated field.
+
+## 6. COPYRIGHT TRANSFER
+
+Copyright in all content I create under this Agreement transfers to you upon receipt of full and final payment. Before I receive full payment, all copyright remains mine, and you have no right to publish, distribute, adapt, or otherwise use the content. After full payment, you own the content outright. I retain the right to keep a sample of the delivered work in my private portfolio unless you request confidentiality in writing at the time of signing. A portfolio sample is for my own reference and is not published publicly.
+
+## 7. FACT-CHECKING RESPONSIBILITY
+
+I write based on the information, facts, and data you provide to me, as well as publicly available sources. I use professional judgment in evaluating sources, but I am not a journalist, researcher, or subject-matter expert in your industry. You are solely responsible for reviewing all factual claims in the delivered content before publication and for ensuring that all statistics, quotes, product claims, and other factual statements are accurate and can be substantiated. I am not liable for inaccuracies that originate from information you have provided or that I have sourced in good faith from reputable public sources.
+
+## 8. CONTENT APPROVAL AND PUBLICATION
+
+Once I deliver content and you have approved it, you are responsible for all decisions about how, when, and where it is published. I am not responsible for how the content is edited after delivery, the context in which it is used, or any consequences arising from its publication. If you make significant changes to the delivered content after approval — including changes that alter its meaning, factual accuracy, or tone — my warranty in Section 4 no longer applies to the modified version.
+
+## 9. CONFIDENTIALITY
+
+I agree to keep confidential all non-public business information you share with me during this engagement, including but not limited to business strategies, target audience data, product roadmaps, pricing, competitive intelligence, and customer information. This obligation lasts for three (3) years from the date of this Agreement.
+
+## 10. RUSH FEE
+
+Projects that require delivery within three (3) business days of the date I receive a complete, final creative brief are considered rush projects. Rush projects incur an additional fee of twenty-five percent (25%) of the applicable project or piece fee. Rush availability is subject to my current workload and must be confirmed in writing before I begin.
+
+## 11. KILL FEE
+
+If you cancel this project after I have begun writing — meaning I have invested substantive time in research, outlining, or drafting — you owe me: (a) payment for all work I have completed and delivered to date; and (b) a kill fee of fifty percent (50%) of the remaining unpaid contract balance. The kill fee compensates me for time invested that cannot be recovered or repurposed.
+
+## 12. LATE PAYMENT PENALTIES
+
+Invoices not paid within the payment terms stated above will accrue a late fee of one and one-half percent (1.5%) per month on the outstanding balance. I reserve the right to suspend all work on your project until overdue invoices are paid in full. You agree to reimburse me for reasonable collection costs, including attorney's fees, if legal action is required.
+
+## 13. GOVERNING LAW
+
+This Agreement is governed by the laws of the United States and the state in which I reside. Any disputes arising under this Agreement shall be resolved in the courts of my state of residence.
+
+---
+
+**Freelancer:** {{freelancer_name}}
+**Client:** {{client_name}} / {{client_company}}
+**Project Start:** {{start_date}} | **Total Fee:** {{currency}} {{rate}}`,
   },
 
   // ─────────────────────────────────────────────────────────────────────────
@@ -459,167 +450,182 @@ This Agreement is governed by the laws of the State of [STATE]. Disputes arising
     label: 'Videographer / Video Editor',
     description: 'For event coverage, commercial videos, music videos, and branded content.',
     icon: 'VideoCamera',
-    suggestedPaymentTerms: '50% non-refundable deposit to book, 50% due before final file delivery',
-    suggestedTitle: 'Video Production Services Agreement',
-    content: `# Video Production Services Agreement
+    suggestedTitle: 'Videography Services Agreement',
+    suggestedPaymentTerms: '50% deposit due before shoot date. Remaining 50% due upon delivery of final edited video.',
+    content: `# Videography Services Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (operating as {{freelancer_business}}, hereinafter "the Videographer") and {{client_name}} of {{client_company}} (hereinafter "the Client"). This Agreement governs the video production and editing services described herein.
-
----
-
-## 1. Project Details
-
-The Videographer agrees to provide video production services as follows: {{project_description}}. The project is scheduled for {{start_date}} through {{end_date}}. The project type, shoot location(s), and final deliverables are as described above. Any changes to the scope, shoot date, location, or deliverables require a written amendment to this Agreement.
-
-## 2. Pre-Production Scope
-
-Pre-production services included in the contract price are as specified in the project description above. Pre-production services that are NOT included unless separately contracted include: casting and talent coordination, professional location scouting beyond basic reconnaissance, production design, prop sourcing, wardrobe styling, hair and makeup, custom music composition, scriptwriting beyond basic outline guidance, and permit acquisition (permit fees are always the Client's responsibility). If any of these services are required, they will be scoped and priced in a separate addendum.
-
-## 3. Shoot Day Terms
-
-The shoot day begins at the agreed call time and is scheduled to wrap at the agreed wrap time. If the shoot runs over the agreed wrap time due to Client-caused delays, scope expansion, or other factors within the Client's control, overtime will be billed at $[OVERTIME_RATE] per hour (or part thereof) per crew member, invoiced separately. The Videographer will notify the Client as soon as it appears the shoot may run over schedule so the Client can make an informed decision about continuing.
-
-## 4. Post-Production Scope
-
-Post-production services included in the contract price are: video editing and assembly, color grading, basic sound mixing and audio cleanup, addition of title cards and lower thirds (text on screen) as specified, and licensed background music selected from the Videographer's royalty-free music library. The following are NOT included unless separately contracted and priced: custom motion graphics and animation, visual effects (VFX), subtitles and closed captioning, audio voiceover recording, additional language versions, social media format cuts (vertical 9:16, square 1:1) beyond what is specified, and speed ramp effects or other specialized edits not included in the brief.
-
-## 5. Revision Policy
-
-This Agreement includes two (2) rounds of revisions on the edited video. A revision round is one complete, consolidated list of changes submitted by the Client in a single communication. Revisions must be submitted via a written document with timecode references where applicable. Additional revision rounds beyond the included two (2) will be billed at $[HOURLY_RATE] per hour of editing time, invoiced upon completion. Revision requests must be submitted within seven (7) business days of each edit being delivered.
-
-## 6. Raw Footage
-
-Unedited raw footage files remain the property of the Videographer and are not included in any standard delivery package. Raw footage will not be delivered to the Client unless explicitly contracted in a written addendum to this Agreement, at an additional fee. If raw footage delivery is included, the format and delivery method will be specified in the addendum. The Videographer is not obligated to retain raw footage beyond ninety (90) days following final project delivery.
-
-## 7. Music Licensing
-
-All background music included in the final video is sourced from a royalty-free music library and is licensed by the Videographer for use within the specific video deliverable described in this Agreement. This license does not extend to: re-editing or remixing the video with the licensed music, uploading the video to platforms other than those specified, using the music separately from the video, or any other use outside the original deliverable. If the Client requires music licensed under specific terms (e.g., a major music catalog song, a sync license for broadcast television, or a music license covering a specific upload platform), the Client must provide such licensed music or arrange and pay for the appropriate license separately.
-
-## 8. Delivery Format and Timeline
-
-The final video will be delivered in 1080p MP4 format (H.264 codec) unless otherwise specified in the project description. Delivery will occur via a file transfer service or online platform within the number of business days specified in the project description, measured from the date of the Client's final written approval of the last revision. The Client is responsible for downloading and backing up all delivered files within thirty (30) days of delivery. The Videographer is not responsible for re-delivering files after this period.
-
-## 9. Cancellation and Rescheduling
-
-The deposit paid to reserve the shoot date is non-refundable under all circumstances. If the Client requests to reschedule the shoot more than seventy-two (72) hours before the scheduled date, the Videographer will make reasonable efforts to accommodate the request subject to availability, and the deposit will be applied to the rescheduled date. Rescheduling within seventy-two (72) hours of the shoot date forfeits the deposit, and a new deposit is required to rebook. If the Videographer cancels due to circumstances within the Videographer's control, the Client will receive a full refund of all amounts paid.
-
-## 10. Force Majeure and Outdoor Weather
-
-For outdoor shoots, the Videographer and Client agree to monitor weather conditions in the days before the shoot. If weather conditions at the time of the shoot are, in the Videographer's professional judgment, likely to damage equipment or produce unusable footage (e.g., heavy rain, extreme wind, electrical storm), the Videographer reserves the right to postpone the shoot to a mutually agreed rescheduled date. The deposit will be applied to the rescheduled date. Neither party will be liable to the other for losses resulting from weather-related postponement.
-
-## 11. Equipment Handling
-
-The Videographer's equipment — including cameras, lenses, audio gear, lighting, stabilizers, and drones — is to be operated exclusively by the Videographer and their crew. The Client, Client's guests, venue staff, and any other parties at the shoot location are not permitted to handle, operate, direct the handling of, or make physical contact with the Videographer's equipment without explicit permission from the Videographer. The Client is liable for any damage to the Videographer's equipment caused by the Client's breach of this provision.
-
-## 12. Model and Location Releases
-
-The Client is solely responsible for: obtaining signed model releases from all identifiable persons who appear in the video; obtaining location permits, location releases, and any required permissions from property owners or venue managers; and ensuring that no intellectual property belonging to third parties (including copyrighted artwork, logos, or branded materials) appears in the video in a way that requires a license. The Client agrees to indemnify and hold the Videographer harmless from any claims arising from the Client's failure to obtain required releases or permits.
-
-## 13. Intellectual Property
-
-All video content produced under this Agreement remains the intellectual property of the Videographer until full payment has been received. Upon receipt of full and final payment, the Videographer assigns to the Client all ownership rights in the final edited video deliverables. The Videographer retains the perpetual right to use clips, screenshots, and descriptions of the project in the Videographer's portfolio, reel, website, and marketing materials, unless the Client requests confidentiality in writing at the time of signing.
-
-## 14. Drone and Aerial Footage
-
-If aerial or drone footage is included in the project scope, the following terms apply: all drone operations will be conducted in compliance with applicable FAA regulations, including registration requirements and applicable airspace authorizations. Drone footage is weather-dependent and may be limited or unavailable due to wind, precipitation, restricted airspace, or other conditions on the day of the shoot. The Videographer will make all reasonable efforts to capture drone footage as planned but cannot guarantee aerial coverage if conditions make safe operation impossible. Drone-related permits, airspace authorizations, and location-specific drone permissions are the Client's responsibility unless otherwise agreed.
-
-## 15. Late Payment Penalties
-
-Invoices not paid by their due date shall accrue interest at 1.5% per month. The Videographer reserves the right to withhold delivery of final files until the account is paid in full and to pursue legal remedies for overdue balances. The Client agrees to pay reasonable attorney's fees if collection action is required.
-
-## 16. Governing Law
-
-This Agreement shall be governed by the laws of the State of [STATE]. Any disputes shall be resolved by binding arbitration in [COUNTY], [STATE].
+This Videography Services Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}}, operating as {{freelancer_business}} ("I," "me," or "the Freelancer"), and {{client_name}} of {{client_company}} ("you" or "the Client"). Both parties agree to the following terms governing video production services.
 
 ---
 
-**Videographer:** {{freelancer_name}} ({{freelancer_business}})
-**Client:** {{client_name}} ({{client_company}})
-**Project Dates:** {{start_date}} – {{end_date}}
-**Contract Value:** {{currency}} {{rate}}`,
+## 1. PARTIES AND PROJECT DETAILS
+
+I, {{freelancer_name}} of {{freelancer_business}}, agree to provide video production and editing services to you, {{client_name}} of {{client_company}}, as follows: {{project_description}}. The shoot is scheduled for {{start_date}}, with post-production and delivery anticipated by {{end_date}}. The total fee for this engagement is {{currency}} {{rate}}, payable per {{payment_terms}}.
+
+## 2. PRE-PRODUCTION SCOPE
+
+Pre-production services included in the contract price are limited to those specifically described in the project overview above. Unless explicitly included, the following are not covered: casting and talent sourcing, professional location scouting beyond basic remote reconnaissance, production design, prop sourcing, wardrobe styling, professional hair and makeup, custom music composition, scriptwriting beyond a basic outline, storyboarding, and permit acquisition. Permit fees — including location permits, FAA waivers for drone use, and any other government-issued permits — are always the client's responsibility regardless of who handles the application.
+
+## 3. SHOOT DAY TERMS
+
+The shoot will begin at the agreed call time and is scheduled to wrap at the agreed end time. If the shoot runs over the agreed wrap time due to circumstances within your control — including late starts, scope creep, subject unavailability, or requests to capture additional footage not in the original scope — overtime will be charged at my standard overtime rate per crew member, per hour or part thereof. I will notify you as soon as I anticipate an overtime situation so you can make an informed decision about whether to continue.
+
+## 4. POST-PRODUCTION SCOPE
+
+Post-production services included in my fee are: video editing and assembly, color grading to my standard style, basic sound mixing and audio cleanup, addition of title cards and lower thirds as specified in the project description, and licensed background music selected from my royalty-free music library. The following are not included in the standard fee and are available as quoted add-ons: custom motion graphics and animation, visual effects (VFX), closed captioning or subtitles, voiceover recording, additional language versions, social media format cuts beyond what is specified (e.g., vertical 9:16, square 1:1), and specialized editing effects not included in the original brief.
+
+## 5. REVISION LIMIT
+
+This Agreement includes two (2) rounds of revisions on the edited video. A revision round is one consolidated list of specific, time-coded changes submitted in a single communication. Revision requests must be submitted within seven (7) business days of each cut being delivered to you. If you require additional revision rounds beyond the two included, those are billed at my hourly rate. Changes to the fundamental structure, narrative, or scope of the edit beyond the original brief may be treated as a new project rather than a revision.
+
+## 6. RAW FOOTAGE CLAUSE
+
+Unedited raw footage — including all camera files, B-roll, and audio recordings captured during the shoot — is my property and is not included in any standard delivery. I will not deliver raw footage under the terms of this Agreement. If you require raw footage, this must be contracted in a separate written addendum at an additional fee. Even when raw footage is delivered, my editing assembly, color grades, and post-production assets remain mine. I am not obligated to retain raw footage beyond ninety (90) days following final project delivery.
+
+## 7. MUSIC LICENSING
+
+Any background music I include in the final video is sourced from a licensed royalty-free music library and is licensed for use within the specific video deliverable described in this Agreement, on the platforms specified. This license does not extend to: re-cutting the video with the same music, using the music as a standalone audio track, uploading the video to platforms not included in the original agreement, or any other use of the music beyond the delivered video. If you require music from a major commercial catalog, a custom sync license for broadcast, or a license with expanded platform rights, you are responsible for sourcing and paying for that license separately, or I can facilitate it as a quoted add-on.
+
+## 8. DELIVERY FORMAT AND TIMELINE
+
+The final video will be delivered in 1080p MP4 format (H.264 codec, unless otherwise specified) within fourteen (14) business days of your written final approval of the last revision round. Delivery will be via a file transfer service or cloud link. You are responsible for downloading and backing up all delivered files within thirty (30) days of the delivery notification. I am not obligated to re-deliver files after that period, though I may be able to do so at an archival retrieval fee.
+
+## 9. CANCELLATION AND RESCHEDULING
+
+The deposit paid to reserve the shoot date is non-refundable under all circumstances. If you request to reschedule the shoot more than seventy-two (72) hours before the scheduled date, I will make reasonable efforts to accommodate the new date subject to my availability, and your deposit will apply to the rescheduled date. If you reschedule within seventy-two (72) hours of the shoot, or fail to show up at the scheduled location and time, your deposit is forfeited and a new deposit is required to rebook.
+
+## 10. FORCE MAJEURE AND WEATHER
+
+For outdoor shoots, I will monitor weather conditions and communicate with you if conditions on the shoot day are expected to be problematic. If, in my professional judgment, weather conditions at the time of the shoot present a significant risk of equipment damage or will result in unusable footage — including heavy rain, lightning, extreme wind, or similar conditions — I reserve the right to postpone the shoot to a mutually agreed rescheduled date, with your deposit applied to the new date. Neither of us will be liable to the other for losses resulting from a weather-related postponement made in good faith.
+
+## 11. EQUIPMENT LIABILITY
+
+My camera equipment, audio gear, lighting, stabilizers, and accessories are to be operated exclusively by me and my crew. You, your employees, guests, and venue staff are not permitted to handle, operate, or direct the positioning of my equipment without my explicit permission. You are liable for any damage to my equipment caused by your breach of this clause, your employees or representatives, or your venue.
+
+## 12. MODEL AND LOCATION RELEASES
+
+You are solely responsible for: obtaining signed model releases from all identifiable individuals who appear on camera; obtaining location permits and written permission from property owners for any private property used in the shoot; and ensuring that no third-party intellectual property — including copyrighted artwork, branded signage, or music playing in the background — appears in the final video in a way that requires a separate license. I am not liable for claims arising from your failure to obtain necessary releases or permits.
+
+## 13. DRONE AND AERIAL FOOTAGE
+
+If aerial or drone footage is included in this project, all drone operations will be conducted in strict compliance with applicable FAA regulations, including Part 107 requirements. Drone footage is inherently weather-dependent and cannot be guaranteed if wind speed, precipitation, airspace restrictions, or other conditions make safe drone operation impossible on the shoot day. I will make every reasonable effort to capture agreed drone footage, but weather-related inability to fly does not constitute a breach of this Agreement, and no fee reduction will apply. Location-specific drone permits and restricted airspace authorizations are your responsibility unless we have separately agreed otherwise.
+
+## 14. INTELLECTUAL PROPERTY
+
+All video content, edits, color grades, and post-production work produced by me under this Agreement remains my intellectual property until full payment is received. Upon receipt of full and final payment, I assign to you all ownership rights in the final edited video deliverables. I retain the right to use clips, stills, and descriptions of this project in my portfolio, showreel, website, and marketing materials, unless you request confidentiality in writing at the time of signing.
+
+## 15. LATE PAYMENT PENALTIES
+
+Invoices not paid by their due date will accrue a late fee of one and one-half percent (1.5%) per month on the outstanding balance. I reserve the right to withhold delivery of final files until the account is paid in full and to pursue legal remedies for overdue balances.
+
+## 16. GOVERNING LAW
+
+This Agreement is governed by the laws of the United States and the state in which I operate my business. Disputes shall be resolved in the courts of my state of operation.
+
+---
+
+**Freelancer:** {{freelancer_name}} / {{freelancer_business}}
+**Client:** {{client_name}} / {{client_company}}
+**Shoot Date:** {{start_date}} | **Delivery By:** {{end_date}} | **Total Fee:** {{currency}} {{rate}}`,
   },
 
   // ─────────────────────────────────────────────────────────────────────────
-  // 7. SOCIAL MEDIA MANAGER / MARKETING CONSULTANT
+  // 7. SOCIAL MEDIA MANAGER
   // ─────────────────────────────────────────────────────────────────────────
   {
     id: 'social-media-manager',
     label: 'Social Media Manager',
-    description: 'For monthly social media management, content creation, and marketing retainers.',
+    description: 'Monthly retainer for social media management, content, and scheduling.',
     icon: 'ChartBar',
-    suggestedPaymentTerms: 'Monthly retainer billed on the 1st of each month, due within 5 business days',
     suggestedTitle: 'Social Media Management Agreement',
+    suggestedPaymentTerms: 'Monthly retainer billed on the 1st of each month. Services pause if payment not received within 5 days.',
     content: `# Social Media Management Agreement
 
-**This Agreement** is entered into as of {{start_date}} by and between {{freelancer_name}} (hereinafter "the Manager") and {{client_name}} of {{client_company}} (hereinafter "the Client"). This Agreement governs the social media management and marketing services to be provided on a monthly retainer basis.
+This Social Media Management Agreement ("Agreement") is entered into as of {{start_date}}, by and between {{freelancer_name}} ("I," "me," or "the Manager"), and {{client_name}} of {{client_company}} ("you" or "the Client"). Both parties agree to the following terms governing social media management services on a monthly retainer basis.
 
 ---
 
-## 1. Scope of Services
+## 1. PARTIES AND SERVICES OVERVIEW
 
-The Manager agrees to provide the following social media management services on the platforms specified in the project description: {{project_description}}. Services are limited to those explicitly described above. The following are expressly NOT included in this Agreement unless separately contracted and priced in writing: paid advertising management (Facebook Ads, Instagram Ads, Google Ads, TikTok Ads, or any other paid media); custom graphic design or illustration beyond basic branded templates; video production, filming, or professional editing; influencer outreach or influencer relationship management; customer service or inbox/comment management on behalf of the Client; public relations or press outreach; and search engine optimization (SEO). Any out-of-scope requests will be quoted and billed separately.
+I, {{freelancer_name}}, agree to provide social media management services to you, {{client_name}} of {{client_company}}, beginning {{start_date}}. The services to be provided are as follows: {{project_description}}. The monthly retainer for these services is {{currency}} {{rate}} per month, payable per {{payment_terms}}.
 
-## 2. Performance Disclaimer — NON-NEGOTIABLE
+## 2. SERVICES INCLUDED
 
-THE MANAGER MAKES NO REPRESENTATIONS, WARRANTIES, OR GUARANTEES, EXPRESS OR IMPLIED, REGARDING THE PERFORMANCE RESULTS OF ANY SOCIAL MEDIA ACTIVITIES CONDUCTED UNDER THIS AGREEMENT. Specific outcomes — including but not limited to follower count growth, engagement rate, reach, impressions, website traffic, lead generation, conversion rates, or revenue attributable to social media activity — are NOT guaranteed and are not the basis of this Agreement. Social media platform algorithms, audience behavior, platform policy changes, market conditions, and competitive factors are entirely outside the Manager's control and can materially affect performance metrics regardless of the quality of content and strategy employed. The Manager's obligation under this Agreement is to deliver the specified services — content creation, posting, scheduling, and strategy — with professional skill and care. The Manager is NOT responsible for outcomes that are contingent on factors beyond the Manager's control.
+The services covered by this Agreement are limited to those explicitly described in the project overview above. To be specific, my standard services include: creating and scheduling a defined number of posts per week across the specified social media platforms; writing captions, selecting or creating basic visual assets using approved brand templates, and scheduling posts using a social media management tool; preparing and submitting a monthly content calendar for your review; and providing a monthly performance report. Everything I do for you is described above or in the project overview — if it is not listed, it is not included.
 
-## 3. Content Approval Process
+## 3. SERVICES NOT INCLUDED
 
-The Manager will prepare and submit a content calendar for the upcoming calendar month no later than the fifth (5th) business day of the current month (or at the cadence agreed in the project description). The Client will have three (3) business days to review and respond with approval or revision requests. If the Client does not respond within three (3) business days, the content calendar shall be deemed approved, and the Manager is authorized to schedule and publish the approved content on the agreed dates. The Manager will not be held responsible for delays in publishing or missed posting schedules caused by the Client's failure to respond within the review window.
+The following services are expressly excluded from this Agreement and are not covered by the retainer unless separately contracted and priced in a written addendum signed by both of us: paid advertising management of any kind, including Facebook Ads, Instagram Ads, TikTok Ads, Google Ads, or any other paid promotion; custom graphic design or illustration beyond basic branded templates; video production, filming, or professional video editing; influencer outreach, vetting, or relationship management; customer service responses or comment management on behalf of your brand; public relations, press outreach, or media pitching; and search engine optimization. If you ask me to perform any of these services, I will quote them separately.
 
-## 4. Client Responsibilities
+## 4. PERFORMANCE DISCLAIMER
 
-The Client agrees to: (a) provide brand guidelines, logo files, product images, and other brand assets within five (5) business days of the Agreement start date; (b) provide timely information about promotions, events, product launches, or other content topics; (c) respond to content calendar submissions within the three (3)-business-day approval window; (d) grant the Manager authorized access to all required social media account dashboards, scheduling tools, and analytics platforms; and (e) notify the Manager promptly of any brand, product, or messaging changes that may affect content. Delays caused by the Client's failure to fulfill these responsibilities — including delays in providing access, assets, or approvals — do not reduce, suspend, or excuse the monthly retainer payment obligation.
+I need to be completely clear about this: I do not guarantee any specific results from social media management. Results including follower growth, engagement rate, reach, impressions, click-through rate, lead generation, and revenue attributable to social media activity are NOT guaranteed and are not promised by this Agreement. Social media platform algorithms change constantly and without notice. Audience behavior is unpredictable. Platform policy changes can dramatically affect organic reach. All of these factors are entirely outside my control, and no social media manager — regardless of skill or experience — can guarantee outcomes on platforms I do not own or control. What I guarantee is the quality and consistency of the services I perform: the content I create, the posting schedule I maintain, the strategy I develop, and the reporting I deliver. You agree that my deliverables are the services themselves — not follower counts, engagement metrics, or any other outcome. You agree not to hold me liable for any performance metric or business result attributable to social media activity.
 
-## 5. Account Ownership
+## 5. CONTENT APPROVAL PROCESS
 
-All social media accounts managed under this Agreement are and shall remain the sole property of the Client. The Manager acts as an authorized operator of the Client's accounts for the purpose of fulfilling the services described herein. The Manager does not claim any ownership over the accounts, audience, or followers accumulated on those accounts. Upon termination of this Agreement, the Manager will immediately cease posting and return or revoke all access credentials.
+I will prepare and submit a content calendar for the upcoming month no later than five (5) business days before the start of that calendar month. You will have forty-eight (48) hours from the time I submit the content calendar to review it and provide feedback or approval in writing. If I do not receive a response within forty-eight (48) hours, the content calendar is deemed approved and I am authorized to schedule and publish the approved content on the planned dates. I will not be held responsible for delayed publishing, missed posting windows, or suboptimal posting times resulting from your failure to respond within the approval window.
 
-## 6. Content Ownership
+## 6. CLIENT RESPONSIBILITIES
 
-All branded content created and published by the Manager on behalf of the Client under this Agreement — including copy, captions, and basic graphic templates — becomes the Client's property upon full payment of the monthly retainer for the period in which it was created. The Manager retains ownership of content frameworks, editorial strategies, scheduling systems, content calendar formats, and general methodologies developed in the course of providing services. These underlying systems and approaches are not transferred to the Client and may be used by the Manager for other clients.
+For me to do my job effectively, you agree to: provide me with complete brand guidelines, logo files, brand photography, and product information within five (5) business days of this Agreement's start date; promptly share information about upcoming promotions, launches, events, and announcements that are relevant to social media content; respond to my content calendar submissions within the forty-eight (48)-hour approval window; grant me authorized access to all required social media account dashboards, scheduling tools, and analytics platforms; and notify me immediately of any changes to your brand, messaging, or sensitive business circumstances that might affect what I post. Delays caused by your failure to fulfill these responsibilities — including delays in providing access, assets, information, or approvals — do not reduce or suspend your monthly retainer payment obligation.
 
-## 7. Out-of-Scope and Add-On Services
+## 7. PLATFORM ACCOUNT OWNERSHIP
 
-Requests for services not listed in Section 1 of this Agreement — including paid ad management, influencer outreach, graphic design beyond basic templates, video editing, customer service responses, or additional platforms — will be scoped and priced separately. Out-of-scope work will not begin until the Client has approved a written quote and, where applicable, paid a deposit. Add-on services are invoiced separately from the monthly retainer.
+All social media accounts I manage under this Agreement are and shall remain your property. I am acting as an authorized operator of your accounts — I have no ownership interest in your accounts, your followers, your audience, or your account history. Upon termination of this Agreement for any reason, I will immediately cease all posting and activity on your accounts and cooperate fully with any access revocation or admin removal you initiate.
 
-## 8. Confidentiality and Non-Disclosure
+## 8. CONTENT OWNERSHIP
 
-The Manager agrees to keep confidential all non-public information disclosed by the Client in connection with this Agreement, including but not limited to business strategies, marketing plans, target audience data, customer lists, financial performance data, product roadmaps, and any other proprietary business information. This obligation survives termination of this Agreement for a period of three (3) years. The Manager may not use the Client's confidential information for any purpose other than providing the services described herein.
+All branded content I create and post on your behalf under this Agreement — including captions, graphics created from your templates, and written copy — becomes your property upon full payment of the monthly retainer for the period in which it was created. I retain ownership of the underlying content frameworks, editorial systems, scheduling templates, strategy documents, and processes I have developed independently. These tools and systems are part of my professional practice and are not transferred to you.
 
-## 9. Non-Compete
+## 9. ADD-ONS AND OUT-OF-SCOPE WORK
 
-During the term of this Agreement, the Manager will not simultaneously provide social media management services to a direct competitor of the Client in the same primary product or service category and target market. A "direct competitor" is a business that sells substantially similar products or services to the same customer demographic. If the Manager is uncertain whether a potential new client constitutes a direct competitor, the Manager will notify the Client before accepting that engagement.
+If you request services outside the scope of this Agreement, I will provide a written quote before beginning any work. Out-of-scope work will not commence until you have approved the quote in writing. Add-on services are invoiced separately from the monthly retainer.
 
-## 10. Reporting and Analytics
+## 10. CONFIDENTIALITY AND NON-DISCLOSURE
 
-The Manager will provide the Client with a monthly performance report within five (5) business days of the end of each calendar month. The report will include the following metrics (to the extent available through the platforms' native analytics): total posts published, reach and impressions, engagement rate and total engagements, follower count and net follower change, and any other metrics agreed upon in the project description. The Manager will present this data objectively and without manipulation, and will provide context where relevant.
+I agree to keep strictly confidential all non-public information you share with me in connection with this engagement, including business strategies, marketing plans, audience data, customer information, unreleased products, financial information, and any other proprietary business information. I will not share this information with any third party without your written consent. This confidentiality obligation survives termination of this Agreement for three (3) years.
 
-## 11. Password and Access Security
+## 11. NON-COMPETE
 
-The Client is responsible for maintaining the security of access credentials shared with the Manager. Upon termination of this Agreement for any reason, the Client agrees to promptly change all passwords, revoke all third-party application access, and remove the Manager from all platform admin roles. The Manager will cooperate fully with the offboarding process. The Manager is not liable for any security incident that occurs after the Client has been notified that offboarding is required.
+During the term of this Agreement, I will not simultaneously provide social media management services to a business that is a direct competitor of yours. A "direct competitor" means a business that sells substantially the same products or services to the same target customer demographic in the same geographic market as you. If I am uncertain whether a prospective client constitutes a direct competitor, I will consult with you before accepting that engagement.
 
-## 12. Termination and Offboarding
+## 12. REPORTING AND ANALYTICS
 
-Either party may terminate this Agreement by providing thirty (30) days' written notice to the other party. The monthly retainer for the notice month is due in full regardless of the termination date within that month. Upon termination, the Manager will: (a) deliver all content calendars, scheduled posts (in draft), and asset files created during the engagement; (b) provide a written record of all account logins and connected tools; (c) transfer admin access back to the Client; and (d) cooperate with the Client's transition to a new provider. The Manager will not delete, archive, or otherwise modify any accounts, content, or data during the offboarding period.
+By the fifth (5th) business day of each calendar month, I will deliver to you a written performance report covering the prior month's social media activity. The report will include: total posts published per platform, total reach and impressions, engagement rate and total engagements, follower count and net change, and any additional metrics available through each platform's native analytics. I will present this data objectively and provide context where appropriate.
 
-## 13. Monthly Retainer and Payment
+## 13. PASSWORD AND ACCESS SECURITY
 
-The monthly retainer is {{currency}} {{rate}} per month, due and payable on the first (1st) of each month for services to be rendered during that month. If payment is not received within five (5) business days of the due date, the Manager reserves the right to pause all services until the account is brought current. Paused months do not reduce the retainer obligation — services paused due to non-payment will resume upon payment of the overdue balance plus any applicable late fees. The Manager's work product for paused months remains the Manager's property until payment is received.
+You are responsible for the security of all login credentials and access tokens shared with me. At the termination of this Agreement for any reason, you agree to promptly change all passwords, revoke all connected app authorizations, and remove me from all platform administrator roles. I will remind you to complete this offboarding when the termination is confirmed. I am not liable for any security incident, unauthorized access, or account compromise that occurs after you have been notified to complete offboarding.
 
-## 14. Late Payment Penalties
+## 14. TERMINATION AND OFFBOARDING
 
-Retainer payments not received by the fifth (5th) business day of the month shall be considered overdue and will accrue a late fee of five percent (5%) of the monthly retainer for each week (or part thereof) that payment is delayed. The Manager reserves the right to suspend services and pursue legal remedies for overdue balances. The Client agrees to reimburse the Manager for reasonable collection costs, including attorney's fees.
+Either party may terminate this Agreement by providing thirty (30) days written notice to the other party. The monthly retainer for the notice period is due in full regardless of when within the month the termination takes effect. Upon termination, I will: deliver all content calendars, scheduled but unpublished post drafts, and brand asset files I have created; provide a written summary of active tools, connected accounts, and scheduled content; transfer all account admin access back to you; and cooperate fully with your transition to a new provider or in-house management. I will not delete, archive, or modify any account content, followers, or data during the offboarding process.
 
-## 15. Governing Law
+## 15. MONTHLY RETAINER AND LATE PAYMENT PENALTIES
 
-This Agreement shall be governed by the laws of the State of [STATE]. Any disputes arising hereunder shall be resolved by binding arbitration in [COUNTY], [STATE], under the American Arbitration Association's Commercial Arbitration Rules.
+The monthly retainer of {{currency}} {{rate}} is due on the first (1st) of each month for services to be performed during that month. If payment is not received within five (5) business days of the due date, I reserve the right to pause all services — including content scheduling, calendar preparation, and reporting — until the outstanding balance is paid. Paused months are not discounted; you owe the full retainer regardless of the service pause caused by non-payment. Overdue balances accrue a late fee of five percent (5%) of the monthly retainer for each week — or part thereof — that payment remains outstanding.
+
+## 16. GOVERNING LAW
+
+This Agreement is governed by the laws of the United States and the state in which I reside and operate. Any disputes arising under this Agreement shall be resolved in the courts of my state of operation.
 
 ---
 
 **Manager:** {{freelancer_name}}
-**Client:** {{client_name}} ({{client_company}})
-**Agreement Start:** {{start_date}}
-**Monthly Retainer:** {{currency}} {{rate}}`,
+**Client:** {{client_name}} / {{client_company}}
+**Agreement Start:** {{start_date}} | **Monthly Retainer:** {{currency}} {{rate}}`,
+  },
+
+  // ─────────────────────────────────────────────────────────────────────────
+  // 8. BLANK
+  // ─────────────────────────────────────────────────────────────────────────
+  {
+    id: 'blank',
+    label: 'Start from Scratch',
+    description: 'Blank contract — write your own clauses from the ground up.',
+    icon: 'FileText',
+    suggestedTitle: 'Freelance Services Agreement',
+    suggestedPaymentTerms: 'Net 30 — payment due within 30 days of invoice date.',
+    content: '',
   },
 ]

@@ -21,8 +21,7 @@ export async function POST(req: NextRequest) {
 
   const id = await createContract(user.id, {
     clientId, templateId, title, projectDescription, amount: Number(amount), currency,
-    paymentTerms, startDate, endDate, additionalTerms,
-    nicheContent: nicheContent ?? undefined,
+    paymentTerms, startDate, endDate, additionalTerms, nicheContent,
   })
   return NextResponse.json({ id })
 }
