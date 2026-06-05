@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { CheckCircle } from '@phosphor-icons/react'
+import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -14,32 +14,10 @@ interface Props {
 }
 
 export function SignaturePanel({ token, signerEmail }: Props) {
+  const router = useRouter()
   const [agreed, setAgreed] = useState(false)
   const [signerName, setSignerName] = useState('')
   const [signing, setSigning] = useState(false)
-  const [signed, setSigned] = useState(false)
-
-  if (signed) {
-    return (
-      <div className="fixed inset-0 z-50 flex items-center justify-center bg-background px-4">
-        <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-lg">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
-            <CheckCircle className="h-9 w-9 text-green-500" />
-          </div>
-          <h1 className="text-xl font-bold text-foreground">Contract Signed</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Thank you, <strong>{signerName}</strong>. Your signature has been recorded.
-          </p>
-          <div className="mt-4 rounded-lg border bg-muted/40 px-4 py-3 text-sm text-muted-foreground">
-            A confirmation email has been sent to <strong>{signerEmail}</strong> with a copy of the signed document.
-          </div>
-          <p className="mt-5 text-xs text-muted-foreground">
-            You may now close this window.
-          </p>
-        </div>
-      </div>
-    )
-  }
 
   const handleSign = async () => {
     if (!agreed) { toast.error('Please agree to sign electronically'); return }
@@ -52,10 +30,9 @@ export function SignaturePanel({ token, signerEmail }: Props) {
         body: JSON.stringify({ signerName }),
       })
       if (!res.ok) throw new Error((await res.json()).error || 'Failed')
-      setSigned(true)
+      router.refresh()
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to sign document')
-    } finally {
       setSigning(false)
     }
   }

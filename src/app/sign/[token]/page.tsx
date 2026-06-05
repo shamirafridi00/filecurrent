@@ -5,6 +5,7 @@ import { CheckCircle } from '@/components/icons'
 import { getContractForSigning } from '@/lib/db/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
+import { SignedActions } from '@/components/sign/SignedActions'
 import { APP_NAME } from '@/lib/constants'
 
 function renderInlineParts(text: string) {
@@ -32,6 +33,7 @@ export default async function SignPage({ params }: { params: { token: string } }
   }
 
   if (session.status === 'signed') {
+    const pdfUrl = `/api/contracts/${session.contractId}/pdf`
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-sm">
@@ -40,6 +42,7 @@ export default async function SignPage({ params }: { params: { token: string } }
           <p className="mt-2 text-sm text-muted-foreground">
             This contract has been signed. Thank you!
           </p>
+          <SignedActions pdfUrl={pdfUrl} />
         </div>
       </div>
     )

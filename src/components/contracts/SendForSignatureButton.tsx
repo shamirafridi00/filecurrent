@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { PaperPlaneTilt, CheckCircle } from '@phosphor-icons/react'
+import { PaperPlaneTilt, CheckCircle, Copy } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -105,8 +105,9 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
                 <Label className="text-xs text-muted-foreground uppercase tracking-wide">Signing Link</Label>
                 <div className="flex items-center gap-2 rounded-md border bg-muted p-2">
                   <p className="flex-1 break-all text-xs font-mono text-foreground">{signLink}</p>
-                  <Button size="sm" variant="outline" onClick={copyLink} className="shrink-0">
-                    Copy
+                  <Button size="sm" variant="default" onClick={copyLink} className="shrink-0 gap-1.5">
+                    <Copy className="h-3.5 w-3.5" />
+                    Copy Link
                   </Button>
                 </div>
               </div>
@@ -126,7 +127,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
               </div>
 
               <DialogFooter>
-                <Button variant="outline" onClick={() => setOpen(false)}>Close</Button>
+                <Button variant="ghost" onClick={() => setOpen(false)}>Close</Button>
               </DialogFooter>
             </div>
           )}
