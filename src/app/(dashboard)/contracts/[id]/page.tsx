@@ -6,7 +6,7 @@ import { FileText, DownloadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge } from '@/components/ui'
-import { formatCurrency, formatDate, stripMarkdown } from '@/lib/utils'
+import { formatCurrency, formatDate, stripMarkdown, slugifyTitle } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getContract } from '@/lib/db/supabase'
 import { SendForSignatureButton } from '@/components/contracts/SendForSignatureButton'
@@ -58,7 +58,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
             )}
             {contract.status === 'signed' && contract.signedPdfUrl && (
               <Button asChild size="sm">
-                <a href={`/api/contracts/${contract.id}/pdf`} target="_blank" rel="noreferrer">
+                <a href={`/api/contracts/${contract.id}/pdf/${slugifyTitle(contract.title)}_signed.pdf`} target="_blank" rel="noreferrer">
                   <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
                   Download Signed PDF
                 </a>

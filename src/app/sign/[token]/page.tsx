@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import { CheckCircle } from '@/components/icons'
 import { getContractForSigning } from '@/lib/db/supabase'
-import { formatCurrency, formatDate, stripMarkdown } from '@/lib/utils'
+import { formatCurrency, formatDate, stripMarkdown, slugifyTitle } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
 import { SignedActions } from '@/components/sign/SignedActions'
 import { APP_NAME } from '@/lib/constants'
@@ -39,7 +39,7 @@ export default async function SignPage({ params }: { params: { token: string } }
   }
 
   if (session.status === 'signed') {
-    const pdfUrl = `/api/contracts/${session.contractId}/pdf`
+    const pdfUrl = `/api/contracts/${session.contractId}/pdf/${slugifyTitle(session.contractTitle)}_signed.pdf`
     return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
         <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-sm">
