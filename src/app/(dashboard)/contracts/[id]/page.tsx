@@ -6,7 +6,7 @@ import { FileText, DownloadSimple } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge } from '@/components/ui'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, stripMarkdown } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getContract } from '@/lib/db/supabase'
 import { SendForSignatureButton } from '@/components/contracts/SendForSignatureButton'
@@ -30,7 +30,7 @@ export default async function ContractDetailPage({ params }: { params: { id: str
         client_email: contract.clientEmail ?? '',
         freelancer_name: profile.fullName,
         freelancer_business: profile.businessName ?? '',
-        project_description: (contract.projectDescription ?? '').replace(/^#{1,6}\s+/gm, ''),
+        project_description: stripMarkdown(contract.projectDescription ?? ''),
         rate: String(contract.amount),
         currency: contract.currency,
         start_date: contract.startDate ? formatDate(contract.startDate) : '',
@@ -101,17 +101,17 @@ export default async function ContractDetailPage({ params }: { params: { id: str
                   if (trimmed === '---') return <hr key={i} className="my-4 border-border" />
                   if (trimmed.startsWith('### ')) return (
                     <h3 key={i} className="mt-4 mb-0.5 text-sm font-semibold text-foreground">
-                      {trimmed.slice(4).replace(/\*\*/g, '')}
+                      {stripMarkdown(trimmed.slice(4))}
                     </h3>
                   )
                   if (trimmed.startsWith('## ')) return (
                     <h2 key={i} className="mt-6 mb-1 text-xs font-bold uppercase tracking-widest text-muted-foreground">
-                      {trimmed.slice(3).replace(/\*\*/g, '')}
+                      {stripMarkdown(trimmed.slice(3))}
                     </h2>
                   )
                   if (trimmed.startsWith('# ')) return (
                     <h1 key={i} className="mb-4 text-xl font-bold text-foreground">
-                      {trimmed.slice(2).replace(/\*\*/g, '')}
+                      {stripMarkdown(trimmed.slice(2))}
                     </h1>
                   )
                   if (/^\d+\.\s+\S/.test(trimmed) && trimmed.length < 60) return (
@@ -186,7 +186,13 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
 }
 
 function renderInlineParts(text: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  // Render **bold** as <strong>, strip *italic*, _italic_, `code` markers
+  const cleaned = text
+    .replace(/\*(.+?)\*/g, '$1')    // italic *
+    .replace(/__(.+?)__/g, '$1')    // bold __
+    .replace(/_(.+?)_/g, '$1')      // italic _
+    .replace(/`(.+?)`/g, '$1')      // inline code
+  const parts = cleaned.split(/(\*\*[^*]+\*\*)/)
   return parts.map((part, j) =>
     part.startsWith('**') && part.endsWith('**')
       ? <strong key={j}>{part.slice(2, -2)}</strong>

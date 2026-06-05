@@ -3,13 +3,19 @@ export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import { CheckCircle } from '@/components/icons'
 import { getContractForSigning } from '@/lib/db/supabase'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency, formatDate, stripMarkdown } from '@/lib/utils'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
 import { SignedActions } from '@/components/sign/SignedActions'
 import { APP_NAME } from '@/lib/constants'
 
 function renderInlineParts(text: string) {
-  const parts = text.split(/(\*\*[^*]+\*\*)/)
+  // Strip italic/code markers, render **bold** as <strong>
+  const cleaned = text
+    .replace(/\*(.+?)\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    .replace(/_(.+?)_/g, '$1')
+    .replace(/`(.+?)`/g, '$1')
+  const parts = cleaned.split(/(\*\*[^*]+\*\*)/)
   return parts.map((part, j) =>
     part.startsWith('**') && part.endsWith('**')
       ? <strong key={j}>{part.slice(2, -2)}</strong>
@@ -48,15 +54,13 @@ export default async function SignPage({ params }: { params: { token: string } }
     )
   }
 
-  const stripHeadings = (str: string) => str.replace(/^#{1,6}\s+/gm, '')
-
   const values: Record<string, string> = {
     client_name: session.clientName,
     client_company: session.clientCompany ?? '',
     client_email: session.clientEmail ?? '',
     freelancer_name: session.freelancerName,
     freelancer_business: session.freelancerBusiness ?? '',
-    project_description: stripHeadings(session.projectDescription ?? ''),
+    project_description: stripMarkdown(session.projectDescription ?? ''),
     rate: String(session.amount),
     currency: session.currency,
     start_date: session.startDate ? formatDate(session.startDate) : '',
@@ -96,17 +100,17 @@ export default async function SignPage({ params }: { params: { token: string } }
               const trimmed = line.trim()
               if (trimmed.startsWith('### ')) return (
                 <h3 key={i} className="mt-4 mb-1 text-sm font-semibold text-foreground">
-                  {trimmed.slice(4).replace(/\*\*/g, '')}
+                  {stripMarkdown(trimmed.slice(4))}
                 </h3>
               )
               if (trimmed.startsWith('## ')) return (
                 <h2 key={i} className="mt-6 mb-1 text-sm font-bold uppercase tracking-wide text-muted-foreground">
-                  {trimmed.slice(3).replace(/\*\*/g, '')}
+                  {stripMarkdown(trimmed.slice(3))}
                 </h2>
               )
               if (trimmed.startsWith('# ')) return (
                 <h1 key={i} className="mb-4 text-lg font-bold text-foreground">
-                  {trimmed.slice(2).replace(/\*\*/g, '')}
+                  {stripMarkdown(trimmed.slice(2))}
                 </h1>
               )
               if (trimmed === '---') return <hr key={i} className="my-4 border-border" />

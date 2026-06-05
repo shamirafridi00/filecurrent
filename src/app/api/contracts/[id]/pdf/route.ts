@@ -8,6 +8,7 @@ import { getContract, getCurrentProfile } from '@/lib/db/supabase'
 import { adminClient } from '@/lib/supabase/admin'
 import { ContractPDF } from '@/lib/pdf/ContractPDF'
 import { createHash } from 'crypto'
+import { slugifyTitle, stripMarkdown } from '@/lib/utils'
 
 export async function GET(_req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -24,9 +25,20 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'Contract is not signed yet' }, { status: 400 })
   }
 
-  // Fast path: redirect to pre-generated PDF stored in R2
+  const filename = `${slugifyTitle(contract.title)}_signed.pdf`
+
+  // Fast path: proxy the pre-generated PDF so the browser gets the correct filename
   if (contract.signedPdfUrl) {
-    return NextResponse.redirect(contract.signedPdfUrl)
+    const r2Res = await fetch(contract.signedPdfUrl)
+    if (!r2Res.ok) return NextResponse.json({ error: 'PDF not available' }, { status: 502 })
+    const buffer = await r2Res.arrayBuffer()
+    return new NextResponse(new Uint8Array(buffer), {
+      headers: {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': `attachment; filename="${filename}"`,
+        'Cache-Control': 'private, max-age=300',
+      },
+    })
   }
 
   const { data: auditRows } = await adminClient
@@ -55,7 +67,7 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     client_email: contract.clientEmail ?? '',
     freelancer_name: profile.fullName,
     freelancer_business: profile.businessName ?? '',
-    project_description: contract.projectDescription ?? '',
+    project_description: stripMarkdown(contract.projectDescription ?? ''),
     rate: String(contract.amount),
     currency: contract.currency,
     start_date: contract.startDate ?? '',
@@ -106,12 +118,10 @@ export async function GET(_req: NextRequest, { params }: { params: { id: string 
     return NextResponse.json({ error: 'PDF generation failed' }, { status: 500 })
   }
 
-  const safeTitle = contract.title.replace(/[^a-z0-9]/gi, '-').slice(0, 50)
-
   return new NextResponse(new Uint8Array(buffer), {
     headers: {
       'Content-Type': 'application/pdf',
-      'Content-Disposition': `attachment; filename="${safeTitle}-signed.pdf"`,
+      'Content-Disposition': `attachment; filename="${filename}"`,
       'Cache-Control': 'no-store',
     },
   })

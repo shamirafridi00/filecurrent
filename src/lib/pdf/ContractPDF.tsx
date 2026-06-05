@@ -86,14 +86,25 @@ const s1 = StyleSheet.create({
   h1: { fontSize: 15, fontWeight: 700, marginTop: 18, marginBottom: 6 },
 })
 
+function cleanLine(line: string): string {
+  return line
+    .replace(/\*\*(.+?)\*\*/g, '$1')   // bold **
+    .replace(/\*(.+?)\*/g, '$1')        // italic *
+    .replace(/__(.+?)__/g, '$1')        // bold __
+    .replace(/_(.+?)_/g, '$1')          // italic _
+    .replace(/`(.+?)`/g, '$1')          // inline code
+}
+
 function renderContent(content: string) {
   return content.split('\n').map((line, i) => {
-    if (line.startsWith('### ')) return <Text key={i} style={s.h3}>{line.slice(4).replace(/\*\*(.*?)\*\*/g, '$1')}</Text>
-    if (line.startsWith('## ')) return <Text key={i} style={s.h2}>{line.slice(3).replace(/\*\*(.*?)\*\*/g, '$1')}</Text>
-    if (line.startsWith('# ')) return <Text key={i} style={s1.h1}>{line.slice(2).replace(/\*\*(.*?)\*\*/g, '$1')}</Text>
-    if (line === '---') return <View key={i} style={s.hr} />
+    if (line.startsWith('### ')) return <Text key={i} style={s.h3}>{cleanLine(line.slice(4))}</Text>
+    if (line.startsWith('## ')) return <Text key={i} style={s.h2}>{cleanLine(line.slice(3))}</Text>
+    if (line.startsWith('# ')) return <Text key={i} style={s1.h1}>{cleanLine(line.slice(2))}</Text>
+    if (/^---+$/.test(line.trim())) return <View key={i} style={s.hr} />
     if (line.trim() === '') return <Text key={i} style={{ fontSize: 4 }}> </Text>
-    return <Text key={i} style={s.para}>{line.replace(/\*\*(.*?)\*\*/g, '$1')}</Text>
+    // Strip leading list markers (- or *)
+    const body = line.replace(/^\s*[-*]\s+/, '')
+    return <Text key={i} style={s.para}>{cleanLine(body)}</Text>
   })
 }
 

@@ -172,6 +172,33 @@ export function replacePlaceholders(
   return result
 }
 
+// ── Strip markdown syntax for plain-text rendering
+// Removes headings (#), bold/italic (* _ **), inline code (`), and horizontal rules (---)
+export function stripMarkdown(text: string): string {
+  return text
+    .replace(/^#{1,6}\s+/gm, '')          // headings
+    .replace(/\*\*(.+?)\*\*/g, '$1')       // bold **
+    .replace(/\*(.+?)\*/g, '$1')           // italic *
+    .replace(/__(.+?)__/g, '$1')           // bold __
+    .replace(/_(.+?)_/g, '$1')             // italic _
+    .replace(/`(.+?)`/g, '$1')             // inline code
+    .replace(/^---+$/gm, '')               // horizontal rules
+    .replace(/^\s*[-*]\s+/gm, '')          // unordered list markers
+    .trim()
+}
+
+// ── Slugify a title into a filename-safe string with underscores
+export function slugifyTitle(title: string, maxLength = 60): string {
+  return title
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, '')   // strip non-alphanumeric
+    .replace(/\s+/g, '_')           // spaces → underscores
+    .replace(/_+/g, '_')            // collapse multiple underscores
+    .slice(0, maxLength)
+    .replace(/_$/, '')              // trim trailing underscore
+}
+
 // ── Debounce
 export function debounce<T extends (...args: unknown[]) => unknown>(
   fn: T,
