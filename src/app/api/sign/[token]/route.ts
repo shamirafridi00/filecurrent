@@ -57,21 +57,26 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     // Email to client (signer) — link back to the sign page (shows "Already Signed")
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'https://filecurrent.com'
     const clientSignUrl = `${appUrl}/sign/${params.token}`
-    try {
-      await sendEmail({
-        to: session.signerEmail,
-        subject: `Signed: ${session.contractTitle}`,
-        html: contractSignedEmail({
-          signerName: signerName.trim(),
-          contractTitle: session.contractTitle,
-          signedAt,
-          dashboardUrl: clientSignUrl,
-          toFreelancer: false,
-        }),
-      })
-      console.log('[sign] Client email sent to:', session.signerEmail)
-    } catch (err) {
-      console.error('[sign] Client email failed:', err)
+    console.log('[sign] signerEmail:', session.signerEmail, '| contractTitle:', session.contractTitle)
+    if (session.signerEmail) {
+      try {
+        await sendEmail({
+          to: session.signerEmail,
+          subject: `Signed: ${session.contractTitle}`,
+          html: contractSignedEmail({
+            signerName: signerName.trim(),
+            contractTitle: session.contractTitle,
+            signedAt,
+            dashboardUrl: clientSignUrl,
+            toFreelancer: false,
+          }),
+        })
+        console.log('[sign] Client email sent to:', session.signerEmail)
+      } catch (err) {
+        console.error('[sign] Client email failed:', JSON.stringify(err, Object.getOwnPropertyNames(err)))
+      }
+    } else {
+      console.error('[sign] signerEmail is empty — client confirmation skipped')
     }
 
     // Email to freelancer
@@ -91,7 +96,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         })
         console.log('[sign] Freelancer email sent to:', freelancerEmail)
       } catch (err) {
-        console.error('[sign] Freelancer email failed:', err)
+        console.error('[sign] Freelancer email failed:', JSON.stringify(err, Object.getOwnPropertyNames(err)))
       }
     } else {
       console.warn('[sign] No freelancer email found for contract:', session.contractId)
