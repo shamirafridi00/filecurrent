@@ -15,7 +15,7 @@ export async function sendEmail({
   subject: string
   html: string
 }) {
-  console.log('[email] Sending to:', to, '| subject:', subject)
+  console.log('[email] Brevo sending to:', to, '| from:', FROM_EMAIL, '| subject:', subject)
   const result = await client.transactionalEmails.sendTransacEmail({
     to: [{ email: to }],
     sender: { name: FROM_NAME, email: FROM_EMAIL },
@@ -23,6 +23,6 @@ export async function sendEmail({
     htmlContent: html,
     replyTo: { email: process.env.EMAIL_REPLY_TO ?? 'support@filecurrent.com' },
   })
-  console.log('[email] Sent successfully, messageId:', result.messageId)
+  console.log('[email] Brevo sent successfully, messageId:', (result as { messageId?: string }).messageId)
   return result
 }
