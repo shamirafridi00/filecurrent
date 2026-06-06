@@ -64,84 +64,92 @@ export function InvoicePreview({ data, template, freelancerName }: InvoicePrevie
           Live Preview
         </p>
         <div className="rounded-xl border border-slate-200 shadow-lg overflow-hidden bg-white">
-          <div className="flex" style={{ minHeight: '320px' }}>
+          <div className="flex min-h-[300px]">
             {/* Left dark sidebar */}
-            <div className="w-28 shrink-0 flex flex-col justify-between p-4" style={{ backgroundColor: '#111827' }}>
+            <div className="w-24 shrink-0 flex flex-col justify-between p-3" style={{ backgroundColor: '#111827' }}>
               <div>
-                <p className="text-white font-bold text-sm leading-tight">{brandName}</p>
-                <p className="text-gray-400 text-[10px] mt-1">INVOICE</p>
-                <p className="text-gray-400 text-[10px] mt-0.5">
-                  #{data.invoiceNumber || 'INV-2026-0001'}
+                <p className="text-white font-bold text-[11px] leading-tight break-words">{brandName}</p>
+                <p className="text-gray-400 text-[9px] mt-1.5 tracking-wide">INVOICE</p>
+                <p className="text-gray-400 text-[9px] mt-0.5 break-all">
+                  #{data.invoiceNumber || 'INV-001'}
                 </p>
               </div>
-              <div>
-                <p className="text-gray-500 text-[9px]">Date</p>
-                <p className="text-gray-300 text-[9px]">{data.invoiceDate || '—'}</p>
+              <div className="space-y-1">
+                <div>
+                  <p className="text-gray-500 text-[8px] uppercase tracking-wide">Date</p>
+                  <p className="text-gray-300 text-[9px]">{data.invoiceDate || '—'}</p>
+                </div>
                 {data.dueDate && (
-                  <>
-                    <p className="text-gray-500 text-[9px] mt-1">Due</p>
+                  <div>
+                    <p className="text-gray-500 text-[8px] uppercase tracking-wide">Due</p>
                     <p className="text-gray-300 text-[9px]">{data.dueDate}</p>
-                  </>
+                  </div>
                 )}
               </div>
             </div>
 
             {/* Right content */}
-            <div className="flex-1 bg-white flex flex-col text-xs">
+            <div className="flex-1 min-w-0 flex flex-col text-xs">
               {/* Bill to */}
-              <div className="px-4 py-3 border-b border-slate-100">
-                <p className="text-[10px] uppercase tracking-wide text-slate-400 font-semibold mb-1">Bill To</p>
-                <p className="font-semibold text-slate-800">{data.clientName || 'Client Name'}</p>
+              <div className="px-3 py-2.5 border-b border-slate-100">
+                <p className="text-[9px] uppercase tracking-wide text-slate-400 font-semibold mb-0.5">Bill To</p>
+                <p className="font-semibold text-slate-800 text-[11px] truncate">{data.clientName || 'Client Name'}</p>
               </div>
 
               {/* Line items */}
-              <div className="px-4 py-2 flex-1">
-                <div className="grid grid-cols-[1fr_40px_60px_60px] gap-1 pb-1 border-b border-slate-800 mb-1">
-                  <span className="text-[9px] text-slate-800 font-semibold uppercase">Description</span>
-                  <span className="text-[9px] text-slate-800 font-semibold text-center">Qty</span>
-                  <span className="text-[9px] text-slate-800 font-semibold text-right">Rate</span>
-                  <span className="text-[9px] text-slate-800 font-semibold text-right">Amount</span>
+              <div className="px-3 py-2 flex-1">
+                <div className="grid grid-cols-[1fr_24px_52px_52px] gap-1 pb-1 border-b-2 border-slate-800 mb-1">
+                  <span className="text-[8px] text-slate-700 font-semibold uppercase">Desc</span>
+                  <span className="text-[8px] text-slate-700 font-semibold text-center">Q</span>
+                  <span className="text-[8px] text-slate-700 font-semibold text-right">Rate</span>
+                  <span className="text-[8px] text-slate-700 font-semibold text-right">Amt</span>
                 </div>
                 {data.items.length > 0 ? (
-                  data.items.slice(0, 3).map((item, i) => (
-                    <div key={i} className="grid grid-cols-[1fr_40px_60px_60px] gap-1 py-1 border-b border-slate-50">
-                      <span className="text-[10px] text-slate-700 truncate">{item.description || 'Service'}</span>
-                      <span className="text-[10px] text-slate-500 text-center">{item.quantity}</span>
-                      <span className="text-[10px] text-slate-500 text-right">{formatAmount(item.unitPrice)}</span>
-                      <span className="text-[10px] font-medium text-right">{formatAmount(item.quantity * item.unitPrice)}</span>
+                  data.items.slice(0, 4).map((item, i) => (
+                    <div key={i} className="grid grid-cols-[1fr_24px_52px_52px] gap-1 py-1 border-b border-slate-50">
+                      <span className="text-[9px] text-slate-700 truncate">{item.description || 'Service'}</span>
+                      <span className="text-[9px] text-slate-500 text-center">{item.quantity}</span>
+                      <span className="text-[9px] text-slate-500 text-right">{formatAmount(item.unitPrice)}</span>
+                      <span className="text-[9px] font-medium text-right">{formatAmount(item.quantity * item.unitPrice)}</span>
                     </div>
                   ))
                 ) : (
-                  <div className="py-3 text-center text-[10px] text-slate-300">Add line items to see them here</div>
+                  <div className="py-3 text-center text-[9px] text-slate-300">Add line items</div>
                 )}
-                {data.items.length > 3 && (
-                  <p className="text-[9px] text-slate-400 pt-1">+{data.items.length - 3} more</p>
+                {data.items.length > 4 && (
+                  <p className="text-[8px] text-slate-400 pt-1">+{data.items.length - 4} more</p>
                 )}
               </div>
 
               {/* Totals */}
-              <div className="px-4 py-3 border-t border-slate-200 space-y-1">
+              <div className="px-3 py-2 border-t border-slate-200 space-y-0.5">
                 <div className="flex justify-between">
-                  <span className="text-[10px] text-slate-500">Subtotal</span>
-                  <span className="text-[10px]">{formatAmount(data.subtotal)}</span>
+                  <span className="text-[9px] text-slate-500">Subtotal</span>
+                  <span className="text-[9px]">{formatAmount(data.subtotal)}</span>
                 </div>
                 {data.taxRate > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-[10px] text-slate-500">Tax ({data.taxRate}%)</span>
-                    <span className="text-[10px]">{formatAmount(data.taxAmount)}</span>
+                    <span className="text-[9px] text-slate-500">Tax ({data.taxRate}%)</span>
+                    <span className="text-[9px]">{formatAmount(data.taxAmount)}</span>
                   </div>
                 )}
                 {data.discountAmount > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-[10px] text-slate-500">Discount</span>
-                    <span className="text-[10px] text-red-500">−{formatAmount(data.discountAmount)}</span>
+                    <span className="text-[9px] text-slate-500">Discount</span>
+                    <span className="text-[9px] text-red-500">−{formatAmount(data.discountAmount)}</span>
                   </div>
                 )}
-                <div className="flex justify-between pt-2 border-t border-slate-200">
-                  <span className="text-xs font-bold text-slate-800">
+                {data.depositAmount > 0 && (
+                  <div className="flex justify-between">
+                    <span className="text-[9px] text-slate-500">Deposit</span>
+                    <span className="text-[9px] text-slate-500">−{formatAmount(data.depositAmount)}</span>
+                  </div>
+                )}
+                <div className="flex justify-between pt-1.5 border-t-2 border-slate-800">
+                  <span className="text-[10px] font-bold text-slate-800">
                     {data.depositAmount > 0 ? 'Balance Due' : 'Total'}
                   </span>
-                  <span className="text-sm font-bold" style={{ color: primaryColor }}>
+                  <span className="text-[11px] font-bold" style={{ color: primaryColor }}>
                     {formatAmount(data.balanceDue)}
                   </span>
                 </div>
@@ -149,8 +157,8 @@ export function InvoicePreview({ data, template, freelancerName }: InvoicePrevie
             </div>
           </div>
 
-          <div className="px-5 py-2 border-t border-slate-100 text-center">
-            <p className="text-[9px] text-slate-300">Created with FileCurrent — filecurrent.com</p>
+          <div className="px-4 py-1.5 border-t border-slate-100 text-center">
+            <p className="text-[8px] text-slate-300">Created with FileCurrent — filecurrent.com</p>
           </div>
         </div>
 

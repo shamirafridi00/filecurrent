@@ -79,6 +79,14 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
   )
   const [discountAmount, setDiscountAmount] = useState(0)
   const [depositAmount, setDepositAmount] = useState(0)
+
+  // Display strings for decimal fields — kept in sync on blur/stepper
+  const initTaxDisplay = (defaultTemplate?.defaultTaxRate != null && defaultTemplate.defaultTaxRate > 0)
+    ? defaultTemplate.defaultTaxRate.toFixed(2)
+    : (profile.defaultTaxRate > 0 ? profile.defaultTaxRate.toFixed(2) : '0.00')
+  const [taxRateDisplay, setTaxRateDisplay] = useState(initTaxDisplay)
+  const [discountDisplay, setDiscountDisplay] = useState('0.00')
+  const [depositDisplay, setDepositDisplay] = useState('')
   const [notes, setNotes] = useState(defaultTemplate?.defaultNotes ?? '')
   const [paymentTerms, setPaymentTerms] = useState(defaultTemplate?.defaultPaymentTerms ?? '')
   const [paymentInstructions, setPaymentInstructions] = useState(defaultTemplate?.paymentInstructions ?? '')
@@ -414,21 +422,25 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                   <Label htmlFor="tax-rate">Tax Rate (%)</Label>
                   <div className="flex items-center">
                     <button type="button"
-                      onClick={() => setTaxRate((v) => Math.max(0, parseFloat((v - 0.25).toFixed(2))))}
+                      onClick={() => { const n = Math.max(0, parseFloat((taxRate - 0.25).toFixed(2))); setTaxRate(n); setTaxRateDisplay(n.toFixed(2)) }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Minus size={11} /></button>
                     <input id="tax-rate" type="text" inputMode="decimal" pattern="[0-9.]*"
-                      value={taxRate}
+                      value={taxRateDisplay}
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         const v = e.target.value
-                        const n = parseFloat(v)
-                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) setTaxRate(isNaN(n) ? 0 : n)
+                        if (/^[0-9]*\.?[0-9]*$/.test(v)) {
+                          setTaxRateDisplay(v)
+                          const n = parseFloat(v)
+                          if (!isNaN(n)) setTaxRate(n)
+                        }
                       }}
+                      onBlur={() => setTaxRateDisplay(taxRate.toFixed(2))}
                       className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                     <button type="button"
-                      onClick={() => setTaxRate((v) => parseFloat((v + 0.25).toFixed(2)))}
+                      onClick={() => { const n = parseFloat((taxRate + 0.25).toFixed(2)); setTaxRate(n); setTaxRateDisplay(n.toFixed(2)) }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Plus size={11} /></button>
                   </div>
@@ -437,21 +449,25 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                   <Label htmlFor="discount">Discount Amount</Label>
                   <div className="flex items-center">
                     <button type="button"
-                      onClick={() => setDiscountAmount((v) => Math.max(0, parseFloat((v - 1).toFixed(2))))}
+                      onClick={() => { const n = Math.max(0, parseFloat((discountAmount - 1).toFixed(2))); setDiscountAmount(n); setDiscountDisplay(n.toFixed(2)) }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Minus size={11} /></button>
                     <input id="discount" type="text" inputMode="decimal" pattern="[0-9.]*"
-                      value={discountAmount}
+                      value={discountDisplay}
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         const v = e.target.value
-                        const n = parseFloat(v)
-                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) setDiscountAmount(isNaN(n) ? 0 : n)
+                        if (/^[0-9]*\.?[0-9]*$/.test(v)) {
+                          setDiscountDisplay(v)
+                          const n = parseFloat(v)
+                          if (!isNaN(n)) setDiscountAmount(n)
+                        }
                       }}
+                      onBlur={() => setDiscountDisplay(discountAmount.toFixed(2))}
                       className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                     <button type="button"
-                      onClick={() => setDiscountAmount((v) => parseFloat((v + 1).toFixed(2)))}
+                      onClick={() => { const n = parseFloat((discountAmount + 1).toFixed(2)); setDiscountAmount(n); setDiscountDisplay(n.toFixed(2)) }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Plus size={11} /></button>
                   </div>
@@ -460,22 +476,26 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                   <Label htmlFor="deposit">Deposit Received (optional)</Label>
                   <div className="flex items-center">
                     <button type="button"
-                      onClick={() => setDepositAmount((v) => Math.max(0, parseFloat((v - 1).toFixed(2))))}
+                      onClick={() => { const n = Math.max(0, parseFloat((depositAmount - 1).toFixed(2))); setDepositAmount(n); setDepositDisplay(n > 0 ? n.toFixed(2) : '') }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Minus size={11} /></button>
                     <input id="deposit" type="text" inputMode="decimal" pattern="[0-9.]*"
-                      value={depositAmount || ''}
+                      value={depositDisplay}
                       placeholder="0.00"
                       onFocus={(e) => e.target.select()}
                       onChange={(e) => {
                         const v = e.target.value
-                        const n = parseFloat(v)
-                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) setDepositAmount(isNaN(n) ? 0 : n)
+                        if (/^[0-9]*\.?[0-9]*$/.test(v)) {
+                          setDepositDisplay(v)
+                          const n = parseFloat(v)
+                          setDepositAmount(isNaN(n) ? 0 : n)
+                        }
                       }}
+                      onBlur={() => setDepositDisplay(depositAmount > 0 ? depositAmount.toFixed(2) : '')}
                       className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                     <button type="button"
-                      onClick={() => setDepositAmount((v) => parseFloat((v + 1).toFixed(2)))}
+                      onClick={() => { const n = parseFloat((depositAmount + 1).toFixed(2)); setDepositAmount(n); setDepositDisplay(n.toFixed(2)) }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Plus size={11} /></button>
                   </div>
