@@ -28,7 +28,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
 
   const template = invoice.template
   const primaryColor = template?.primaryColor ?? '#635BFF'
-  const brandName = template?.brandName ?? profile.businessName ?? profile.fullName
+  const brandName = template?.brandName?.trim() || profile.businessName || profile.fullName
   return (
     <div>
       <PageHeader

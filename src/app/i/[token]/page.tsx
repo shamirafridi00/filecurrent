@@ -69,7 +69,13 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
   }
 
   const primaryColor = invoice.template?.primaryColor ?? '#635BFF'
-  const brandName = invoice.template?.brandName ?? invoice.freelancerName
+  const brandName =
+    invoice.template?.brandName?.trim() ||
+    invoice.businessName ||
+    invoice.freelancerName
+  const theme = invoice.template?.theme ?? 'summit'
+  const isIvory = theme === 'ivory'
+  const isLedger = theme === 'ledger'
   const isOverdue = invoice.status !== 'paid' &&
     !!invoice.dueDate &&
     new Date(invoice.dueDate) < new Date()
@@ -86,8 +92,23 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
         {/* Invoice card */}
         <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
           {/* Header */}
-          <div className="px-6 py-5 text-white" style={{ backgroundColor: primaryColor }}>
-            <div className="flex items-start justify-between">
+          {isIvory ? (
+            <div className="px-6 py-5 bg-white flex items-start justify-between"
+                 style={{ borderTop: `3px solid ${primaryColor}` }}>
+              <div>
+                <p className="font-bold text-xl text-slate-800">{brandName}</p>
+                {invoice.template?.brandAddress && (
+                  <p className="text-xs text-slate-400 mt-0.5">{invoice.template.brandAddress}</p>
+                )}
+              </div>
+              <div className="text-right">
+                <p className="font-bold text-lg tracking-wide" style={{ color: primaryColor }}>INVOICE</p>
+                <p className="text-slate-400 text-sm mt-0.5">{invoice.invoiceNumber}</p>
+              </div>
+            </div>
+          ) : (
+            <div className="px-6 py-5 text-white flex items-start justify-between"
+                 style={{ backgroundColor: isLedger ? '#111827' : primaryColor }}>
               <div>
                 <p className="text-xl font-bold tracking-wide">INVOICE</p>
                 <p className="opacity-80 text-sm mt-0.5">{invoice.invoiceNumber}</p>
@@ -99,7 +120,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
                 )}
               </div>
             </div>
-          </div>
+          )}
 
           <div className="p-6">
             {/* FROM / BILL TO */}

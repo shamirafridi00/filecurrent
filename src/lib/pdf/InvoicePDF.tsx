@@ -128,7 +128,7 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
   const themeName = (template?.theme ?? 'summit') as keyof typeof themes
   const themeBase = themes[themeName] ?? themes.summit
   const primary = template?.primaryColor ?? '#635BFF'
-  const brandName = template?.brandName ?? freelancerName
+  const brandName = template?.brandName?.trim() || freelancerName
 
   // Resolve dynamic placeholders
   const theme = {
