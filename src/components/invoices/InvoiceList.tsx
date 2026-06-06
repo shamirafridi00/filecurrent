@@ -4,6 +4,7 @@ import { useState, useMemo } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { MagnifyingGlass, X, Trash } from '@phosphor-icons/react'
+import { toast } from 'sonner'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { InvoiceBadge, ConfirmDialog } from '@/components/ui'
@@ -79,16 +80,18 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
   async function confirmDelete() {
     if (!deleteTarget) return
     setDeleting(true)
+    const invoiceNumber = deleteTarget.invoiceNumber
     try {
       const res = await fetch(`/api/invoices/${deleteTarget.id}`, { method: 'DELETE' })
       if (!res.ok) throw new Error('Delete failed')
       setInvoices((prev) => prev.filter((inv) => inv.id !== deleteTarget.id))
+      setDeleteTarget(null)
       router.refresh()
+      toast.success(`Invoice ${invoiceNumber} deleted`)
     } catch {
-      // keep modal open on error — user can retry
+      toast.error('Failed to delete invoice. Please try again.')
     } finally {
       setDeleting(false)
-      setDeleteTarget(null)
     }
   }
 
