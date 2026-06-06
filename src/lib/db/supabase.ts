@@ -858,6 +858,18 @@ export async function createInvoice(
   return row.id
 }
 
+export async function markOverdueInvoices(userId: string): Promise<void> {
+  const today = new Date().toISOString().split('T')[0]
+  const { error } = await adminClient
+    .from('invoices')
+    .update({ status: 'overdue', updated_at: new Date().toISOString() })
+    .eq('user_id', userId)
+    .in('status', ['sent', 'partial'])
+    .lt('due_date', today)
+    .not('due_date', 'is', null)
+  if (error) console.error('[markOverdueInvoices] failed:', error)
+}
+
 export async function updateInvoiceStatus(id: string, userId: string, status: string): Promise<void> {
   const { error } = await adminClient
     .from('invoices')

@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader, InvoiceBadge } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentProfile, getInvoice, getInvoicePayments } from '@/lib/db/supabase'
+import { getCurrentProfile, getInvoice, getInvoicePayments, markOverdueInvoices } from '@/lib/db/supabase'
 import { RecordPaymentModal } from '@/components/invoices/RecordPaymentModal'
 import { InvoiceShareLink } from '@/components/invoices/InvoiceShareLink'
 import { InvoicePdfButton } from '@/components/invoices/InvoicePdfButton'
@@ -19,6 +19,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) { notFound(); return null }
 
+  await markOverdueInvoices(user.id)
   const [profile, invoice, payments] = await Promise.all([
     getCurrentProfile(user.id),
     getInvoice(params.id, user.id),
