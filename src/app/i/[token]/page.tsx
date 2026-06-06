@@ -76,6 +76,8 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
   const theme = invoice.template?.theme ?? 'summit'
   const isIvory = theme === 'ivory'
   const isLedger = theme === 'ledger'
+  const tableHeaderBg = isLedger ? '#111827' : isIvory ? '#F9FAFB' : primaryColor
+  const tableHeaderText = isIvory ? '#374151' : 'white'
   const isOverdue = invoice.status !== 'paid' &&
     !!invoice.dueDate &&
     new Date(invoice.dueDate) < new Date()
@@ -165,11 +167,11 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
             {/* Items */}
             <table className="w-full mb-6 text-sm">
               <thead>
-                <tr className="text-white">
-                  <th className="text-left p-2.5 rounded-tl-md" style={{ backgroundColor: primaryColor }}>Description</th>
-                  <th className="text-right p-2.5 w-14" style={{ backgroundColor: primaryColor }}>Qty</th>
-                  <th className="text-right p-2.5 w-28" style={{ backgroundColor: primaryColor }}>Unit Price</th>
-                  <th className="text-right p-2.5 rounded-tr-md w-28" style={{ backgroundColor: primaryColor }}>Amount</th>
+                <tr style={{ color: tableHeaderText }}>
+                  <th className="text-left p-2.5 rounded-tl-md" style={{ backgroundColor: tableHeaderBg }}>Description</th>
+                  <th className="text-right p-2.5 w-14" style={{ backgroundColor: tableHeaderBg }}>Qty</th>
+                  <th className="text-right p-2.5 w-28" style={{ backgroundColor: tableHeaderBg }}>Unit Price</th>
+                  <th className="text-right p-2.5 rounded-tr-md w-28" style={{ backgroundColor: tableHeaderBg }}>Amount</th>
                 </tr>
               </thead>
               <tbody>
@@ -205,6 +207,14 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
                   <tr>
                     <td colSpan={3} className="px-2.5 text-right text-gray-500">Amount Paid</td>
                     <td className="px-2.5 text-right text-green-600">−{formatCurrency(invoice.paidAmount, invoice.currency)}</td>
+                  </tr>
+                )}
+                {invoice.paidAmount > 0 && invoice.paidAmount < invoice.total && (
+                  <tr>
+                    <td colSpan={3} className="px-2.5 pb-2 text-right font-bold text-gray-900">Balance Due</td>
+                    <td className="px-2.5 pb-2 text-right font-bold" style={{ color: primaryColor }}>
+                      {formatCurrency(invoice.total - invoice.paidAmount, invoice.currency)}
+                    </td>
                   </tr>
                 )}
               </tfoot>
