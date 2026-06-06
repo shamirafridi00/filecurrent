@@ -12,6 +12,7 @@ import { getCurrentProfile, getInvoice, getInvoicePayments, markOverdueInvoices 
 import { RecordPaymentModal } from '@/components/invoices/RecordPaymentModal'
 import { InvoiceShareLink } from '@/components/invoices/InvoiceShareLink'
 import { InvoicePdfButton } from '@/components/invoices/InvoicePdfButton'
+import { DuplicateInvoiceButton } from '@/components/invoices/DuplicateInvoiceButton'
 import type { InvoiceStatus } from '@/types'
 
 export default async function InvoiceDetailPage({ params }: { params: { id: string } }) {
@@ -40,6 +41,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
         action={
           <div className="flex items-center gap-2">
             <InvoiceBadge status={invoice.status as InvoiceStatus} />
+            <DuplicateInvoiceButton invoiceId={invoice.id} />
             <InvoicePdfButton invoiceId={invoice.id} isPro={profile.plan !== 'free'} />
             {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} />}
           </div>
