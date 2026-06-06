@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader, EmptyState } from '@/components/ui'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getInvoices, markOverdueInvoices } from '@/lib/db/supabase'
+import { getInvoices, markOverdueInvoices, generateRecurringInvoices } from '@/lib/db/supabase'
 import { InvoiceList } from '@/components/invoices/InvoiceList'
 
 export default async function InvoicesPage() {
@@ -15,7 +15,10 @@ export default async function InvoicesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  await markOverdueInvoices(user.id)
+  await Promise.all([
+    markOverdueInvoices(user.id),
+    generateRecurringInvoices(user.id),
+  ])
   const invoices = await getInvoices(user.id)
 
   return (

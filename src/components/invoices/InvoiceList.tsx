@@ -232,6 +232,11 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
               <div className="flex items-center gap-3 shrink-0">
                 <span className="text-sm font-medium">{formatCurrency(inv.total, inv.currency)}</span>
                 <InvoiceBadge status={inv.status as InvoiceStatus} />
+                {inv.isRecurring && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">
+                    ↻ Recurring
+                  </span>
+                )}
                 <Button asChild variant="ghost" size="sm">
                   <Link href={`/invoices/${inv.id}`}>View →</Link>
                 </Button>

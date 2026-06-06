@@ -10,6 +10,7 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getInvoice, getInvoicePayments, markOverdueInvoices } from '@/lib/db/supabase'
 import { RecordPaymentModal } from '@/components/invoices/RecordPaymentModal'
+import { RecurringSettings } from '@/components/invoices/RecurringSettings'
 import { InvoiceShareLink } from '@/components/invoices/InvoiceShareLink'
 import { InvoicePdfButton } from '@/components/invoices/InvoicePdfButton'
 import { DuplicateInvoiceButton } from '@/components/invoices/DuplicateInvoiceButton'
@@ -218,6 +219,14 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
               {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} />}
             </CardContent>
           </Card>
+
+          <RecurringSettings
+            invoiceId={invoice.id}
+            isRecurring={invoice.isRecurring}
+            recurrenceInterval={invoice.recurrenceInterval}
+            recurrenceNextDate={invoice.recurrenceNextDate}
+            recurrenceEndDate={invoice.recurrenceEndDate}
+          />
         </div>
       </div>
     </div>

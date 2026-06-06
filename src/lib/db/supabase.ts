@@ -744,6 +744,7 @@ export interface InvoiceListRow {
   id: string; invoiceNumber: string; clientId: string; clientName: string
   total: number; currency: string; status: string; invoiceDate: string
   dueDate: string | null; shareToken: string
+  isRecurring: boolean; recurrenceInterval: string | null; recurrenceNextDate: string | null
 }
 
 export interface InvoiceDetailRow extends InvoiceListRow {
@@ -753,6 +754,7 @@ export interface InvoiceDetailRow extends InvoiceListRow {
   clientEmail: string | null
   clientCompany: string | null; clientAddress: string | null
   templateId: string | null; template: InvoiceTemplateRow | null; createdAt: string
+  recurrenceEndDate: string | null; recurrenceParentId: string | null
 }
 
 export async function getNextInvoiceSequence(userId: string): Promise<number> {
@@ -784,7 +786,7 @@ export async function deleteInvoice(id: string, userId: string): Promise<void> {
 export async function getInvoices(userId: string): Promise<InvoiceListRow[]> {
   const { data, error } = await adminClient
     .from('invoices')
-    .select('id, invoice_number, client_id, total, currency, status, invoice_date, due_date, share_token, clients!inner(name)')
+    .select('id, invoice_number, client_id, total, currency, status, invoice_date, due_date, share_token, is_recurring, recurrence_interval, recurrence_next_date, clients!inner(name)')
     .eq('user_id', userId)
     .order('created_at', { ascending: false })
   if (error) throw new Error(error.message)
@@ -793,6 +795,9 @@ export async function getInvoices(userId: string): Promise<InvoiceListRow[]> {
     clientName: (r.clients as unknown as { name: string })?.name ?? '',
     total: r.total, currency: r.currency, status: r.status,
     invoiceDate: r.invoice_date, dueDate: r.due_date, shareToken: r.share_token,
+    isRecurring: r.is_recurring ?? false,
+    recurrenceInterval: r.recurrence_interval ?? null,
+    recurrenceNextDate: r.recurrence_next_date ?? null,
   }))
 }
 
@@ -823,6 +828,11 @@ export async function getInvoice(id: string, userId: string): Promise<InvoiceDet
     clientEmail: client.email, clientCompany: client.company,
     clientAddress: client.address, templateId: data.invoice_template_id,
     template, createdAt: data.created_at,
+    isRecurring: data.is_recurring ?? false,
+    recurrenceInterval: data.recurrence_interval ?? null,
+    recurrenceNextDate: data.recurrence_next_date ?? null,
+    recurrenceEndDate: data.recurrence_end_date ?? null,
+    recurrenceParentId: data.recurrence_parent_id ?? null,
   }
 }
 
@@ -877,6 +887,111 @@ export async function markOverdueInvoices(userId: string): Promise<void> {
     .lt('due_date', today)
     .not('due_date', 'is', null)
   if (error) console.error('[markOverdueInvoices] failed:', error)
+}
+
+export async function setInvoiceRecurring(
+  id: string,
+  userId: string,
+  settings: {
+    isRecurring: boolean
+    interval: 'weekly' | 'biweekly' | 'monthly' | 'quarterly' | null
+    nextDate: string | null
+    endDate: string | null
+  }
+): Promise<void> {
+  const { error } = await adminClient
+    .from('invoices')
+    .update({
+      is_recurring: settings.isRecurring,
+      recurrence_interval: settings.isRecurring ? settings.interval : null,
+      recurrence_next_date: settings.isRecurring ? settings.nextDate : null,
+      recurrence_end_date: settings.isRecurring ? settings.endDate : null,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function generateRecurringInvoices(userId: string): Promise<void> {
+  const today = new Date().toISOString().split('T')[0]
+
+  const { data: due, error } = await adminClient
+    .from('invoices')
+    .select('id, client_id, invoice_template_id, currency, items, subtotal, tax_rate, tax_amount, discount_amount, deposit_amount, total, notes, payment_terms, payment_instructions, recurrence_interval, recurrence_next_date, recurrence_end_date')
+    .eq('user_id', userId)
+    .eq('is_recurring', true)
+    .lte('recurrence_next_date', today)
+    .not('recurrence_next_date', 'is', null)
+
+  if (error) { console.error('[generateRecurringInvoices] fetch failed:', error); return }
+  if (!due || due.length === 0) return
+
+  for (const source of due) {
+    try {
+      const current = new Date(source.recurrence_next_date as string)
+      let next: Date
+      switch (source.recurrence_interval) {
+        case 'weekly':    next = new Date(current); next.setDate(current.getDate() + 7); break
+        case 'biweekly':  next = new Date(current); next.setDate(current.getDate() + 14); break
+        case 'quarterly': next = new Date(current); next.setMonth(current.getMonth() + 3); break
+        default:          next = new Date(current); next.setMonth(current.getMonth() + 1); break
+      }
+      const nextDateStr = next.toISOString().split('T')[0]
+
+      const endDate = source.recurrence_end_date as string | null
+      if (endDate && nextDateStr > endDate) {
+        await adminClient.from('invoices').update({ is_recurring: false, recurrence_next_date: null }).eq('id', source.id)
+        continue
+      }
+
+      const year = new Date().getFullYear()
+      const { data: latest } = await adminClient
+        .from('invoices')
+        .select('invoice_number')
+        .eq('user_id', userId)
+        .like('invoice_number', `INV-${year}-%`)
+        .order('invoice_number', { ascending: false })
+        .limit(1)
+      const latestNum = latest?.[0]?.invoice_number
+      const parts = latestNum ? latestNum.split('-') : []
+      const nextSeq = (parseInt(parts[2] ?? '0', 10) || 0) + 1
+      const invoiceNumber = `INV-${year}-${String(nextSeq).padStart(4, '0')}`
+
+      const items = typeof source.items === 'string' ? JSON.parse(source.items) : source.items
+      await adminClient.from('invoices').insert({
+        user_id: userId,
+        client_id: source.client_id,
+        invoice_template_id: source.invoice_template_id ?? null,
+        invoice_number: invoiceNumber,
+        invoice_date: today,
+        due_date: null,
+        currency: source.currency,
+        items: JSON.stringify(items),
+        subtotal: source.subtotal,
+        tax_rate: source.tax_rate,
+        tax_amount: source.tax_amount,
+        discount_amount: source.discount_amount,
+        deposit_amount: source.deposit_amount ?? 0,
+        total: source.total,
+        notes: source.notes ?? null,
+        payment_terms: source.payment_terms ?? null,
+        payment_instructions: source.payment_instructions ?? null,
+        status: 'draft',
+        has_branding_footer: true,
+        share_token: crypto.randomUUID(),
+        recurrence_parent_id: source.id,
+        is_recurring: false,
+      })
+
+      await adminClient
+        .from('invoices')
+        .update({ recurrence_next_date: nextDateStr, updated_at: new Date().toISOString() })
+        .eq('id', source.id)
+    } catch (err) {
+      console.error(`[generateRecurringInvoices] failed for invoice ${source.id}:`, err)
+    }
+  }
 }
 
 export async function updateInvoiceStatus(id: string, userId: string, status: string): Promise<void> {
