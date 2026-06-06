@@ -70,10 +70,19 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
 
   const primaryColor = invoice.template?.primaryColor ?? '#635BFF'
   const brandName = invoice.template?.brandName ?? invoice.freelancerName
+  const isOverdue = invoice.status !== 'paid' &&
+    !!invoice.dueDate &&
+    new Date(invoice.dueDate) < new Date()
 
   return (
     <div className="min-h-screen bg-neutral-50 py-8 px-4">
       <div className="mx-auto max-w-2xl">
+        {isOverdue && (
+          <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-4 flex items-center gap-2 text-sm text-red-700">
+            <span>⚠</span>
+            <span>This invoice is overdue. Please arrange payment as soon as possible.</span>
+          </div>
+        )}
         {/* Invoice card */}
         <div className="rounded-xl border bg-white shadow-sm overflow-hidden">
           {/* Header */}
@@ -117,7 +126,12 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
               </div>
               <div>
                 <p className="text-xs text-gray-400 uppercase tracking-wide">Due Date</p>
-                <p className="font-medium text-sm mt-1">{invoice.dueDate ? formatDate(invoice.dueDate) : '—'}</p>
+                <p className={`font-medium text-sm mt-1 ${isOverdue ? 'text-red-600 font-semibold' : ''}`}>
+                  {invoice.dueDate ? formatDate(invoice.dueDate) : '—'}
+                  {isOverdue && (
+                    <span className="ml-2 text-xs bg-red-100 text-red-700 px-2 py-0.5 rounded-full font-medium">Overdue</span>
+                  )}
+                </p>
               </div>
               <div>
                 <p className="text-xs text-gray-400 uppercase tracking-wide">Status</p>
@@ -189,6 +203,13 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
                     <p className="text-sm text-gray-600">{invoice.paymentTerms}</p>
                   </div>
                 )}
+              </div>
+            )}
+
+            {invoice.paymentInstructions && (
+              <div className="mt-4 border-l-4 border-green-500 rounded-lg bg-green-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-green-700 mb-1">How to Pay</p>
+                <p className="text-sm text-green-900 whitespace-pre-wrap">{invoice.paymentInstructions}</p>
               </div>
             )}
           </div>

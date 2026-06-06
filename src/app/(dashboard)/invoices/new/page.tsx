@@ -30,7 +30,7 @@ export default async function NewInvoicePage({ searchParams }: { searchParams: {
       profile={{
         fullName: profile.fullName,
         businessName: profile.businessName,
-        defaultTaxRate: 0,
+        defaultTaxRate: profile.defaultTaxRate ?? 0,
       }}
     />
   )

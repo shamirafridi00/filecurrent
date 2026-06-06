@@ -31,7 +31,22 @@ const themes = {
     tableRowAlt: '#F9FAFB',
     borderColor: '#E5E7EB',
   },
-} as const
+  // slate & ivory tableHeaderBg depends on primaryColor — resolved at render time
+  slate: {
+    headerText: '#FFFFFF',
+    tableHeaderBg: '__primary__',
+    tableHeaderText: '#FFFFFF',
+    tableRowAlt: '#F8FAFC',
+    borderColor: '#CBD5E1',
+  },
+  ivory: {
+    headerText: '#111827',
+    tableHeaderBg: '#F9FAFB',
+    tableHeaderText: '#111827',
+    tableRowAlt: '#FFFFFF',
+    borderColor: '#E5E7EB',
+  },
+}
 
 function fmt(amount: number, currency = 'USD'): string {
   return new Intl.NumberFormat('en-US', {
@@ -107,10 +122,17 @@ const s = StyleSheet.create({
 
 export function InvoicePDF({ invoice, template, freelancerName, isPro }: InvoicePDFProps) {
   const themeName = (template?.theme ?? 'summit') as keyof typeof themes
-  const theme = themes[themeName] ?? themes.summit
+  const themeBase = themes[themeName] ?? themes.summit
   const primary = template?.primaryColor ?? '#635BFF'
   const brandName = template?.brandName ?? freelancerName
 
+  // Resolve dynamic placeholder used by slate theme
+  const theme = {
+    ...themeBase,
+    tableHeaderBg: themeBase.tableHeaderBg === '__primary__' ? primary : themeBase.tableHeaderBg,
+  }
+
+  const isIvory = themeName === 'ivory'
   const balance = invoice.total - (invoice.paidAmount ?? 0)
   const items = invoice.items ?? []
 
@@ -118,25 +140,46 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
     <Document>
       <Page size="A4" style={s.page}>
 
-        {/* Header */}
-        <View style={[s.header, { backgroundColor: primary }]}>
-          <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            {template?.logoUrl && (
-              // eslint-disable-next-line jsx-a11y/alt-text
-              <Image src={template.logoUrl} style={s.logo} />
-            )}
-            <View>
-              <Text style={[s.headerTitle, { color: theme.headerText }]}>INVOICE</Text>
-              <Text style={[s.headerSub, { color: theme.headerText }]}>#{invoice.invoiceNumber}</Text>
+        {/* Header — Ivory: white bg with top accent line; all others: colored bg */}
+        {isIvory ? (
+          <View style={[s.header, { backgroundColor: '#FFFFFF', borderTopWidth: 3, borderTopColor: primary }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              {template?.logoUrl && (
+                // eslint-disable-next-line jsx-a11y/alt-text
+                <Image src={template.logoUrl} style={s.logo} />
+              )}
+              <View>
+                <Text style={[s.headerBrand, { color: '#111827', fontSize: 15 }]}>{brandName}</Text>
+                {template?.brandAddress && (
+                  <Text style={[s.headerAddr, { color: '#6B7280' }]}>{template.brandAddress}</Text>
+                )}
+              </View>
+            </View>
+            <View style={s.headerRight}>
+              <Text style={[s.headerTitle, { color: primary, fontSize: 20, letterSpacing: 3 }]}>INVOICE</Text>
+              <Text style={[s.headerSub, { color: '#6B7280' }]}>#{invoice.invoiceNumber}</Text>
             </View>
           </View>
-          <View style={s.headerRight}>
-            <Text style={[s.headerBrand, { color: theme.headerText }]}>{brandName}</Text>
-            {template?.brandAddress && (
-              <Text style={[s.headerAddr, { color: theme.headerText }]}>{template.brandAddress}</Text>
-            )}
+        ) : (
+          <View style={[s.header, { backgroundColor: primary }]}>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
+              {template?.logoUrl && (
+                // eslint-disable-next-line jsx-a11y/alt-text
+                <Image src={template.logoUrl} style={s.logo} />
+              )}
+              <View>
+                <Text style={[s.headerTitle, { color: theme.headerText }]}>INVOICE</Text>
+                <Text style={[s.headerSub, { color: theme.headerText }]}>#{invoice.invoiceNumber}</Text>
+              </View>
+            </View>
+            <View style={s.headerRight}>
+              <Text style={[s.headerBrand, { color: theme.headerText }]}>{brandName}</Text>
+              {template?.brandAddress && (
+                <Text style={[s.headerAddr, { color: theme.headerText }]}>{template.brandAddress}</Text>
+              )}
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Parties */}
         <View style={s.parties}>
@@ -238,6 +281,16 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
                 <Text style={s.noteText}>{invoice.paymentTerms}</Text>
               </View>
             )}
+          </View>
+        )}
+
+        {/* Payment Instructions */}
+        {invoice.paymentInstructions && (
+          <View style={s.notesRow}>
+            <View style={[s.noteBox, { borderColor: '#BBF7D0', flex: 1 }]}>
+              <Text style={[s.noteLabel, { color: '#15803D' }]}>HOW TO PAY</Text>
+              <Text style={s.noteText}>{invoice.paymentInstructions}</Text>
+            </View>
           </View>
         )}
 

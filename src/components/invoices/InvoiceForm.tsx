@@ -77,6 +77,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
   const [depositAmount, setDepositAmount] = useState(0)
   const [notes, setNotes] = useState(defaultTemplate?.defaultNotes ?? '')
   const [paymentTerms, setPaymentTerms] = useState(defaultTemplate?.defaultPaymentTerms ?? '')
+  const [paymentInstructions, setPaymentInstructions] = useState(defaultTemplate?.paymentInstructions ?? '')
   const [items, setItems] = useState<ItemRow[]>([
     { _id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, amount: 0 },
   ])
@@ -118,6 +119,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
           })),
           subtotal, taxRate, taxAmount, discountAmount, depositAmount, total,
           notes: notes || undefined, paymentTerms: paymentTerms || undefined,
+          paymentInstructions: paymentInstructions || undefined,
           markAsSent,
         }),
       })
@@ -160,6 +162,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                   setTaxRate(t.defaultTaxRate)
                   if (t.defaultNotes) setNotes(t.defaultNotes)
                   if (t.defaultPaymentTerms) setPaymentTerms(t.defaultPaymentTerms)
+                  if (t.paymentInstructions) setPaymentInstructions(t.paymentInstructions)
                 }
               }}>
                 <SelectTrigger className="w-64">
@@ -349,14 +352,26 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
         {/* Notes + Terms */}
         <Card>
           <CardHeader><CardTitle className="text-base">Additional Information</CardTitle></CardHeader>
-          <CardContent className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <Label>Notes (visible to client)</Label>
-              <Textarea rows={3} placeholder="Thank you for your business!" value={notes} onChange={(e) => setNotes(e.target.value)} />
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label>Notes (visible to client)</Label>
+                <Textarea rows={3} placeholder="Thank you for your business!" value={notes} onChange={(e) => setNotes(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Payment Terms</Label>
+                <Textarea rows={3} placeholder="Payment due within 30 days" value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} />
+              </div>
             </div>
             <div className="space-y-1.5">
-              <Label>Payment Terms</Label>
-              <Textarea rows={3} placeholder="Payment due within 30 days" value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} />
+              <Label>Payment Instructions</Label>
+              <Textarea
+                rows={3}
+                placeholder="e.g. Pay via Zelle to email@example.com, PayPal @handle, or bank transfer. Include invoice number as reference."
+                value={paymentInstructions}
+                onChange={(e) => setPaymentInstructions(e.target.value)}
+              />
+              <p className="text-xs text-muted-foreground">Shown on the invoice so clients always know how to pay.</p>
             </div>
           </CardContent>
         </Card>

@@ -29,6 +29,24 @@ export async function seedDefaultInvoiceTemplates(userId: string): Promise<void>
       secondary_color: '#111827',
       is_default: false,
     },
+    {
+      user_id: userId,
+      name: 'Slate',
+      description: 'Bold, brand-forward layout. Great for agencies and studios.',
+      theme: 'slate',
+      primary_color: '#0F172A',
+      secondary_color: '#475569',
+      is_default: false,
+    },
+    {
+      user_id: userId,
+      name: 'Ivory',
+      description: 'Premium minimal layout. Great for consultants and designers.',
+      theme: 'ivory',
+      primary_color: '#635BFF',
+      secondary_color: '#111827',
+      is_default: false,
+    },
   ]
 
   const { error } = await adminClient.from('invoice_templates').insert(defaults)

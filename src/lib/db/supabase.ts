@@ -22,6 +22,7 @@ export interface LocalProfile {
   trialEndsAt: string | null
   profession: Profession | null
   onboardingComplete: boolean
+  defaultTaxRate: number
 }
 
 export interface OnboardingInput {
@@ -34,7 +35,7 @@ export interface OnboardingInput {
 export async function getCurrentProfile(userId: string): Promise<LocalProfile> {
   const { data, error } = await adminClient
     .from('profiles')
-    .select('id, email, full_name, business_name, business_logo, phone, plan, trial_ends_at, profession, onboarding_complete')
+    .select('id, email, full_name, business_name, business_logo, phone, plan, trial_ends_at, profession, onboarding_complete, default_tax_rate')
     .eq('id', userId)
     .single()
 
@@ -51,6 +52,7 @@ export async function getCurrentProfile(userId: string): Promise<LocalProfile> {
     trialEndsAt: data.trial_ends_at ?? null,
     profession: data.profession as Profession | null,
     onboardingComplete: Boolean(data.onboarding_complete),
+    defaultTaxRate: data.default_tax_rate ?? 0,
   }
 }
 
@@ -616,6 +618,7 @@ export interface InvoiceTemplateRow {
   brandName: string | null; brandAddress: string | null; phone: string | null
   website: string | null; taxId: string | null; defaultNotes: string | null
   defaultPaymentTerms: string | null; defaultTaxRate: number
+  paymentInstructions: string | null
   isDefault: boolean; createdAt: string
 }
 
@@ -625,6 +628,7 @@ function rowToInvoiceTemplate(r: {
   brand_name: string | null; brand_address: string | null; phone: string | null
   website: string | null; tax_id: string | null; default_notes: string | null
   default_payment_terms: string | null; default_tax_rate: number
+  payment_instructions: string | null
   is_default: boolean; created_at: string
 }): InvoiceTemplateRow {
   return {
@@ -633,7 +637,9 @@ function rowToInvoiceTemplate(r: {
     logoUrl: r.logo_url, brandName: r.brand_name, brandAddress: r.brand_address,
     phone: r.phone, website: r.website, taxId: r.tax_id,
     defaultNotes: r.default_notes, defaultPaymentTerms: r.default_payment_terms,
-    defaultTaxRate: r.default_tax_rate, isDefault: Boolean(r.is_default),
+    defaultTaxRate: r.default_tax_rate,
+    paymentInstructions: r.payment_instructions ?? null,
+    isDefault: Boolean(r.is_default),
     createdAt: r.created_at,
   }
 }
@@ -667,7 +673,9 @@ export async function createInvoiceTemplate(
       website: data.website ?? null, tax_id: data.taxId ?? null,
       default_notes: data.defaultNotes ?? null,
       default_payment_terms: data.defaultPaymentTerms ?? null,
-      default_tax_rate: data.defaultTaxRate ?? 0, is_default: data.isDefault ?? false,
+      default_tax_rate: data.defaultTaxRate ?? 0,
+      payment_instructions: data.paymentInstructions ?? null,
+      is_default: data.isDefault ?? false,
     })
     .select('id')
     .single()
@@ -690,7 +698,9 @@ export async function updateInvoiceTemplate(
       website: data.website ?? null, tax_id: data.taxId ?? null,
       default_notes: data.defaultNotes ?? null,
       default_payment_terms: data.defaultPaymentTerms ?? null,
-      default_tax_rate: data.defaultTaxRate ?? 0, is_default: data.isDefault ?? false,
+      default_tax_rate: data.defaultTaxRate ?? 0,
+      payment_instructions: data.paymentInstructions ?? null,
+      is_default: data.isDefault ?? false,
       updated_at: new Date().toISOString(),
     })
     .eq('id', id)
@@ -739,7 +749,8 @@ export interface InvoiceListRow {
 export interface InvoiceDetailRow extends InvoiceListRow {
   subtotal: number; taxRate: number; taxAmount: number; discountAmount: number
   paidAmount: number; items: InvoiceItem[]; notes: string | null
-  paymentTerms: string | null; clientEmail: string | null
+  paymentTerms: string | null; paymentInstructions: string | null
+  clientEmail: string | null
   clientCompany: string | null; clientAddress: string | null
   templateId: string | null; template: InvoiceTemplateRow | null; createdAt: string
 }
@@ -790,6 +801,7 @@ export async function getInvoice(id: string, userId: string): Promise<InvoiceDet
     paidAmount: data.paid_amount,
     items: (typeof data.items === 'string' ? JSON.parse(data.items) : data.items) as InvoiceItem[],
     notes: data.notes, paymentTerms: data.payment_terms,
+    paymentInstructions: data.payment_instructions ?? null,
     clientEmail: client.email, clientCompany: client.company,
     clientAddress: client.address, templateId: data.invoice_template_id,
     template, createdAt: data.created_at,
@@ -803,7 +815,7 @@ export async function createInvoice(
     invoiceDate: string; dueDate?: string; currency: string
     items: InvoiceItem[]; subtotal: number; taxRate: number; taxAmount: number
     discountAmount: number; depositAmount: number; total: number
-    notes?: string; paymentTerms?: string
+    notes?: string; paymentTerms?: string; paymentInstructions?: string
   }
 ): Promise<string> {
   const profile = await adminClient
@@ -827,6 +839,7 @@ export async function createInvoice(
       discount_amount: data.discountAmount,
       deposit_amount: data.depositAmount, total: data.total,
       notes: data.notes ?? null, payment_terms: data.paymentTerms ?? null,
+      payment_instructions: data.paymentInstructions ?? null,
       status: 'draft', has_branding_footer: !isPro,
       share_token: shareToken,
     })
@@ -899,7 +912,8 @@ export interface InvoicePublicRow {
   id: string; invoiceNumber: string; invoiceDate: string; dueDate: string | null
   currency: string; items: InvoiceItem[]; subtotal: number; taxRate: number
   taxAmount: number; discountAmount: number; paidAmount: number; total: number
-  notes: string | null; paymentTerms: string | null; status: string
+  notes: string | null; paymentTerms: string | null; paymentInstructions: string | null
+  status: string
   hasBrandingFooter: boolean; clientName: string; clientEmail: string | null
   clientCompany: string | null; freelancerName: string; businessName: string | null
   template: InvoiceTemplateRow | null
@@ -936,7 +950,9 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
     items: (typeof data.items === 'string' ? JSON.parse(data.items) : data.items) as InvoiceItem[],
     subtotal: data.subtotal, taxRate: data.tax_rate, taxAmount: data.tax_amount,
     discountAmount: data.discount_amount, paidAmount: data.paid_amount, total: data.total,
-    notes: data.notes, paymentTerms: data.payment_terms, status: data.status,
+    notes: data.notes, paymentTerms: data.payment_terms,
+    paymentInstructions: data.payment_instructions ?? null,
+    status: data.status,
     hasBrandingFooter: Boolean(data.has_branding_footer),
     clientName: client.name, clientEmail: client.email,
     clientCompany: client.company,

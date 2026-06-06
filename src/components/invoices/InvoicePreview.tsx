@@ -51,6 +51,8 @@ export function InvoicePreview({ data, template, freelancerName }: InvoicePrevie
       minimumFractionDigits: 2,
     }).format(n)
 
+  const isIvory = template?.theme === 'ivory'
+
   return (
     <div className="sticky top-6">
       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400 mb-3">
@@ -59,25 +61,47 @@ export function InvoicePreview({ data, template, freelancerName }: InvoicePrevie
 
       <div className="rounded-xl border border-slate-200 shadow-lg overflow-hidden bg-white text-xs">
         {/* Header */}
-        <div
-          className="px-5 py-4 flex items-start justify-between"
-          style={{ backgroundColor: primaryColor }}
-        >
-          <div>
-            <p className="text-white font-bold text-base tracking-wide">INVOICE</p>
-            <p className="text-white/70 text-[11px] mt-0.5">
-              #{data.invoiceNumber || 'INV-2026-0001'}
-            </p>
-          </div>
-          <div className="text-right">
-            <p className="text-white font-semibold text-sm">{brandName}</p>
-            {template?.brandAddress && (
-              <p className="text-white/70 text-[10px] mt-0.5 max-w-[140px]">
-                {template.brandAddress}
+        {isIvory ? (
+          <div
+            className="px-5 py-4 flex items-start justify-between bg-white"
+            style={{ borderTop: `3px solid ${primaryColor}` }}
+          >
+            <div>
+              <p className="font-bold text-sm text-slate-800">{brandName}</p>
+              {template?.brandAddress && (
+                <p className="text-slate-400 text-[10px] mt-0.5 max-w-[140px]">
+                  {template.brandAddress}
+                </p>
+              )}
+            </div>
+            <div className="text-right">
+              <p className="font-bold text-base tracking-wide" style={{ color: primaryColor }}>INVOICE</p>
+              <p className="text-slate-400 text-[11px] mt-0.5">
+                #{data.invoiceNumber || 'INV-2026-0001'}
               </p>
-            )}
+            </div>
           </div>
-        </div>
+        ) : (
+          <div
+            className="px-5 py-4 flex items-start justify-between"
+            style={{ backgroundColor: primaryColor }}
+          >
+            <div>
+              <p className="text-white font-bold text-base tracking-wide">INVOICE</p>
+              <p className="text-white/70 text-[11px] mt-0.5">
+                #{data.invoiceNumber || 'INV-2026-0001'}
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-white font-semibold text-sm">{brandName}</p>
+              {template?.brandAddress && (
+                <p className="text-white/70 text-[10px] mt-0.5 max-w-[140px]">
+                  {template.brandAddress}
+                </p>
+              )}
+            </div>
+          </div>
+        )}
 
         {/* Bill to + dates */}
         <div className="px-5 py-3 grid grid-cols-2 gap-3 border-b border-slate-100">

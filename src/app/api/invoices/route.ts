@@ -12,7 +12,7 @@ export async function POST(req: NextRequest) {
   const body = await req.json()
   const { clientId, templateId, invoiceNumber, invoiceDate, dueDate, currency,
     items, subtotal, taxRate, taxAmount, discountAmount, depositAmount, total,
-    notes, paymentTerms, markAsSent } = body
+    notes, paymentTerms, paymentInstructions, markAsSent } = body
 
   if (!clientId || !invoiceNumber) {
     return NextResponse.json({ error: 'clientId and invoiceNumber required' }, { status: 400 })
@@ -26,7 +26,7 @@ export async function POST(req: NextRequest) {
   const id = await createInvoice(user.id, {
     clientId, templateId: templateId ?? null, invoiceNumber, invoiceDate,
     dueDate, currency, items, subtotal, taxRate, taxAmount,
-    discountAmount, depositAmount: depositAmount ?? 0, total, notes, paymentTerms,
+    discountAmount, depositAmount: depositAmount ?? 0, total, notes, paymentTerms, paymentInstructions,
   })
 
   if (markAsSent) {

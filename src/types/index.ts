@@ -28,7 +28,7 @@ export type PaymentMethod =
 
 export type FeedbackType = 'bug' | 'feature' | 'general' | 'other'
 
-export type InvoiceTheme = 'aurora' | 'summit' | 'ledger'
+export type InvoiceTheme = 'aurora' | 'summit' | 'ledger' | 'slate' | 'ivory'
 
 export type ExportFormat = 'excel_only' | 'pdf_only' | 'both'
 

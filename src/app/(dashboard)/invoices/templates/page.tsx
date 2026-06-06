@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { Plus, Rows, Star } from '@/components/icons'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader, EmptyState } from '@/components/ui'
@@ -10,11 +10,23 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getInvoiceTemplates } from '@/lib/db/supabase'
 import { seedDefaultInvoiceTemplates } from '@/lib/db/seedUserDefaults'
+import { SummitPreview, AuroraPreview, LedgerPreview, SlatePreview, IvoryPreview } from '@/components/invoices/InvoiceThemePreviews'
 
 const THEME_LABELS: Record<string, string> = {
   summit: 'Summit — Minimal',
   aurora: 'Aurora — Gradient',
   ledger: 'Ledger — Classic',
+  slate: 'Slate — Bold',
+  ivory: 'Ivory — Premium',
+}
+
+function ThemePreview({ theme, primaryColor, brandName }: { theme: string; primaryColor: string; brandName?: string }) {
+  const props = { primaryColor, brandName }
+  if (theme === 'aurora') return <AuroraPreview {...props} />
+  if (theme === 'ledger') return <LedgerPreview {...props} />
+  if (theme === 'slate') return <SlatePreview {...props} />
+  if (theme === 'ivory') return <IvoryPreview {...props} />
+  return <SummitPreview {...props} />
 }
 
 export default async function InvoiceTemplatesPage() {
@@ -64,35 +76,29 @@ export default async function InvoiceTemplatesPage() {
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
           {templates.map((t) => (
-            <Card key={t.id} className="flex flex-col">
-              {/* Color preview strip */}
-              <div
-                className="h-2 rounded-t-lg"
-                style={{ backgroundColor: t.primaryColor }}
-              />
-              <CardHeader className="pb-2">
-                <div className="flex items-start justify-between gap-2">
-                  <CardTitle className="text-base">{t.name}</CardTitle>
-                  {t.isDefault && (
-                    <Badge className="shrink-0 bg-primary text-primary-foreground text-xs">
-                      <Star className="mr-1 h-3 w-3" />
-                      Default
-                    </Badge>
-                  )}
+            <Card key={t.id} className="flex flex-col overflow-hidden">
+              {/* Theme preview thumbnail */}
+              <div className="h-32 overflow-hidden bg-white border-b">
+                <ThemePreview
+                  theme={t.theme}
+                  primaryColor={t.primaryColor}
+                  brandName={t.brandName ?? undefined}
+                />
+              </div>
+              <CardContent className="flex flex-1 flex-col justify-between gap-3 p-4">
+                <div>
+                  <div className="flex items-start justify-between gap-2 mb-1">
+                    <p className="font-semibold text-sm">{t.name}</p>
+                    {t.isDefault && (
+                      <Badge className="shrink-0 bg-primary text-primary-foreground text-xs">
+                        <Star className="mr-1 h-3 w-3" />
+                        Default
+                      </Badge>
+                    )}
+                  </div>
+                  <p className="text-xs text-muted-foreground">{THEME_LABELS[t.theme] ?? t.theme}</p>
                 </div>
-                <CardDescription>
-                  {THEME_LABELS[t.theme] ?? t.theme}
-                  {t.brandName && ` · ${t.brandName}`}
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="flex flex-1 flex-col justify-between gap-3 pt-0">
-                <div className="space-y-1 text-sm text-muted-foreground">
-                  {t.defaultTaxRate > 0 && <p>Default tax: {t.defaultTaxRate}%</p>}
-                  {t.defaultPaymentTerms && (
-                    <p className="truncate">Terms: {t.defaultPaymentTerms}</p>
-                  )}
-                </div>
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-2">
                   <Button asChild variant="outline" size="sm">
                     <Link href={`/invoices/templates/${t.id}/edit`}>Edit</Link>
                   </Button>

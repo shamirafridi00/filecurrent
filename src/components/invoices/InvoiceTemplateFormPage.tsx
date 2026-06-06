@@ -12,86 +12,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
 import { toast } from 'sonner'
 import type { InvoiceTemplateRow } from '@/lib/db/supabase'
-
-function SummitPreview() {
-  return (
-    <div className="text-[7px]">
-      <div className="bg-[#635BFF] px-2 py-1.5 flex justify-between">
-        <span className="text-white font-bold text-[8px]">INVOICE</span>
-        <span className="text-white/70">#001</span>
-      </div>
-      <div className="bg-white px-2 py-1">
-        <div className="flex justify-between py-0.5 border-b border-slate-100">
-          <span className="text-slate-400">Description</span>
-          <span className="text-slate-400">Amount</span>
-        </div>
-        <div className="flex justify-between py-0.5">
-          <span className="text-slate-600">Service</span>
-          <span className="text-slate-700">$500</span>
-        </div>
-        <div className="flex justify-between pt-1 border-t border-slate-200 mt-0.5">
-          <span className="font-bold text-slate-800">Total</span>
-          <span className="font-bold text-[#635BFF]">$500</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function AuroraPreview() {
-  return (
-    <div className="text-[7px]">
-      <div className="px-2 py-1.5 flex justify-between" style={{ background: 'linear-gradient(135deg, #635BFF 0%, #14b8a6 100%)' }}>
-        <span className="text-white font-bold text-[8px]">INVOICE</span>
-        <span className="text-white/80">#001</span>
-      </div>
-      <div className="bg-white px-2 py-1">
-        <div className="flex justify-between py-0.5 bg-[#F0EFFF] px-1 rounded">
-          <span className="text-[#635BFF]">Description</span>
-          <span className="text-[#635BFF]">Amount</span>
-        </div>
-        <div className="flex justify-between py-0.5">
-          <span className="text-slate-600">Service</span>
-          <span className="text-slate-700">$500</span>
-        </div>
-        <div className="bg-[#F0EFFF] rounded px-1 py-0.5 mt-0.5 flex justify-between border border-[#E8E7FF]">
-          <span className="font-bold text-[#5145E5]">Total</span>
-          <span className="font-bold text-[#635BFF]">$500</span>
-        </div>
-      </div>
-    </div>
-  )
-}
-
-function LedgerPreview() {
-  return (
-    <div className="text-[7px]">
-      <div className="bg-[#111827] px-2 py-1.5 flex justify-between">
-        <span className="text-white font-bold text-[8px]">INVOICE</span>
-        <span className="text-gray-400">#001</span>
-      </div>
-      <div className="bg-white">
-        <div className="flex border-b border-[#111827] bg-[#1f2937]">
-          <span className="text-white px-2 py-0.5 flex-1 border-r border-gray-600">Description</span>
-          <span className="text-white px-2 py-0.5 w-12 text-right">Amount</span>
-        </div>
-        <div className="flex border-b border-slate-200">
-          <span className="text-slate-700 px-2 py-0.5 flex-1 border-r border-slate-200">Service</span>
-          <span className="text-slate-700 px-2 py-0.5 w-12 text-right">$500</span>
-        </div>
-        <div className="flex border-t-2 border-slate-800">
-          <span className="font-bold text-slate-900 px-2 py-0.5 flex-1">Total</span>
-          <span className="font-bold px-2 py-0.5 w-12 text-right text-[#635BFF]">$500</span>
-        </div>
-      </div>
-    </div>
-  )
-}
+import { SummitPreview, AuroraPreview, LedgerPreview, SlatePreview, IvoryPreview } from './InvoiceThemePreviews'
 
 const THEME_OPTIONS = [
   { value: 'summit' as const, label: 'Summit', desc: 'Clean & minimal', Preview: SummitPreview },
   { value: 'aurora' as const, label: 'Aurora', desc: 'Modern gradient', Preview: AuroraPreview },
   { value: 'ledger' as const, label: 'Ledger', desc: 'Classic tabular', Preview: LedgerPreview },
+  { value: 'slate' as const, label: 'Slate', desc: 'Bold & brand-forward', Preview: SlatePreview },
+  { value: 'ivory' as const, label: 'Ivory', desc: 'Premium & minimal', Preview: IvoryPreview },
 ]
 
 interface Props {
@@ -115,6 +43,7 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
   const [defaultNotes, setDefaultNotes] = useState(initial?.defaultNotes ?? '')
   const [defaultPaymentTerms, setDefaultPaymentTerms] = useState(initial?.defaultPaymentTerms ?? '')
   const [defaultTaxRate, setDefaultTaxRate] = useState(String(initial?.defaultTaxRate ?? 0))
+  const [paymentInstructions, setPaymentInstructions] = useState(initial?.paymentInstructions ?? '')
   const [isDefault, setIsDefault] = useState(initial?.isDefault ?? false)
 
   const handleSubmit = async () => {
@@ -128,7 +57,9 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
         body: JSON.stringify({
           name, theme, primaryColor, secondaryColor, brandName, brandAddress,
           phone, website, taxId, defaultNotes, defaultPaymentTerms,
-          defaultTaxRate: parseFloat(defaultTaxRate) || 0, isDefault,
+          defaultTaxRate: parseFloat(defaultTaxRate) || 0,
+          paymentInstructions: paymentInstructions || null,
+          isDefault,
         }),
       })
       if (!res.ok) throw new Error()
@@ -171,7 +102,7 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
             <CardContent className="space-y-5">
               <div>
                 <Label className="mb-3 block">Theme</Label>
-                <div className="grid grid-cols-3 gap-3">
+                <div className="grid grid-cols-3 gap-3 sm:grid-cols-5">
                   {THEME_OPTIONS.map(({ value, label, desc, Preview }) => (
                     <button
                       key={value}
@@ -189,7 +120,7 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
                         </div>
                       )}
                       <div className="rounded-lg overflow-hidden border border-slate-100 mb-2.5 shadow-sm">
-                        <Preview />
+                        <Preview primaryColor={primaryColor} />
                       </div>
                       <p className="font-semibold text-sm text-slate-800">{label}</p>
                       <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
@@ -261,6 +192,16 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
               <div className="w-40 space-y-1.5">
                 <Label>Default Tax Rate (%)</Label>
                 <Input type="number" min="0" max="100" step="0.1" value={defaultTaxRate} onChange={(e) => setDefaultTaxRate(e.target.value)} />
+              </div>
+              <div className="space-y-1.5">
+                <Label>Payment Instructions</Label>
+                <Textarea
+                  rows={3}
+                  placeholder="e.g. Pay via Zelle to email@example.com, PayPal @handle, or bank transfer. Include invoice number as reference."
+                  value={paymentInstructions}
+                  onChange={(e) => setPaymentInstructions(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">Shown on the invoice so clients always know how to pay.</p>
               </div>
             </CardContent>
           </Card>
