@@ -18,24 +18,28 @@ export async function POST(
   const invoiceNumber = generateInvoiceNumber(seq)
   const today = new Date().toISOString().split('T')[0]
 
-  const newId = await createInvoice(user.id, {
-    clientId: source.clientId,
-    templateId: source.templateId ?? null,
-    invoiceNumber,
-    invoiceDate: today,
-    dueDate: undefined,
-    currency: source.currency,
-    items: source.items,
-    subtotal: source.subtotal,
-    taxRate: source.taxRate,
-    taxAmount: source.taxAmount,
-    discountAmount: source.discountAmount,
-    depositAmount: 0,
-    total: source.total,
-    notes: source.notes ?? undefined,
-    paymentTerms: source.paymentTerms ?? undefined,
-    paymentInstructions: source.paymentInstructions ?? undefined,
-  })
-
-  return NextResponse.json({ id: newId })
+  try {
+    const newId = await createInvoice(user.id, {
+      clientId: source.clientId,
+      templateId: source.templateId ?? null,
+      invoiceNumber,
+      invoiceDate: today,
+      dueDate: undefined,
+      currency: source.currency,
+      items: source.items,
+      subtotal: source.subtotal,
+      taxRate: source.taxRate,
+      taxAmount: source.taxAmount,
+      discountAmount: source.discountAmount,
+      depositAmount: 0,
+      total: source.total,
+      notes: source.notes ?? undefined,
+      paymentTerms: source.paymentTerms ?? undefined,
+      paymentInstructions: source.paymentInstructions ?? undefined,
+    })
+    return NextResponse.json({ id: newId })
+  } catch (err) {
+    console.error('[duplicate] createInvoice failed:', err)
+    return NextResponse.json({ error: String(err) }, { status: 500 })
+  }
 }
