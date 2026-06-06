@@ -1,9 +1,9 @@
 'use client'
 
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Plus, Trash, FileText, FloppyDisk, X, CaretDown, Check } from '@phosphor-icons/react'
+import { Plus, Trash, FileText, FloppyDisk, X, CaretDown, Check, Minus } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -86,6 +86,64 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
     { _id: crypto.randomUUID(), description: '', quantity: 1, unitPrice: 0, amount: 0 },
   ])
 
+  const DRAFT_KEY = 'filecurrent_invoice_draft'
+  const draftTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
+  // Hydrate from localStorage on mount
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY)
+      if (!saved) return
+      const d = JSON.parse(saved) as {
+        clientId?: string; templateId?: string; invoiceNumber?: string
+        invoiceDate?: string; dueDate?: string; currency?: string
+        taxRate?: number; discountAmount?: number; depositAmount?: number
+        notes?: string; paymentTerms?: string; paymentInstructions?: string
+        items?: ItemRow[]
+      }
+      if (d.clientId) setClientId(d.clientId)
+      if (d.templateId) setTemplateId(d.templateId)
+      if (d.invoiceNumber) setInvoiceNumber(d.invoiceNumber)
+      if (d.invoiceDate) setInvoiceDate(d.invoiceDate)
+      if (d.dueDate) setDueDate(d.dueDate)
+      if (d.currency) setCurrency(d.currency)
+      if (d.taxRate != null) setTaxRate(d.taxRate)
+      if (d.discountAmount != null) setDiscountAmount(d.discountAmount)
+      if (d.depositAmount != null) setDepositAmount(d.depositAmount)
+      if (d.notes != null) setNotes(d.notes)
+      if (d.paymentTerms != null) setPaymentTerms(d.paymentTerms)
+      if (d.paymentInstructions != null) setPaymentInstructions(d.paymentInstructions)
+      if (d.items?.length) setItems(d.items)
+    } catch {
+      // corrupted draft — ignore
+    }
+  }, [])
+
+  // Persist draft to localStorage (debounced 500ms)
+  const persistDraft = useCallback(() => {
+    if (draftTimerRef.current) clearTimeout(draftTimerRef.current)
+    draftTimerRef.current = setTimeout(() => {
+      try {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          clientId, templateId, invoiceNumber, invoiceDate, dueDate,
+          currency, taxRate, discountAmount, depositAmount,
+          notes, paymentTerms, paymentInstructions, items,
+        }))
+      } catch {
+        // storage full — ignore
+      }
+    }, 500)
+  }, [clientId, templateId, invoiceNumber, invoiceDate, dueDate, currency, taxRate, discountAmount, depositAmount, notes, paymentTerms, paymentInstructions, items])
+
+  useEffect(() => {
+    persistDraft()
+  }, [persistDraft])
+
+  const clearDraft = () => {
+    if (draftTimerRef.current) clearTimeout(draftTimerRef.current)
+    try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
+  }
+
   const updateItem = (id: string, field: keyof Omit<ItemRow, '_id'>, value: string | number) => {
     setItems((prev) =>
       prev.map((item) => {
@@ -130,6 +188,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
       if (res.status === 402) { setShowUpgrade(true); return }
       if (!res.ok) throw new Error()
       const { id } = await res.json()
+      clearDraft()
       toast.success(markAsSent ? 'Invoice created and marked as sent' : 'Draft invoice created')
       router.push(`/invoices/${id}`)
       router.refresh()
@@ -269,17 +328,66 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                     onRateChange={(rate) => { if (rate !== null) updateItem(item._id, 'unitPrice', rate) }}
                     presets={lineItemPresets}
                   />
-                  <Input
-                    type="number" min="0" step="0.01"
-                    value={item.quantity}
-                    onChange={(e) => updateItem(item._id, 'quantity', parseFloat(e.target.value) || 0)}
-                    className="text-center"
-                  />
-                  <Input
-                    type="number" min="0" step="0.01"
-                    value={item.unitPrice}
-                    onChange={(e) => updateItem(item._id, 'unitPrice', parseFloat(e.target.value) || 0)}
-                  />
+                  {/* Qty */}
+                  <div className="flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => updateItem(item._id, 'quantity', Math.max(1, item.quantity - 1))}
+                      className="flex h-9 w-7 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      <Minus size={11} />
+                    </button>
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      value={item.quantity}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const v = e.target.value
+                        const n = parseInt(v, 10)
+                        if (v === '' || (!isNaN(n) && n >= 0)) updateItem(item._id, 'quantity', isNaN(n) ? 0 : n)
+                      }}
+                      className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-1 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateItem(item._id, 'quantity', item.quantity + 1)}
+                      className="flex h-9 w-7 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      <Plus size={11} />
+                    </button>
+                  </div>
+                  {/* Unit Price */}
+                  <div className="flex items-center">
+                    <button
+                      type="button"
+                      onClick={() => updateItem(item._id, 'unitPrice', Math.max(0, item.unitPrice - 1))}
+                      className="flex h-9 w-7 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      <Minus size={11} />
+                    </button>
+                    <input
+                      type="text"
+                      inputMode="decimal"
+                      pattern="[0-9.]*"
+                      value={item.unitPrice}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const v = e.target.value
+                        const n = parseFloat(v)
+                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) updateItem(item._id, 'unitPrice', isNaN(n) ? 0 : n)
+                      }}
+                      className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-1 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => updateItem(item._id, 'unitPrice', item.unitPrice + 1)}
+                      className="flex h-9 w-7 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    >
+                      <Plus size={11} />
+                    </button>
+                  </div>
                   <span className="text-sm font-medium text-right">
                     {formatCurrency(item.amount, currency)}
                   </span>
@@ -385,7 +493,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
         </Card>
 
         <div className="flex justify-end gap-3">
-          <Button variant="outline" onClick={() => router.push('/invoices')}>
+          <Button variant="outline" onClick={() => { clearDraft(); router.push('/invoices') }}>
             <X className="mr-1 h-4 w-4" /> Cancel
           </Button>
           <Button variant="outline" onClick={() => handleSave(false)} disabled={saving}>
