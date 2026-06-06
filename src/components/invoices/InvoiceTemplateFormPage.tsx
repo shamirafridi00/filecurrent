@@ -315,7 +315,7 @@ function InvoicePreview({ theme, primaryColor, secondaryColor, brandName }: {
       >
         <div className="flex justify-between items-start">
           <div>
-            <p className="font-bold text-sm">{brandName || 'Your Business'}</p>
+            <p className="font-bold text-sm">{brandName || 'Your Business Name'}</p>
             <p className="opacity-75 text-xs">INVOICE</p>
           </div>
           <div className="text-right opacity-90">

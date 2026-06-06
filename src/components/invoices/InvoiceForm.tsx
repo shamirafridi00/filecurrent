@@ -401,6 +401,7 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
             currency: currency || 'USD',
           }}
           template={templates.find(t => t.id === templateId) ?? null}
+          freelancerName={profile.businessName || profile.fullName}
         />
       </div>
 

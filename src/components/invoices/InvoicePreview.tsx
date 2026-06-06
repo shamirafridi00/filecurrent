@@ -37,11 +37,12 @@ interface PreviewData {
 interface InvoicePreviewProps {
   data: PreviewData
   template: InvoiceTemplateData | null
+  freelancerName?: string
 }
 
-export function InvoicePreview({ data, template }: InvoicePreviewProps) {
+export function InvoicePreview({ data, template, freelancerName }: InvoicePreviewProps) {
   const primaryColor = template?.primaryColor ?? '#635BFF'
-  const brandName = template?.brandName ?? 'Your Business'
+  const brandName = template?.brandName || freelancerName || 'Your Business'
 
   const formatAmount = (n: number) =>
     new Intl.NumberFormat('en-US', {
