@@ -756,11 +756,20 @@ export interface InvoiceDetailRow extends InvoiceListRow {
 }
 
 export async function getNextInvoiceSequence(userId: string): Promise<number> {
-  const { count } = await adminClient
+  const year = new Date().getFullYear()
+  const { data } = await adminClient
     .from('invoices')
-    .select('*', { count: 'exact', head: true })
+    .select('invoice_number')
     .eq('user_id', userId)
-  return (count ?? 0) + 1
+    .like('invoice_number', `INV-${year}-%`)
+    .order('invoice_number', { ascending: false })
+    .limit(1)
+
+  const latest = data?.[0]?.invoice_number
+  if (!latest) return 1
+  const parts = latest.split('-')
+  const parsed = parseInt(parts[2] ?? '0', 10)
+  return isNaN(parsed) ? 1 : parsed + 1
 }
 
 export async function deleteInvoice(id: string, userId: string): Promise<void> {
