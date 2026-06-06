@@ -75,5 +75,8 @@ const NEW_THEME_DEFAULTS = {
 export async function seedMissingThemes(userId: string, themes: ReadonlyArray<'slate' | 'ivory'>): Promise<void> {
   const rows = themes.map((theme) => ({ user_id: userId, ...NEW_THEME_DEFAULTS[theme] }))
   const { error } = await adminClient.from('invoice_templates').insert(rows)
-  if (error) console.error('Failed to seed missing themes:', error)
+  if (error) {
+    console.error('Failed to seed missing themes:', JSON.stringify(error))
+    throw error
+  }
 }

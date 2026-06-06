@@ -45,7 +45,11 @@ export default async function InvoiceTemplatesPage() {
     const existingThemes = new Set(templates.map((t) => t.theme))
     const missingThemes = (['slate', 'ivory'] as const).filter((th) => !existingThemes.has(th))
     if (missingThemes.length > 0) {
-      try { await seedMissingThemes(user.id, missingThemes) } catch {}
+      try {
+        await seedMissingThemes(user.id, missingThemes)
+      } catch (err) {
+        console.error('[templates page] seedMissingThemes failed:', err)
+      }
       templates = await getInvoiceTemplates(user.id)
     }
   }
