@@ -9,7 +9,7 @@ import { PageHeader, EmptyState } from '@/components/ui'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { getInvoiceTemplates } from '@/lib/db/supabase'
-import { seedDefaultInvoiceTemplates } from '@/lib/db/seedUserDefaults'
+import { seedDefaultInvoiceTemplates, seedMissingThemes } from '@/lib/db/seedUserDefaults'
 import { SummitPreview, AuroraPreview, LedgerPreview, SlatePreview, IvoryPreview } from '@/components/invoices/InvoiceThemePreviews'
 
 const THEME_LABELS: Record<string, string> = {
@@ -36,10 +36,18 @@ export default async function InvoiceTemplatesPage() {
 
   let templates = await getInvoiceTemplates(user.id)
 
-  // Auto-seed defaults for existing users with no templates
+  // Seed all defaults if user has none
   if (templates.length === 0) {
     try { await seedDefaultInvoiceTemplates(user.id) } catch {}
     templates = await getInvoiceTemplates(user.id)
+  } else {
+    // For existing users: add Slate and Ivory if they don't have them yet
+    const existingThemes = new Set(templates.map((t) => t.theme))
+    const missingThemes = (['slate', 'ivory'] as const).filter((th) => !existingThemes.has(th))
+    if (missingThemes.length > 0) {
+      try { await seedMissingThemes(user.id, missingThemes) } catch {}
+      templates = await getInvoiceTemplates(user.id)
+    }
   }
 
   return (

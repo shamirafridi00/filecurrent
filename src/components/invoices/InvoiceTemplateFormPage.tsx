@@ -241,29 +241,44 @@ function InvoicePreview({ theme, primaryColor, secondaryColor, brandName }: {
 }) {
   const isAurora = theme === 'aurora'
   const isLedger = theme === 'ledger'
+  const isSlate = theme === 'slate'
+  const isIvory = theme === 'ivory'
+
+  const headerStyle = isIvory
+    ? { backgroundColor: '#ffffff', borderTop: `3px solid ${primaryColor}` }
+    : isAurora
+    ? { background: `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`, color: 'white' }
+    : { backgroundColor: primaryColor, color: 'white' }
 
   return (
     <div className="rounded-lg border bg-white overflow-hidden text-xs shadow-sm">
       {/* Header */}
-      <div
-        className="px-4 py-3"
-        style={{
-          background: isAurora
-            ? `linear-gradient(135deg, ${primaryColor}, ${secondaryColor})`
-            : primaryColor,
-          color: 'white',
-        }}
-      >
-        <div className="flex justify-between items-start">
-          <div>
-            <p className="font-bold text-sm">{brandName || 'Your Business Name'}</p>
-            <p className="opacity-75 text-xs">INVOICE</p>
+      <div className="px-4 py-3" style={headerStyle}>
+        {isIvory ? (
+          <div className="flex justify-between items-start">
+            <p className="font-bold text-sm text-slate-800">{brandName || 'Your Business Name'}</p>
+            <div className="text-right">
+              <p className="font-bold text-xs" style={{ color: primaryColor }}>INVOICE</p>
+              <p className="text-slate-400 text-[10px]">INV-2026-0001</p>
+            </div>
           </div>
-          <div className="text-right opacity-90">
-            <p>INV-2026-0001</p>
-            <p className="opacity-75">Jun 1, 2026</p>
+        ) : isSlate ? (
+          <div className="flex justify-between items-end">
+            <p className="font-bold text-sm text-white">{brandName || 'Your Business Name'}</p>
+            <p className="text-white/70 text-[10px] font-semibold">INVOICE</p>
           </div>
-        </div>
+        ) : (
+          <div className="flex justify-between items-start">
+            <div>
+              <p className="font-bold text-sm">{brandName || 'Your Business Name'}</p>
+              <p className="opacity-75 text-xs">INVOICE</p>
+            </div>
+            <div className="text-right opacity-90">
+              <p>INV-2026-0001</p>
+              <p className="opacity-75">Jun 1, 2026</p>
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Body */}
@@ -271,7 +286,7 @@ function InvoicePreview({ theme, primaryColor, secondaryColor, brandName }: {
         <div className="flex justify-between text-xs">
           <div>
             <p className="text-muted-foreground">Bill To</p>
-            <p className="font-medium" style={{ color: secondaryColor }}>Client Name</p>
+            <p className="font-medium" style={{ color: isIvory ? '#111827' : secondaryColor }}>Client Name</p>
             <p className="text-muted-foreground">client@example.com</p>
           </div>
           <div className="text-right">
@@ -281,8 +296,13 @@ function InvoicePreview({ theme, primaryColor, secondaryColor, brandName }: {
         </div>
 
         <div className={`rounded text-xs overflow-hidden ${isLedger ? 'border' : ''}`}>
-          <div className="py-1.5 px-2 text-white text-xs font-medium flex justify-between"
-            style={{ backgroundColor: isLedger ? secondaryColor : primaryColor }}>
+          <div
+            className="py-1.5 px-2 text-xs font-medium flex justify-between"
+            style={{
+              backgroundColor: isLedger ? secondaryColor : isIvory ? '#F9FAFB' : primaryColor,
+              color: isIvory ? '#374151' : 'white',
+            }}
+          >
             <span>Description</span>
             <span>Amount</span>
           </div>
