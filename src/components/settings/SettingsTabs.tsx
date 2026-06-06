@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { FloppyDisk, ArrowSquareOut, Lightning, Star, ShieldCheck } from '@phosphor-icons/react'
+import { FloppyDisk, ArrowSquareOut, Lightning, Star } from '@phosphor-icons/react'
 import { useCheckout } from '@/hooks/useCheckout'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -331,81 +331,97 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
 
         {/* ── Plan & Billing Tab ── */}
         <TabsContent value="billing" className="max-w-2xl space-y-5">
-          <Card>
-            <CardContent className="p-5">
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
+          {isTrial ? (
+            <Card className="mx-auto max-w-lg">
+              <CardContent className="p-6">
+                <div className="mb-5 flex flex-col items-center gap-2 text-center">
                   <div className="flex items-center gap-2">
-                    {isPro
-                      ? <Star className="h-5 w-5 text-primary" />
-                      : <Lightning className="h-5 w-5 text-muted-foreground" />}
-                    <p className="font-semibold text-lg">{PLAN_LABELS[initial.plan]}</p>
+                    <Lightning className="h-5 w-5 text-muted-foreground" />
+                    <p className="font-semibold text-lg">Free Trial</p>
+                    <Badge variant="secondary">
+                      {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} remaining
+                    </Badge>
                   </div>
-                  {isTrial ? (
-                    <>
-                      <p className="text-sm text-muted-foreground">
-                        {trialDaysLeft} day{trialDaysLeft !== 1 ? 's' : ''} remaining · Full access to all features
-                      </p>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        <Button
-                          className="w-full sm:w-auto"
-                          disabled={checkoutLoading !== null}
-                          onClick={() => startCheckout('monthly')}
-                        >
-                          {checkoutLoading === 'monthly' ? 'Redirecting…' : 'Upgrade to Pro — $9/month'}
-                        </Button>
-                        <Button
-                          variant="outline"
-                          className="w-full sm:w-auto"
-                          disabled={checkoutLoading !== null}
-                          onClick={() => startCheckout('annual')}
-                        >
-                          {checkoutLoading === 'annual' ? 'Redirecting…' : 'Get Annual — $79/year (save 27%)'}
-                        </Button>
-                      </div>
-                    </>
-                  ) : isPro ? (
-                    <>
-                      {initial.planExpiresAt && (
-                        <p className="text-sm text-muted-foreground">
-                          Renews: {new Date(initial.planExpiresAt).toLocaleDateString()}
-                        </p>
-                      )}
-                      <p className="text-sm text-muted-foreground">Unlimited documents · No FileCurrent branding</p>
-                      <Button variant="outline" size="sm" className="mt-3">
-                        Cancel subscription
-                      </Button>
-                    </>
-                  ) : null}
+                  <p className="text-sm text-muted-foreground">Full access to all features during your trial</p>
                 </div>
-                <Badge variant={isPro ? 'default' : 'secondary'} className={isPro ? 'bg-primary' : ''}>
-                  {PLAN_LABELS[initial.plan]}
-                </Badge>
-              </div>
-            </CardContent>
-          </Card>
 
-          {(isTrial || !isPro) && (
-            <Card className="border-primary/20 bg-accent/30">
-              <CardHeader>
-                <CardTitle className="text-base flex items-center gap-2">
-                  <ShieldCheck className="h-4 w-4 text-primary" /> Launch Lifetime Deal
-                </CardTitle>
-                <CardDescription>Available for a limited time</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground mb-3">
-                  Pay once, use FileCurrent Pro forever. $49 one-time payment — limited to the first 90 days.
-                </p>
-                <Button
-                  disabled={checkoutLoading !== null}
-                  onClick={() => startCheckout('lifetime')}
-                >
-                  {checkoutLoading === 'lifetime' ? 'Redirecting…' : 'Get Lifetime Access — $49'}
-                </Button>
+                <ul className="mb-5 space-y-2">
+                  {[
+                    'Unlimited contracts & invoices',
+                    'Digital e-signatures with audit trail',
+                    'Automated payment reminders',
+                    'Client portal & signing page',
+                    'PDF generation & download',
+                    'No FileCurrent branding on Pro',
+                  ].map((feature) => (
+                    <li key={feature} className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <span className="text-primary">✓</span> {feature}
+                    </li>
+                  ))}
+                </ul>
+
+                <div className="border-t border-border my-5" />
+
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                  <div className="rounded-lg border bg-card p-4 space-y-3">
+                    <div>
+                      <p className="text-xl font-bold">$9 <span className="text-sm font-normal text-muted-foreground">/ month</span></p>
+                      <p className="text-xs text-muted-foreground mt-0.5">Billed monthly, cancel anytime</p>
+                    </div>
+                    <Button
+                      className="w-full"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => startCheckout('monthly')}
+                    >
+                      {checkoutLoading === 'monthly' ? 'Redirecting…' : 'Upgrade to Pro'}
+                    </Button>
+                  </div>
+
+                  <div className="rounded-lg border-2 border-primary bg-card p-4 space-y-3">
+                    <div>
+                      <div className="flex items-center gap-2 mb-0.5">
+                        <p className="text-xl font-bold">$79 <span className="text-sm font-normal text-muted-foreground">/ year</span></p>
+                        <Badge className="bg-primary text-primary-foreground text-xs">Best Value</Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground">Save 27% — just $6.58/month</p>
+                    </div>
+                    <Button
+                      className="w-full"
+                      disabled={checkoutLoading !== null}
+                      onClick={() => startCheckout('annual')}
+                    >
+                      {checkoutLoading === 'annual' ? 'Redirecting…' : 'Get Annual Plan'}
+                    </Button>
+                  </div>
+                </div>
               </CardContent>
             </Card>
-          )}
+          ) : isPro ? (
+            <Card>
+              <CardContent className="p-5">
+                <div className="flex items-start justify-between">
+                  <div className="space-y-1">
+                    <div className="flex items-center gap-2">
+                      <Star className="h-5 w-5 text-primary" />
+                      <p className="font-semibold text-lg">{PLAN_LABELS[initial.plan]}</p>
+                    </div>
+                    {initial.planExpiresAt && (
+                      <p className="text-sm text-muted-foreground">
+                        Renews: {new Date(initial.planExpiresAt).toLocaleDateString()}
+                      </p>
+                    )}
+                    <p className="text-sm text-muted-foreground">Unlimited documents · No FileCurrent branding</p>
+                    <Button variant="outline" size="sm" className="mt-3">
+                      Cancel subscription
+                    </Button>
+                  </div>
+                  <Badge variant="default" className="bg-primary">
+                    {PLAN_LABELS[initial.plan]}
+                  </Badge>
+                </div>
+              </CardContent>
+            </Card>
+          ) : null}
         </TabsContent>
 
         {/* ── Notifications Tab ── */}
