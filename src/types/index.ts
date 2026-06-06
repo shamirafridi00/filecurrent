@@ -363,7 +363,6 @@ export const CURRENCIES: SelectOption[] = [
   { value: 'USD', label: 'USD - US Dollar' },
   { value: 'EUR', label: 'EUR - Euro' },
   { value: 'GBP', label: 'GBP - British Pound' },
-  { value: 'PKR', label: 'PKR - Pakistani Rupee' },
   { value: 'CAD', label: 'CAD - Canadian Dollar' },
   { value: 'AUD', label: 'AUD - Australian Dollar' },
 ]

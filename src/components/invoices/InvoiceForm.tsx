@@ -72,7 +72,11 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
   const [invoiceDate, setInvoiceDate] = useState(today)
   const [dueDate, setDueDate] = useState('')
   const [currency, setCurrency] = useState('USD')
-  const [taxRate, setTaxRate] = useState(defaultTemplate?.defaultTaxRate ?? profile.defaultTaxRate ?? 0)
+  const [taxRate, setTaxRate] = useState<number>(
+    (defaultTemplate?.defaultTaxRate != null && defaultTemplate.defaultTaxRate > 0)
+      ? defaultTemplate.defaultTaxRate
+      : (profile.defaultTaxRate ?? 0)
+  )
   const [discountAmount, setDiscountAmount] = useState(0)
   const [depositAmount, setDepositAmount] = useState(0)
   const [notes, setNotes] = useState(defaultTemplate?.defaultNotes ?? '')
@@ -159,7 +163,11 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                 setTemplateId(v)
                 const t = templates.find((x) => x.id === v)
                 if (t) {
-                  setTaxRate(t.defaultTaxRate)
+                  setTaxRate(
+                    (t.defaultTaxRate != null && t.defaultTaxRate > 0)
+                      ? t.defaultTaxRate
+                      : (profile.defaultTaxRate ?? 0)
+                  )
                   if (t.defaultNotes) setNotes(t.defaultNotes)
                   if (t.defaultPaymentTerms) setPaymentTerms(t.defaultPaymentTerms)
                   if (t.paymentInstructions) setPaymentInstructions(t.paymentInstructions)
@@ -438,19 +446,33 @@ function DescriptionInput({
 
   return (
     <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger asChild>
+      <div className="relative flex-1">
         <Input
           placeholder="Service or product description"
           value={value}
           onChange={(e) => onChange(e.target.value)}
-          onFocus={() => presets.length > 0 && setOpen(true)}
+          className="pr-8"
         />
-      </PopoverTrigger>
+        {presets.length > 0 && (
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              tabIndex={-1}
+            >
+              <CaretDown className="h-3.5 w-3.5" />
+            </button>
+          </PopoverTrigger>
+        )}
+      </div>
       {presets.length > 0 && (
         <PopoverContent className="w-72 p-0" align="start">
           <Command>
             <CommandInput placeholder="Search presets…" />
             <CommandList>
+              <div className="px-3 py-1.5 text-[11px] text-muted-foreground border-b">
+                Select a preset or type your own description
+              </div>
               <CommandEmpty>No presets found</CommandEmpty>
               <CommandGroup heading="Suggestions">
                 {presets.map((p) => (
