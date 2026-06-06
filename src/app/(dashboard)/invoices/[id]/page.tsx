@@ -32,6 +32,19 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
   const template = invoice.template
   const primaryColor = template?.primaryColor ?? '#635BFF'
   const brandName = template?.brandName?.trim() || profile.businessName || profile.fullName
+  const theme = template?.theme ?? 'summit'
+  const isSummit = theme === 'summit'
+  const isAurora = theme === 'aurora'
+  const isLedger = theme === 'ledger'
+  const isIvory = theme === 'ivory'
+  const tableHeaderBg = isLedger ? 'transparent'
+    : isIvory ? '#F9FAFB'
+    : isSummit ? '#F3F4F6'
+    : isAurora ? `${primaryColor}18`
+    : primaryColor
+  const tableHeaderColor = (isLedger || isIvory || isSummit) ? '#374151'
+    : isAurora ? primaryColor
+    : 'white'
   return (
     <div>
       <PageHeader
@@ -53,20 +66,77 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
         {/* Invoice document */}
         <Card className="overflow-hidden">
           {/* Header bar */}
-          <div className="px-6 py-5 text-white" style={{ backgroundColor: primaryColor }}>
-            <div className="flex items-start justify-between">
+          {isSummit ? (
+            <div className="px-6 py-5 bg-white flex items-start justify-between"
+                 style={{ borderLeft: `4px solid ${primaryColor}` }}>
               <div>
-                <p className="text-xl font-bold tracking-wide">INVOICE</p>
-                <p className="opacity-80 text-sm mt-0.5">{invoice.invoiceNumber}</p>
+                <p className="font-bold text-xl text-slate-800">{brandName}</p>
+                {template?.brandAddress && (
+                  <p className="text-xs text-slate-400 mt-0.5">{template.brandAddress}</p>
+                )}
+                <p className="text-xs text-slate-400 mt-0.5 tracking-wide">INVOICE</p>
+              </div>
+              <p className="text-slate-500 text-sm">{invoice.invoiceNumber}</p>
+            </div>
+          ) : isIvory ? (
+            <div className="px-6 py-5 bg-white flex items-start justify-between"
+                 style={{ borderTop: `3px solid ${primaryColor}` }}>
+              <div>
+                <p className="font-bold text-xl text-slate-800">{brandName}</p>
+                {template?.brandAddress && (
+                  <p className="text-xs text-slate-400 mt-0.5">{template.brandAddress}</p>
+                )}
               </div>
               <div className="text-right">
-                <p className="font-semibold text-lg">{brandName}</p>
+                <p className="font-bold text-lg tracking-wide" style={{ color: primaryColor }}>INVOICE</p>
+                <p className="text-slate-400 text-sm mt-0.5">{invoice.invoiceNumber}</p>
+              </div>
+            </div>
+          ) : isLedger ? (
+            <div className="flex">
+              <div className="w-32 shrink-0 flex flex-col justify-between px-5 py-5"
+                   style={{ backgroundColor: '#111827' }}>
+                <div>
+                  <p className="text-white font-bold text-base leading-tight">{brandName}</p>
+                  <p className="text-gray-400 text-xs mt-1.5 tracking-wide">INVOICE</p>
+                  <p className="text-gray-400 text-xs mt-0.5">{invoice.invoiceNumber}</p>
+                </div>
+              </div>
+              <div className="flex-1 px-6 py-5 bg-white flex items-center justify-end">
                 {template?.brandAddress && (
-                  <p className="opacity-75 text-xs">{template.brandAddress}</p>
+                  <p className="text-xs text-slate-400 text-right">{template.brandAddress}</p>
                 )}
               </div>
             </div>
-          </div>
+          ) : isAurora ? (
+            <div className="px-6 py-5 flex items-start justify-between"
+                 style={{ background: `linear-gradient(135deg, ${primaryColor}, #14b8a6)` }}>
+              <div>
+                <p className="text-white font-bold text-xl tracking-wide">INVOICE</p>
+                <p className="text-white/70 text-sm mt-0.5">{invoice.invoiceNumber}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-white font-semibold text-lg">{brandName}</p>
+                {template?.brandAddress && (
+                  <p className="text-white/70 text-xs mt-0.5">{template.brandAddress}</p>
+                )}
+              </div>
+            </div>
+          ) : (
+            <div className="px-6 py-5 flex items-start justify-between"
+                 style={{ backgroundColor: primaryColor }}>
+              <div>
+                <p className="text-white font-bold text-xl tracking-wide">INVOICE</p>
+                <p className="text-white/70 text-sm mt-0.5">{invoice.invoiceNumber}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-white font-semibold text-lg">{brandName}</p>
+                {template?.brandAddress && (
+                  <p className="text-white/70 text-xs mt-0.5">{template.brandAddress}</p>
+                )}
+              </div>
+            </div>
+          )}
 
           <CardContent className="p-6">
             {/* FROM / BILL TO */}
@@ -111,12 +181,21 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
             {/* Items table */}
             <table className="w-full mb-6 text-sm">
               <thead>
-                <tr className="text-white">
-                  <th className="text-left p-2.5 rounded-tl-md font-medium" style={{ backgroundColor: primaryColor }}>Description</th>
-                  <th className="text-right p-2.5 font-medium w-14" style={{ backgroundColor: primaryColor }}>Qty</th>
-                  <th className="text-right p-2.5 font-medium w-28" style={{ backgroundColor: primaryColor }}>Unit Price</th>
-                  <th className="text-right p-2.5 rounded-tr-md font-medium w-28" style={{ backgroundColor: primaryColor }}>Amount</th>
-                </tr>
+                {isLedger ? (
+                  <tr style={{ color: '#374151' }}>
+                    <th className="text-left p-2.5 font-medium border-b-2 border-slate-800">Description</th>
+                    <th className="text-right p-2.5 font-medium w-14 border-b-2 border-slate-800">Qty</th>
+                    <th className="text-right p-2.5 font-medium w-28 border-b-2 border-slate-800">Unit Price</th>
+                    <th className="text-right p-2.5 font-medium w-28 border-b-2 border-slate-800">Amount</th>
+                  </tr>
+                ) : (
+                  <tr style={{ color: tableHeaderColor }}>
+                    <th className="text-left p-2.5 rounded-tl-md font-medium" style={{ backgroundColor: tableHeaderBg }}>Description</th>
+                    <th className="text-right p-2.5 font-medium w-14" style={{ backgroundColor: tableHeaderBg }}>Qty</th>
+                    <th className="text-right p-2.5 font-medium w-28" style={{ backgroundColor: tableHeaderBg }}>Unit Price</th>
+                    <th className="text-right p-2.5 rounded-tr-md font-medium w-28" style={{ backgroundColor: tableHeaderBg }}>Amount</th>
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {invoice.items.map((item, i) => (

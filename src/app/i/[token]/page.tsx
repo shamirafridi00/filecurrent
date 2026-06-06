@@ -74,10 +74,18 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
     invoice.businessName ||
     invoice.freelancerName
   const theme = invoice.template?.theme ?? 'summit'
+  const isSummit = theme === 'summit'
+  const isAurora = theme === 'aurora'
   const isIvory = theme === 'ivory'
   const isLedger = theme === 'ledger'
-  const tableHeaderBg = isLedger ? '#111827' : isIvory ? '#F9FAFB' : primaryColor
-  const tableHeaderText = isIvory ? '#374151' : 'white'
+  const tableHeaderBg = isLedger ? 'transparent'
+    : isIvory ? '#F9FAFB'
+    : isSummit ? '#F3F4F6'
+    : isAurora ? `${primaryColor}18`
+    : primaryColor
+  const tableHeaderText = (isLedger || isIvory || isSummit) ? '#374151'
+    : isAurora ? primaryColor
+    : 'white'
   const isOverdue = invoice.status !== 'paid' &&
     !!invoice.dueDate &&
     new Date(invoice.dueDate) < new Date()
@@ -167,12 +175,21 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
             {/* Items */}
             <table className="w-full mb-6 text-sm">
               <thead>
-                <tr style={{ color: tableHeaderText }}>
-                  <th className="text-left p-2.5 rounded-tl-md" style={{ backgroundColor: tableHeaderBg }}>Description</th>
-                  <th className="text-right p-2.5 w-14" style={{ backgroundColor: tableHeaderBg }}>Qty</th>
-                  <th className="text-right p-2.5 w-28" style={{ backgroundColor: tableHeaderBg }}>Unit Price</th>
-                  <th className="text-right p-2.5 rounded-tr-md w-28" style={{ backgroundColor: tableHeaderBg }}>Amount</th>
-                </tr>
+                {isLedger ? (
+                  <tr style={{ color: '#374151' }}>
+                    <th className="text-left p-2.5 font-medium border-b-2 border-slate-800">Description</th>
+                    <th className="text-right p-2.5 w-14 font-medium border-b-2 border-slate-800">Qty</th>
+                    <th className="text-right p-2.5 w-28 font-medium border-b-2 border-slate-800">Unit Price</th>
+                    <th className="text-right p-2.5 w-28 font-medium border-b-2 border-slate-800">Amount</th>
+                  </tr>
+                ) : (
+                  <tr style={{ color: tableHeaderText }}>
+                    <th className="text-left p-2.5 rounded-tl-md" style={{ backgroundColor: tableHeaderBg }}>Description</th>
+                    <th className="text-right p-2.5 w-14" style={{ backgroundColor: tableHeaderBg }}>Qty</th>
+                    <th className="text-right p-2.5 w-28" style={{ backgroundColor: tableHeaderBg }}>Unit Price</th>
+                    <th className="text-right p-2.5 rounded-tr-md w-28" style={{ backgroundColor: tableHeaderBg }}>Amount</th>
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {invoice.items.map((item, i) => (
