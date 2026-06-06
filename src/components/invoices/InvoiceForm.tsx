@@ -412,19 +412,73 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
               <div className="space-y-3">
                 <div className="space-y-1.5">
                   <Label htmlFor="tax-rate">Tax Rate (%)</Label>
-                  <Input id="tax-rate" type="number" min="0" step="0.1" value={taxRate}
-                    onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)} />
+                  <div className="flex items-center">
+                    <button type="button"
+                      onClick={() => setTaxRate((v) => Math.max(0, parseFloat((v - 0.25).toFixed(2))))}
+                      className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    ><Minus size={11} /></button>
+                    <input id="tax-rate" type="text" inputMode="decimal" pattern="[0-9.]*"
+                      value={taxRate}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const v = e.target.value
+                        const n = parseFloat(v)
+                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) setTaxRate(isNaN(n) ? 0 : n)
+                      }}
+                      className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                    <button type="button"
+                      onClick={() => setTaxRate((v) => parseFloat((v + 0.25).toFixed(2)))}
+                      className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    ><Plus size={11} /></button>
+                  </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="discount">Discount Amount</Label>
-                  <Input id="discount" type="number" min="0" step="0.01" value={discountAmount}
-                    onChange={(e) => setDiscountAmount(parseFloat(e.target.value) || 0)} />
+                  <div className="flex items-center">
+                    <button type="button"
+                      onClick={() => setDiscountAmount((v) => Math.max(0, parseFloat((v - 1).toFixed(2))))}
+                      className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    ><Minus size={11} /></button>
+                    <input id="discount" type="text" inputMode="decimal" pattern="[0-9.]*"
+                      value={discountAmount}
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const v = e.target.value
+                        const n = parseFloat(v)
+                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) setDiscountAmount(isNaN(n) ? 0 : n)
+                      }}
+                      className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                    <button type="button"
+                      onClick={() => setDiscountAmount((v) => parseFloat((v + 1).toFixed(2)))}
+                      className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    ><Plus size={11} /></button>
+                  </div>
                 </div>
                 <div className="space-y-1.5">
                   <Label htmlFor="deposit">Deposit Received (optional)</Label>
-                  <Input id="deposit" type="number" min="0" step="0.01" value={depositAmount || ''}
-                    placeholder="0.00"
-                    onChange={(e) => setDepositAmount(parseFloat(e.target.value) || 0)} />
+                  <div className="flex items-center">
+                    <button type="button"
+                      onClick={() => setDepositAmount((v) => Math.max(0, parseFloat((v - 1).toFixed(2))))}
+                      className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    ><Minus size={11} /></button>
+                    <input id="deposit" type="text" inputMode="decimal" pattern="[0-9.]*"
+                      value={depositAmount || ''}
+                      placeholder="0.00"
+                      onFocus={(e) => e.target.select()}
+                      onChange={(e) => {
+                        const v = e.target.value
+                        const n = parseFloat(v)
+                        if (v === '' || v === '.' || (!isNaN(n) && n >= 0)) setDepositAmount(isNaN(n) ? 0 : n)
+                      }}
+                      className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+                    />
+                    <button type="button"
+                      onClick={() => setDepositAmount((v) => parseFloat((v + 1).toFixed(2)))}
+                      className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
+                    ><Plus size={11} /></button>
+                  </div>
                 </div>
               </div>
               <div className="rounded-lg border bg-muted/30 p-4 space-y-2 text-sm">
