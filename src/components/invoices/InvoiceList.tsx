@@ -1,11 +1,12 @@
 'use client'
 
 import { useState, useMemo } from 'react'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { MagnifyingGlass, X } from '@phosphor-icons/react'
+import { MagnifyingGlass, X, Trash } from '@phosphor-icons/react'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
-import { InvoiceBadge } from '@/components/ui'
+import { InvoiceBadge, ConfirmDialog } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import type { InvoiceListRow } from '@/lib/db/supabase'
 import type { InvoiceStatus } from '@/types'
@@ -23,11 +24,22 @@ interface Props {
   invoices: InvoiceListRow[]
 }
 
-export function InvoiceList({ invoices }: Props) {
+export function InvoiceList({ invoices: initialInvoices }: Props) {
+  const router = useRouter()
+  const [invoices, setInvoices] = useState(initialInvoices)
   const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all')
   const [search, setSearch] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
+  const [clientFilter, setClientFilter] = useState('')
+  const [deleteTarget, setDeleteTarget] = useState<InvoiceListRow | null>(null)
+  const [deleting, setDeleting] = useState(false)
+
+  // Unique sorted client names from the full list
+  const clientNames = useMemo(() => {
+    const names = Array.from(new Set(invoices.map((inv) => inv.clientName))).sort()
+    return names
+  }, [invoices])
 
   const statusCounts = useMemo(() => {
     const counts: Record<string, number> = {}
@@ -40,6 +52,7 @@ export function InvoiceList({ invoices }: Props) {
   const filtered = useMemo(() => {
     return invoices.filter((inv) => {
       if (statusFilter !== 'all' && inv.status !== statusFilter) return false
+      if (clientFilter && inv.clientName !== clientFilter) return false
       if (
         search &&
         !inv.clientName.toLowerCase().includes(search.toLowerCase()) &&
@@ -50,15 +63,33 @@ export function InvoiceList({ invoices }: Props) {
       if (dateTo && inv.invoiceDate > dateTo) return false
       return true
     })
-  }, [invoices, statusFilter, search, dateFrom, dateTo])
+  }, [invoices, statusFilter, clientFilter, search, dateFrom, dateTo])
 
-  const isFiltered = statusFilter !== 'all' || search !== '' || dateFrom !== '' || dateTo !== ''
+  const isFiltered =
+    statusFilter !== 'all' || search !== '' || dateFrom !== '' || dateTo !== '' || clientFilter !== ''
 
   function clearFilters() {
     setStatusFilter('all')
     setSearch('')
     setDateFrom('')
     setDateTo('')
+    setClientFilter('')
+  }
+
+  async function confirmDelete() {
+    if (!deleteTarget) return
+    setDeleting(true)
+    try {
+      const res = await fetch(`/api/invoices/${deleteTarget.id}`, { method: 'DELETE' })
+      if (!res.ok) throw new Error('Delete failed')
+      setInvoices((prev) => prev.filter((inv) => inv.id !== deleteTarget.id))
+      router.refresh()
+    } catch {
+      // keep modal open on error — user can retry
+    } finally {
+      setDeleting(false)
+      setDeleteTarget(null)
+    }
   }
 
   return (
@@ -86,6 +117,23 @@ export function InvoiceList({ invoices }: Props) {
               <X size={12} />
             </button>
           )}
+        </div>
+
+        {/* Client filter */}
+        <div className="relative">
+          <select
+            value={clientFilter}
+            onChange={(e) => setClientFilter(e.target.value)}
+            className="h-8 rounded-md border border-input bg-background pl-2.5 pr-7 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring appearance-none text-foreground"
+          >
+            <option value="">All Clients</option>
+            {clientNames.map((name) => (
+              <option key={name} value={name}>
+                {name}
+              </option>
+            ))}
+          </select>
+          <span className="pointer-events-none absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground text-[10px]">▼</span>
         </div>
 
         {/* Date range */}
@@ -164,7 +212,7 @@ export function InvoiceList({ invoices }: Props) {
           {filtered.map((inv) => (
             <div
               key={inv.id}
-              className="flex items-center justify-between px-5 py-4 hover:bg-muted/40 transition-colors"
+              className="flex items-center justify-between px-5 py-4 hover:bg-muted/40 transition-colors group"
             >
               <div className="min-w-0">
                 <Link
@@ -178,17 +226,40 @@ export function InvoiceList({ invoices }: Props) {
                   {inv.dueDate && ` · Due ${formatDate(inv.dueDate)}`}
                 </p>
               </div>
-              <div className="flex items-center gap-4 shrink-0">
+              <div className="flex items-center gap-3 shrink-0">
                 <span className="text-sm font-medium">{formatCurrency(inv.total, inv.currency)}</span>
                 <InvoiceBadge status={inv.status as InvoiceStatus} />
                 <Button asChild variant="ghost" size="sm">
                   <Link href={`/invoices/${inv.id}`}>View →</Link>
                 </Button>
+                <button
+                  type="button"
+                  onClick={() => setDeleteTarget(inv)}
+                  className="opacity-0 group-hover:opacity-100 transition-opacity flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
+                  aria-label="Delete invoice"
+                >
+                  <Trash size={14} />
+                </button>
               </div>
             </div>
           ))}
         </div>
       )}
+
+      {/* Delete confirm dialog */}
+      <ConfirmDialog
+        open={deleteTarget !== null}
+        title="Delete Invoice"
+        description={
+          deleteTarget
+            ? `Delete invoice ${deleteTarget.invoiceNumber} for ${deleteTarget.clientName}? This cannot be undone.`
+            : ''
+        }
+        confirmLabel={deleting ? 'Deleting…' : 'Delete'}
+        variant="danger"
+        onConfirm={confirmDelete}
+        onCancel={() => setDeleteTarget(null)}
+      />
     </div>
   )
 }

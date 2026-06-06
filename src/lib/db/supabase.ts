@@ -763,6 +763,15 @@ export async function getNextInvoiceSequence(userId: string): Promise<number> {
   return (count ?? 0) + 1
 }
 
+export async function deleteInvoice(id: string, userId: string): Promise<void> {
+  const { error } = await adminClient
+    .from('invoices')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
 export async function getInvoices(userId: string): Promise<InvoiceListRow[]> {
   const { data, error } = await adminClient
     .from('invoices')
