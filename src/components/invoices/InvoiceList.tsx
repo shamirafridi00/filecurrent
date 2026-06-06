@@ -12,13 +12,14 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import type { InvoiceListRow } from '@/lib/db/supabase'
 import type { InvoiceStatus } from '@/types'
 
-const STATUS_OPTIONS: Array<{ value: InvoiceStatus | 'all'; label: string }> = [
+const STATUS_OPTIONS: Array<{ value: InvoiceStatus | 'all' | 'recurring'; label: string }> = [
   { value: 'all', label: 'All' },
   { value: 'draft', label: 'Draft' },
   { value: 'sent', label: 'Sent' },
   { value: 'partial', label: 'Partial' },
   { value: 'paid', label: 'Paid' },
   { value: 'overdue', label: 'Overdue' },
+  { value: 'recurring', label: 'Recurring' },
 ]
 
 interface Props {
@@ -28,7 +29,7 @@ interface Props {
 export function InvoiceList({ invoices: initialInvoices }: Props) {
   const router = useRouter()
   const [invoices, setInvoices] = useState(initialInvoices)
-  const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all'>('all')
+  const [statusFilter, setStatusFilter] = useState<InvoiceStatus | 'all' | 'recurring'>('all')
   const [search, setSearch] = useState('')
   const [dateFrom, setDateFrom] = useState('')
   const [dateTo, setDateTo] = useState('')
@@ -46,12 +47,14 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
     const counts: Record<string, number> = {}
     for (const inv of invoices) {
       counts[inv.status] = (counts[inv.status] ?? 0) + 1
+      if (inv.isRecurring) counts['recurring'] = (counts['recurring'] ?? 0) + 1
     }
     return counts
   }, [invoices])
 
   const filtered = useMemo(() => {
     return invoices.filter((inv) => {
+      if (statusFilter === 'recurring') return inv.isRecurring
       if (statusFilter !== 'all' && inv.status !== statusFilter) return false
       if (clientFilter && inv.clientName !== clientFilter) return false
       if (
@@ -171,7 +174,7 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
       {/* Status pills */}
       <div className="flex flex-wrap items-center gap-1.5">
         {STATUS_OPTIONS.map(({ value, label }) => {
-          const count = value === 'all' ? invoices.length : (statusCounts[value] ?? 0)
+          const count = value === 'all' ? invoices.length : (statusCounts[value as string] ?? 0)
           const isActive = statusFilter === value
           return (
             <button
