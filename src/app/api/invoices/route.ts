@@ -32,7 +32,7 @@ export async function POST(req: NextRequest) {
   // Log invoice_created — fetch client name from the invoice
   const createdInvoice = await getInvoice(id, user.id)
   if (createdInvoice) {
-    logClientActivity({
+    void logClientActivity({
       userId: user.id,
       clientId: createdInvoice.clientId ?? null,
       clientName: createdInvoice.clientName,
@@ -41,14 +41,14 @@ export async function POST(req: NextRequest) {
       entityId: id,
       entityLabel: createdInvoice.invoiceNumber,
       amount: createdInvoice.total,
-    }).catch(() => {})
+    })
   }
 
   if (markAsSent) {
     await updateInvoiceStatus(id, user.id, 'sent')
 
     if (createdInvoice) {
-      logClientActivity({
+      void logClientActivity({
         userId: user.id,
         clientId: createdInvoice.clientId ?? null,
         clientName: createdInvoice.clientName,
@@ -57,7 +57,7 @@ export async function POST(req: NextRequest) {
         entityId: id,
         entityLabel: createdInvoice.invoiceNumber,
         amount: createdInvoice.total,
-      }).catch(() => {})
+      })
     }
 
     // Send invoice email to client — reuse createdInvoice, only fetch profile

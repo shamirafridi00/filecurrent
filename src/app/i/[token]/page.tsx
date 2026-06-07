@@ -35,7 +35,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
 
     // Log invoice_viewed for every view (rate-limit only applies to notification email below)
     if (invoiceRow) {
-      logClientActivity({
+      void logClientActivity({
         userId: invoiceRow.user_id,
         clientId: null,
         clientName: invoice.clientName,
@@ -43,7 +43,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
         entityType: 'invoice',
         entityId: String(invoiceRow.id),
         entityLabel: invoice.invoiceNumber,
-      }).catch(() => {})
+      })
     }
 
     if (invoiceRow && !recentLog?.length) {

@@ -19,7 +19,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   ])
 
   if (contract) {
-    logClientActivity({
+    void logClientActivity({
       userId: user.id,
       clientId: contract.clientId ?? null,
       clientName: contract.clientName,
@@ -27,7 +27,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       entityType: 'contract',
       entityId: params.id,
       entityLabel: contract.title,
-    }).catch(() => {})
+    })
 
     const signingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${token}`
     const amount = new Intl.NumberFormat('en-US', {

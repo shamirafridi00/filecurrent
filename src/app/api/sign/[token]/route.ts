@@ -68,7 +68,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
 
     // Log contract_signed — user_id now available from contractRow
     if (contractRow?.user_id) {
-      logClientActivity({
+      void logClientActivity({
         userId: contractRow.user_id,
         clientId: null,
         clientName: session.clientName,
@@ -77,7 +77,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         entityId: session.contractId,
         entityLabel: session.contractTitle,
         metadata: { signerEmail: session.signerEmail },
-      }).catch(() => {})
+      })
     }
 
     const { data: profileRow } = await adminClient
