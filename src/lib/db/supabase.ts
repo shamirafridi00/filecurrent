@@ -137,6 +137,7 @@ export async function checkDocLimit(userId: string): Promise<{
   if (!profile) return { allowed: false, reason: 'no_profile' }
 
   if (
+    profile.plan === 'pro' ||
     profile.plan === 'pro_monthly' ||
     profile.plan === 'pro_annual' ||
     profile.plan === 'lifetime'
@@ -851,7 +852,7 @@ export async function createInvoice(
     .select('plan')
     .eq('id', userId)
     .single()
-  const isPro = profile.data?.plan === 'pro_monthly' || profile.data?.plan === 'pro_annual' || profile.data?.plan === 'lifetime'
+  const isPro = profile.data?.plan === 'pro' || profile.data?.plan === 'pro_monthly' || profile.data?.plan === 'pro_annual' || profile.data?.plan === 'lifetime'
 
   const shareToken = crypto.randomUUID()
 

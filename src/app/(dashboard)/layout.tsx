@@ -19,6 +19,7 @@ export default async function DashboardLayout({
   const profile = await getCurrentProfile(user.id)
 
   const isPro =
+    profile.plan === 'pro' ||
     profile.plan === 'pro_monthly' ||
     profile.plan === 'pro_annual' ||
     profile.plan === 'lifetime'

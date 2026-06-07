@@ -133,7 +133,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
     }
   }
 
-  const isPro = initial.plan === 'pro_monthly' || initial.plan === 'pro_annual' || initial.plan === 'lifetime'
+  const isPro = initial.plan === 'pro' || initial.plan === 'pro_monthly' || initial.plan === 'pro_annual' || initial.plan === 'lifetime'
   const isTrial = initial.plan === 'trial'
   const trialDaysLeft = isTrial && initial.trialEndsAt
     ? Math.max(0, Math.ceil((new Date(initial.trialEndsAt).getTime() - Date.now()) / 86400000))

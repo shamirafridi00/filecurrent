@@ -47,7 +47,7 @@ function PlanBadge({ user }: { user: LayoutUser }) {
   if (user.plan === 'free') {
     return <span className={`${base} bg-[#FFF9ED] text-[#E6A817] border-[#FDD87A]`}>Free</span>
   }
-  if (user.plan === 'pro_monthly' || user.plan === 'pro_annual') {
+  if (user.plan === 'pro' || user.plan === 'pro_monthly' || user.plan === 'pro_annual') {
     return <span className={`${base} bg-[#F0EFFF] text-[#635BFF] border-[#C7C4FF]`}>Pro</span>
   }
   if (user.plan === 'lifetime') {
@@ -78,6 +78,14 @@ function PlanStatusLine({ user }: { user: LayoutUser }) {
     )
   }
 
+  if (user.plan === 'pro') {
+    return (
+      <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
+        <span className="h-1.5 w-1.5 rounded-full bg-[#635BFF]" />
+        Pro
+      </span>
+    )
+  }
   if (user.plan === 'pro_monthly') {
     return (
       <span className="flex items-center gap-1.5 text-xs text-muted-foreground">
@@ -107,7 +115,7 @@ function PlanStatusLine({ user }: { user: LayoutUser }) {
 }
 
 function showUpgradeButton(user: LayoutUser): boolean {
-  if (user.plan === 'pro_monthly' || user.plan === 'pro_annual' || user.plan === 'lifetime') {
+  if (user.plan === 'pro' || user.plan === 'pro_monthly' || user.plan === 'pro_annual' || user.plan === 'lifetime') {
     return false
   }
   return true
