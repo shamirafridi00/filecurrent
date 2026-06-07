@@ -27,7 +27,7 @@ export function InvoicePdfButton({ invoiceId, isPro }: Props) {
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={handleClick} disabled={loading}>
+      <Button variant="outline" size="sm" onClick={handleClick} disabled={loading} className="border-blue-200 text-blue-700 hover:bg-blue-50 hover:text-blue-800">
         <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
         {loading ? 'Generating…' : 'Download PDF'}
       </Button>

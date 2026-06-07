@@ -57,7 +57,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
             <InvoiceBadge status={invoice.status as InvoiceStatus} />
             <DuplicateInvoiceButton invoiceId={invoice.id} />
             <InvoicePdfButton invoiceId={invoice.id} isPro={profile.plan !== 'free'} />
-            {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} />}
+            {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} compact />}
           </div>
         }
       />
