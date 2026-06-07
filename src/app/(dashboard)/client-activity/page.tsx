@@ -68,6 +68,7 @@ export default async function ClientActivityPage() {
           <ActivityFeed
             events={events}
             emptyMessage="No activity yet. Create invoices and contracts to see events here."
+            showReset
           />
         </CardContent>
       </Card>
