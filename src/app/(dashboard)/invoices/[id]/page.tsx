@@ -292,13 +292,6 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
             </Card>
           )}
 
-          <Card>
-            <CardHeader><CardTitle className="text-base">Share Link</CardTitle></CardHeader>
-            <CardContent>
-              {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} />}
-            </CardContent>
-          </Card>
-
           <RecurringSettings
             invoiceId={invoice.id}
             isRecurring={invoice.isRecurring}
