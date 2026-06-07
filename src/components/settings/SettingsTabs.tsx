@@ -45,6 +45,7 @@ const NOTIFICATION_OPTIONS = [
 const PLAN_LABELS: Record<Plan, string> = {
   trial: 'Free Trial',
   free: 'Free Plan',
+  pro: 'Pro',
   pro_monthly: 'Pro Monthly',
   pro_annual: 'Pro Annual',
   lifetime: 'Lifetime',
