@@ -125,10 +125,12 @@ export function Topbar({ user, onLogout }: TopbarProps) {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   return (
-    <header className="fixed left-56 right-0 top-0 z-40 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
-      <Link href="/dashboard">
-        <LogoFull size={28} />
-      </Link>
+    <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
+      <div className="flex w-56 items-center">
+        <Link href="/dashboard">
+          <LogoFull size={28} />
+        </Link>
+      </div>
 
       <div className="flex items-center gap-3">
         <PlanBadge user={user} />
