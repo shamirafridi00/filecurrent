@@ -1189,7 +1189,7 @@ export async function toggleInvoiceRemindersPaused(
 }
 
 export interface ReminderLogRow {
-  id: string; invoiceNumber: string; clientName: string
+  id: string; invoiceId: string; invoiceNumber: string; clientName: string
   recipientEmail: string; status: string; sentAt: string; openedAt: string | null
 }
 
@@ -1216,7 +1216,7 @@ export async function getInvoiceReminderLogs(invoiceId: string): Promise<Invoice
 export async function getReminderLogs(userId: string, limit = 50): Promise<ReminderLogRow[]> {
   const { data } = await adminClient
     .from('reminder_logs')
-    .select('id, recipient_email, status, sent_at, opened_at, invoices!inner(invoice_number, clients!inner(name))')
+    .select('id, invoice_id, recipient_email, status, sent_at, opened_at, invoices!inner(invoice_number, clients!inner(name))')
     .eq('user_id', userId)
     .order('sent_at', { ascending: false })
     .limit(limit)
@@ -1224,7 +1224,7 @@ export async function getReminderLogs(userId: string, limit = 50): Promise<Remin
   return (data ?? []).map((r) => {
     const inv = r.invoices as unknown as { invoice_number: string; clients: { name: string } }
     return {
-      id: r.id, invoiceNumber: inv.invoice_number,
+      id: r.id, invoiceId: r.invoice_id, invoiceNumber: inv.invoice_number,
       clientName: inv.clients.name, recipientEmail: r.recipient_email,
       status: r.status, sentAt: r.sent_at, openedAt: r.opened_at,
     }

@@ -97,9 +97,9 @@ export default async function RemindersPage() {
                 {logs.map((r) => (
                   <tr key={r.id} className="border-b border-slate-50 hover:bg-slate-50 transition-colors">
                     <td className="px-6 py-3">
-                      <span className="text-sm text-[#635BFF] font-medium">
+                      <Link href={`/invoices/${r.invoiceId}`} className="text-sm text-[#635BFF] font-medium hover:underline">
                         {r.invoiceNumber}
-                      </span>
+                      </Link>
                     </td>
                     <td className="px-6 py-3 text-sm text-slate-700">{r.clientName}</td>
                     <td className="px-6 py-3 text-sm text-slate-500">{r.recipientEmail}</td>
