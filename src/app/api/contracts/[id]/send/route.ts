@@ -44,6 +44,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
         projectAmount: amount,
         signingUrl,
       }),
+      replyTo: profile.email ?? undefined,
     }).catch((err) => console.error('Contract send email failed:', err))
   }
 

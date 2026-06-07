@@ -29,7 +29,7 @@ export async function POST(
 
   const { data: profile } = await adminClient
     .from('profiles')
-    .select('full_name, business_name')
+    .select('full_name, business_name, email')
     .eq('id', user.id)
     .single()
 
@@ -55,6 +55,7 @@ export async function POST(
         shareToken: invoice.shareToken,
         stage: 'overdue',
       }),
+      replyTo: profile?.email ?? undefined,
     })
 
     await adminClient.from('reminder_logs').insert({

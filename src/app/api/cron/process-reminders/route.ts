@@ -33,7 +33,7 @@ export async function GET(req: NextRequest) {
     // Get profile for freelancer name/business
     const { data: profile } = await adminClient
       .from('profiles')
-      .select('full_name, business_name, plan')
+      .select('full_name, business_name, plan, email')
       .eq('id', userId)
       .single()
 
@@ -141,6 +141,7 @@ export async function GET(req: NextRequest) {
             shareToken: invoice.share_token as string,
             stage,
           }),
+          replyTo: profile.email ?? undefined,
         })
 
         await adminClient.from('reminder_logs').insert({

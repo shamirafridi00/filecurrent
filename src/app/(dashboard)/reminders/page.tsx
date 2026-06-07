@@ -35,20 +35,6 @@ export default async function RemindersPage() {
         </Button>
       </div>
 
-      {/* No-limits banner */}
-      <div className="bg-[#F0EFFF] border border-[#C7C4FF] rounded-xl p-4 flex items-start gap-3 mb-6">
-        <Lightning size={20} weight="fill" className="text-[#635BFF] mt-0.5 shrink-0" />
-        <div>
-          <p className="font-semibold text-[#0A2540] text-sm">
-            Unlimited payment reminders — no daily cap
-          </p>
-          <p className="text-[#635BFF] text-sm mt-0.5">
-            FileCurrent sends reminders automatically with no daily limits.
-            Freelancers with 20+ active invoices are never penalized.
-          </p>
-        </div>
-      </div>
-
       {/* 3 action cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <Link href="/reminders/settings">

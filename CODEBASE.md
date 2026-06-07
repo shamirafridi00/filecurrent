@@ -554,6 +554,7 @@ CRON_SECRET=
 | 2026-06-07 | Fix client_id null in cron reminder logs | `src/app/api/cron/process-reminders/route.ts` |
 | 2026-06-07 | Per-invoice reminders_paused toggle — pause reminders for specific invoice | `invoices table (Supabase)`, `src/lib/db/supabase.ts`, `src/app/api/invoices/[id]/remind-pause/route.ts`, `src/app/(dashboard)/invoices/[id]/page.tsx` |
 | 2026-06-07 | Delete dead reminder components (ReminderSettings.tsx, EmailTemplateForm.tsx) | `src/components/reminders/` |
+| 2026-06-07 | Fix reply-to email on all client-facing emails — replies now go to freelancer's inbox (FreshBooks model) | `src/app/api/cron/process-reminders/route.ts`, `src/app/api/invoices/[id]/remind/route.ts`, `src/app/api/invoices/route.ts`, `src/app/api/contracts/[id]/send/route.ts`, `src/app/api/invoices/[id]/payments/route.ts` |
 
 ---
 

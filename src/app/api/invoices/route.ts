@@ -88,6 +88,7 @@ export async function POST(req: NextRequest) {
           invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${createdInvoice.shareToken}`,
           hasBrandingFooter: profile.plan === 'free',
         }),
+        replyTo: profile.email ?? undefined,
       }).catch((err) => console.error('Invoice sent email failed:', err))
     }
   }

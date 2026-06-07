@@ -58,6 +58,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           currency: invoice.currency,
           invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${invoice.shareToken}`,
         }),
+        replyTo: profile.email ?? undefined,
       }).catch(() => {})
     }
   } catch {
