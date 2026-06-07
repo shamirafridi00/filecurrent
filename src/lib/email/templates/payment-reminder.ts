@@ -9,6 +9,7 @@ export function paymentReminderEmail({
   dueDate,
   daysOverdue,
   invoiceUrl,
+  shareToken,
   stage,
 }: {
   clientName: string
@@ -19,6 +20,7 @@ export function paymentReminderEmail({
   dueDate: string
   daysOverdue: number
   invoiceUrl: string
+  shareToken: string
   stage: 'before_due' | 'on_due' | 'overdue'
 }): string {
   const sender = businessName || freelancerName
@@ -71,7 +73,7 @@ export function paymentReminderEmail({
   return emailLayout({
     previewText,
     body,
-    footerText: `Sent by ${sender} via FileCurrent. <a href="${invoiceUrl}?unsubscribe=1" style="color:#9CA3AF;">Unsubscribe from reminders for this invoice</a>`,
+    footerText: `Sent by ${sender} via FileCurrent. <a href="${process.env.NEXT_PUBLIC_APP_URL}/i/${shareToken}/unsubscribe" style="color:#9CA3AF;">Unsubscribe from reminders for this invoice</a>`,
   })
 }
 

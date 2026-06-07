@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     // Get all open invoices for this user
     const { data: invoices } = await adminClient
       .from('invoices')
-      .select('id, invoice_number, total, paid_amount, currency, status, due_date, share_token, clients!inner(name, email)')
+      .select('id, invoice_number, total, paid_amount, currency, status, due_date, share_token, client_id, reminders_paused, clients!inner(name, email)')
       .eq('user_id', userId)
       .in('status', ['sent', 'partial'])
       .not('due_date', 'is', null)
@@ -60,6 +60,7 @@ export async function GET(req: NextRequest) {
       const skipThreshold = settings.skip_below_balance ?? 10
 
       if (balance <= skipThreshold) { skipped++; continue }
+      if (invoice.reminders_paused) { skipped++; continue }
 
       const dueDate = new Date(invoice.due_date as string)
       dueDate.setHours(0, 0, 0, 0)
@@ -137,6 +138,7 @@ export async function GET(req: NextRequest) {
             dueDate: dueDateFormatted,
             daysOverdue,
             invoiceUrl,
+            shareToken: invoice.share_token as string,
             stage,
           }),
         })
@@ -144,7 +146,7 @@ export async function GET(req: NextRequest) {
         await adminClient.from('reminder_logs').insert({
           invoice_id: invoice.id,
           user_id: userId,
-          client_id: null,
+          client_id: invoice.client_id ?? null,
           recipient_email: client.email,
           trigger_type: triggerType,
           template_key: stage,
@@ -160,7 +162,7 @@ export async function GET(req: NextRequest) {
         await adminClient.from('reminder_logs').insert({
           invoice_id: invoice.id,
           user_id: userId,
-          client_id: null,
+          client_id: invoice.client_id ?? null,
           recipient_email: client.email,
           trigger_type: triggerType,
           template_key: stage,

@@ -548,6 +548,12 @@ CRON_SECRET=
 | 2026-06-07 | Added % / flat discount toggle in invoice form | `components/invoices/InvoiceForm.tsx` |
 | 2026-06-07 | Complete email system: shared emailLayout wrapper, payment-received + welcome templates, payment-received trigger on payment record, welcome email on first signup, per-call replyTo override | `src/lib/email/**` |
 | 2026-06-07 | Complete client activity system: client_activity_log table, event logging at all triggers, redesigned /client-activity page, activity tab on /clients/[id], shared ActivityFeed component | `src/app/(dashboard)/client-activity/`, `src/components/clients/ActivityFeed.tsx`, `src/lib/db/supabase.ts`, `src/types/index.ts` |
+| 2026-06-07 | Fix payment reminder unsubscribe handler — new route /i/[token]/unsubscribe, updates reminder_unsubscribes table | `src/app/i/[token]/unsubscribe/route.ts`, `src/lib/email/templates/payment-reminder.ts` |
+| 2026-06-07 | Add manual reminder API + wire Send Reminder button on invoice detail | `src/app/api/invoices/[id]/remind/route.ts`, `src/app/(dashboard)/invoices/[id]/page.tsx` |
+| 2026-06-07 | Per-invoice reminder history section on invoice detail page | `src/lib/db/supabase.ts`, `src/app/(dashboard)/invoices/[id]/page.tsx` |
+| 2026-06-07 | Fix client_id null in cron reminder logs | `src/app/api/cron/process-reminders/route.ts` |
+| 2026-06-07 | Per-invoice reminders_paused toggle — pause reminders for specific invoice | `invoices table (Supabase)`, `src/lib/db/supabase.ts`, `src/app/api/invoices/[id]/remind-pause/route.ts`, `src/app/(dashboard)/invoices/[id]/page.tsx` |
+| 2026-06-07 | Delete dead reminder components (ReminderSettings.tsx, EmailTemplateForm.tsx) | `src/components/reminders/` |
 
 ---
 

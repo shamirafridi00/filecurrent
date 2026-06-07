@@ -756,6 +756,7 @@ export interface InvoiceDetailRow extends InvoiceListRow {
   clientCompany: string | null; clientAddress: string | null
   templateId: string | null; template: InvoiceTemplateRow | null; createdAt: string
   recurrenceEndDate: string | null; recurrenceParentId: string | null
+  remindersPaused: boolean
 }
 
 export async function getNextInvoiceSequence(userId: string): Promise<number> {
@@ -835,6 +836,7 @@ export async function getInvoice(id: string, userId: string): Promise<InvoiceDet
     recurrenceNextDate: data.recurrence_next_date ?? null,
     recurrenceEndDate: data.recurrence_end_date ?? null,
     recurrenceParentId: data.recurrence_parent_id ?? null,
+    remindersPaused: data.reminders_paused ?? false,
   }
 }
 
@@ -1158,9 +1160,42 @@ export async function saveReminderSettings(userId: string, data: ReminderSetting
   if (error) throw new Error(error.message)
 }
 
+export async function toggleInvoiceRemindersPaused(
+  invoiceId: string,
+  userId: string,
+  paused: boolean
+): Promise<void> {
+  const { error } = await adminClient
+    .from('invoices')
+    .update({ reminders_paused: paused })
+    .eq('id', invoiceId)
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
 export interface ReminderLogRow {
   id: string; invoiceNumber: string; clientName: string
   recipientEmail: string; status: string; sentAt: string; openedAt: string | null
+}
+
+export interface InvoiceReminderLogRow {
+  id: string; triggerType: string; status: string; sentAt: string
+}
+
+export async function getInvoiceReminderLogs(invoiceId: string): Promise<InvoiceReminderLogRow[]> {
+  const { data } = await adminClient
+    .from('reminder_logs')
+    .select('id, trigger_type, status, sent_at')
+    .eq('invoice_id', invoiceId)
+    .order('sent_at', { ascending: false })
+    .limit(20)
+
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    triggerType: r.trigger_type,
+    status: r.status,
+    sentAt: r.sent_at,
+  }))
 }
 
 export async function getReminderLogs(userId: string, limit = 50): Promise<ReminderLogRow[]> {

@@ -1,32 +1,49 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import { Receipt, Copy, CheckCircle, ArrowSquareOut, DownloadSimple } from '@/components/icons'
+import { Receipt, CheckCircle } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
-import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
 import { PageHeader, InvoiceBadge } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentProfile, getInvoice, getInvoicePayments, markOverdueInvoices } from '@/lib/db/supabase'
+import {
+  getCurrentProfile,
+  getInvoice,
+  getInvoicePayments,
+  getInvoiceReminderLogs,
+  markOverdueInvoices,
+} from '@/lib/db/supabase'
 import { InvoiceDocument } from '@/components/invoices/InvoiceDocument'
 import { RecordPaymentModal } from '@/components/invoices/RecordPaymentModal'
 import { RecurringSettings } from '@/components/invoices/RecurringSettings'
 import { InvoiceShareLink } from '@/components/invoices/InvoiceShareLink'
 import { InvoicePdfButton } from '@/components/invoices/InvoicePdfButton'
 import { DuplicateInvoiceButton } from '@/components/invoices/DuplicateInvoiceButton'
+import { ReminderControls } from '@/components/invoices/ReminderControls'
 import type { InvoiceStatus } from '@/types'
+
+function triggerTypeLabel(triggerType: string): string {
+  if (triggerType === 'manual') return 'Manual'
+  if (triggerType === 'on_due') return 'Due date'
+  const beforeMatch = triggerType.match(/^before_due_(\d+)$/)
+  if (beforeMatch) return `${beforeMatch[1]} days before due`
+  const overdueMatch = triggerType.match(/^overdue_(\d+)$/)
+  if (overdueMatch) return `${overdueMatch[1]} days overdue`
+  return triggerType
+}
 
 export default async function InvoiceDetailPage({ params }: { params: { id: string } }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) { notFound(); return null }
 
-  const [, profile, invoice, payments] = await Promise.all([
+  const [, profile, invoice, payments, reminderLogs] = await Promise.all([
     markOverdueInvoices(user.id),
     getCurrentProfile(user.id),
     getInvoice(params.id, user.id),
     getInvoicePayments(params.id),
+    getInvoiceReminderLogs(params.id),
   ])
   if (!invoice) notFound()
 
@@ -34,6 +51,8 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
   const primaryColor = template?.primaryColor ?? '#635BFF'
   const brandName = template?.brandName?.trim() || profile.businessName || profile.fullName
   const theme = (template?.theme ?? 'summit') as 'summit' | 'aurora' | 'ledger' | 'slate' | 'ivory'
+  const remindersPaused = invoice.remindersPaused
+
   return (
     <div>
       <PageHeader
@@ -109,6 +128,45 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
               </CardContent>
             </Card>
           )}
+
+          <Card>
+            <CardHeader><CardTitle className="text-base">Reminders</CardTitle></CardHeader>
+            <CardContent className="space-y-4">
+              <ReminderControls
+                invoiceId={invoice.id}
+                isPaid={invoice.status === 'paid'}
+                remindersPaused={remindersPaused}
+              />
+
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-2">History</p>
+                {reminderLogs.length === 0 ? (
+                  <p className="text-xs text-muted-foreground">No reminders sent yet.</p>
+                ) : (
+                  <div className="space-y-2">
+                    {reminderLogs.map((log) => (
+                      <div key={log.id} className="flex items-center justify-between text-xs">
+                        <div>
+                          <p className="font-medium">{triggerTypeLabel(log.triggerType)}</p>
+                          <p className="text-muted-foreground">
+                            {new Date(log.sentAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                          </p>
+                        </div>
+                        <Badge
+                          variant="outline"
+                          className={log.status === 'sent'
+                            ? 'border-green-500 text-green-600 bg-green-50'
+                            : 'border-red-400 text-red-600 bg-red-50'}
+                        >
+                          {log.status}
+                        </Badge>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
           <RecurringSettings
             invoiceId={invoice.id}
