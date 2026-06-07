@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createSigningSession, getContract, getCurrentProfile } from '@/lib/db/supabase'
+import { createSigningSession, getContract, getCurrentProfile, logClientActivity } from '@/lib/db/supabase'
 import { sendEmail } from '@/lib/email'
 import { contractSignatureRequestEmail } from '@/lib/email/templates/contract-signature-request'
 
@@ -19,6 +19,16 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   ])
 
   if (contract) {
+    logClientActivity({
+      userId: user.id,
+      clientId: contract.clientId ?? null,
+      clientName: contract.clientName,
+      eventType: 'contract_sent',
+      entityType: 'contract',
+      entityId: params.id,
+      entityLabel: contract.title,
+    }).catch(() => {})
+
     const signingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${token}`
     const amount = new Intl.NumberFormat('en-US', {
       style: 'currency', currency: contract.currency,

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { createInvoice, updateInvoiceStatus, checkDocLimit, getInvoice, getCurrentProfile } from '@/lib/db/supabase'
+import { createInvoice, updateInvoiceStatus, checkDocLimit, getInvoice, getCurrentProfile, logClientActivity } from '@/lib/db/supabase'
 import { sendEmail } from '@/lib/email'
 import { invoiceSentEmail } from '@/lib/email/templates/invoice-sent'
 
@@ -29,8 +29,36 @@ export async function POST(req: NextRequest) {
     discountAmount, depositAmount: depositAmount ?? 0, total, notes, paymentTerms, paymentInstructions,
   })
 
+  // Log invoice_created — fetch client name from the invoice
+  const createdInvoice = await getInvoice(id, user.id)
+  if (createdInvoice) {
+    logClientActivity({
+      userId: user.id,
+      clientId: createdInvoice.clientId ?? null,
+      clientName: createdInvoice.clientName,
+      eventType: 'invoice_created',
+      entityType: 'invoice',
+      entityId: id,
+      entityLabel: createdInvoice.invoiceNumber,
+      amount: createdInvoice.total,
+    }).catch(() => {})
+  }
+
   if (markAsSent) {
     await updateInvoiceStatus(id, user.id, 'sent')
+
+    if (createdInvoice) {
+      logClientActivity({
+        userId: user.id,
+        clientId: createdInvoice.clientId ?? null,
+        clientName: createdInvoice.clientName,
+        eventType: 'invoice_sent',
+        entityType: 'invoice',
+        entityId: id,
+        entityLabel: createdInvoice.invoiceNumber,
+        amount: createdInvoice.total,
+      }).catch(() => {})
+    }
 
     // Send invoice email to client
     const [invoice, profile] = await Promise.all([

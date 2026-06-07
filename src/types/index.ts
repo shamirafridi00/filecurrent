@@ -304,6 +304,20 @@ export interface ClientActivity {
   latestInvoice?: Invoice
 }
 
+export interface ClientActivityLogRow {
+  id: string
+  user_id: string
+  client_id: string | null
+  client_name: string
+  event_type: string
+  entity_type: string
+  entity_id: string | null
+  entity_label: string | null
+  amount: number | null
+  metadata: Record<string, unknown>
+  created_at: string
+}
+
 // ─── Dashboard Stats ───────────────────────────────────────
 
 export interface DashboardStats {

@@ -1,7 +1,7 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { getInvoiceByShareToken } from '@/lib/db/supabase'
+import { getInvoiceByShareToken, logClientActivity } from '@/lib/db/supabase'
 import { adminClient } from '@/lib/supabase/admin'
 import { sendEmail } from '@/lib/email'
 import { invoiceOpenedEmail } from '@/lib/email/templates/invoice-opened'
@@ -32,6 +32,19 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
       .select('user_id, open_count')
       .eq('share_token', params.token)
       .single()
+
+    // Log invoice_viewed for every view (rate-limit only applies to notification email below)
+    if (invoiceRow) {
+      logClientActivity({
+        userId: invoiceRow.user_id,
+        clientId: null,
+        clientName: invoice.clientName,
+        eventType: 'invoice_viewed',
+        entityType: 'invoice',
+        entityId: String(invoiceRow.id ?? ''),
+        entityLabel: invoice.invoiceNumber,
+      }).catch(() => {})
+    }
 
     if (invoiceRow && !recentLog?.length) {
       const { data: profile } = await adminClient

@@ -1286,6 +1286,96 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
   }
 }
 
+// ── Client Activity Log ────────────────────────────────────
+
+export async function logClientActivity(data: {
+  userId: string
+  clientId?: string | null
+  clientName: string
+  eventType: string
+  entityType: 'invoice' | 'contract' | 'payment' | 'note'
+  entityId?: string
+  entityLabel?: string
+  amount?: number
+  metadata?: Record<string, unknown>
+}): Promise<void> {
+  await adminClient.from('client_activity_log').insert({
+    user_id: data.userId,
+    client_id: data.clientId ?? null,
+    client_name: data.clientName,
+    event_type: data.eventType,
+    entity_type: data.entityType,
+    entity_id: data.entityId ?? null,
+    entity_label: data.entityLabel ?? null,
+    amount: data.amount ?? null,
+    metadata: data.metadata ?? {},
+  })
+}
+
+export async function getClientActivityLog(
+  userId: string,
+  clientId: string,
+  limit = 50
+): Promise<import('@/types').ClientActivityLogRow[]> {
+  const { data } = await adminClient
+    .from('client_activity_log')
+    .select('*')
+    .eq('user_id', userId)
+    .eq('client_id', clientId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  return (data ?? []) as import('@/types').ClientActivityLogRow[]
+}
+
+export async function getAllClientActivity(
+  userId: string,
+  limit = 100
+): Promise<import('@/types').ClientActivityLogRow[]> {
+  const { data } = await adminClient
+    .from('client_activity_log')
+    .select('*')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(limit)
+  return (data ?? []) as import('@/types').ClientActivityLogRow[]
+}
+
+export interface ClientStatsRow {
+  totalBilled: number
+  totalPaid: number
+  outstanding: number
+  invoiceCount: number
+  contractCount: number
+  signedContracts: number
+}
+
+export async function getClientStats(userId: string, clientId: string): Promise<ClientStatsRow> {
+  const [invoicesRes, contractsRes] = await Promise.all([
+    adminClient
+      .from('invoices')
+      .select('total, paid_amount, status')
+      .eq('user_id', userId)
+      .eq('client_id', clientId),
+    adminClient
+      .from('contracts')
+      .select('status')
+      .eq('user_id', userId)
+      .eq('client_id', clientId),
+  ])
+
+  const invoices = invoicesRes.data ?? []
+  const contracts = contractsRes.data ?? []
+
+  const totalBilled = invoices.reduce((s, i) => s + (i.total ?? 0), 0)
+  const totalPaid = invoices.reduce((s, i) => s + (i.paid_amount ?? 0), 0)
+  const outstanding = totalBilled - totalPaid
+  const invoiceCount = invoices.length
+  const contractCount = contracts.length
+  const signedContracts = contracts.filter((c) => c.status === 'signed').length
+
+  return { totalBilled, totalPaid, outstanding, invoiceCount, contractCount, signedContracts }
+}
+
 function formatAuditDescription(
   eventType: string,
   signerName: string | null,

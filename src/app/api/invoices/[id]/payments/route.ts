@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
-import { recordPayment, getInvoice, getCurrentProfile } from '@/lib/db/supabase'
+import { recordPayment, getInvoice, getCurrentProfile, logClientActivity } from '@/lib/db/supabase'
 import { sendEmail } from '@/lib/email'
 import { paymentReceivedEmail } from '@/lib/email/templates/payment-received'
 
@@ -22,6 +22,22 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       getInvoice(params.id, user.id),
       getCurrentProfile(user.id),
     ])
+
+    if (invoice) {
+      const paidNow = parseFloat(amount)
+      const newPaid = (invoice.paidAmount ?? 0)
+      const eventType = newPaid >= invoice.total ? 'invoice_paid' : 'invoice_partial_paid'
+      logClientActivity({
+        userId: user.id,
+        clientId: invoice.clientId ?? null,
+        clientName: invoice.clientName,
+        eventType,
+        entityType: 'payment',
+        entityId: invoice.id,
+        entityLabel: invoice.invoiceNumber,
+        amount: paidNow,
+      }).catch(() => {})
+    }
 
     if (invoice?.clientEmail) {
       const fmt = (n: number) => new Intl.NumberFormat('en-US', {

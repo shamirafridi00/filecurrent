@@ -5,87 +5,74 @@ import { Card, CardContent } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getContracts, getInvoices, getClients } from '@/lib/db/supabase'
-import { formatCurrency, formatDate } from '@/lib/utils'
-import Link from 'next/link'
-import { ContractBadge, InvoiceBadge } from '@/components/ui'
-import type { ContractStatus, InvoiceStatus } from '@/types'
+import { getClients, getAllClientActivity, getInvoices } from '@/lib/db/supabase'
+import { formatCurrency } from '@/lib/utils'
+import { ActivityFeed } from '@/components/clients/ActivityFeed'
 
 export default async function ClientActivityPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [clients, allContracts, allInvoices] = await Promise.all([
+  const [clients, events, allInvoices] = await Promise.all([
     getClients(user.id),
-    getContracts(user.id),
+    getAllClientActivity(user.id, 100),
     getInvoices(user.id),
   ])
 
-  const clientActivity = clients.map((client) => ({
-    client,
-    latestContract: allContracts.find((c) => c.clientId === client.id),
-    latestInvoice: allInvoices.find((i) => i.clientId === client.id),
-  })).filter((a) => a.latestContract || a.latestInvoice)
+  // Stat: total billed this month
+  const now = new Date()
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString()
+  const billedThisMonth = allInvoices
+    .filter((i) => i.invoiceDate >= monthStart.split('T')[0])
+    .reduce((s, i) => s + i.total, 0)
+
+  // Stat: outstanding balance
+  const outstanding = allInvoices
+    .filter((i) => i.status !== 'paid')
+    .reduce((s, i) => s + i.total, 0)
+
+  const currency = allInvoices[0]?.currency ?? 'USD'
 
   return (
     <div>
       <PageHeader
         title="Client Activity"
-        subtitle="Overview of all client interactions"
+        subtitle="Recent events across all clients"
         icon={<ChartLine size={24} />}
       />
 
-      {clientActivity.length === 0 ? (
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
         <Card>
-          <CardContent className="p-8 text-center text-muted-foreground text-sm">
-            No client activity yet. Add clients and create contracts or invoices to see activity here.
+          <CardContent className="p-5">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total Clients</p>
+            <p className="text-3xl font-bold">{clients.length}</p>
           </CardContent>
         </Card>
-      ) : (
-        <div className="space-y-4">
-          {clientActivity.map(({ client, latestContract, latestInvoice }) => (
-            <Card key={client.id}>
-              <CardContent className="p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <Link href={`/clients/${client.id}`} className="font-semibold hover:text-primary">
-                      {client.name}
-                    </Link>
-                    {client.company && <p className="text-sm text-muted-foreground">{client.company}</p>}
-                  </div>
-                  <div className="flex gap-6 text-sm">
-                    {latestContract && (
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Latest Contract</p>
-                        <div className="flex items-center gap-2">
-                          <Link href={`/contracts/${latestContract.id}`} className="hover:text-primary truncate max-w-32">
-                            {latestContract.title}
-                          </Link>
-                          <ContractBadge status={latestContract.status as ContractStatus} />
-                        </div>
-                        <p className="text-xs text-muted-foreground">{formatDate(latestContract.createdAt)}</p>
-                      </div>
-                    )}
-                    {latestInvoice && (
-                      <div>
-                        <p className="text-xs text-muted-foreground mb-1">Latest Invoice</p>
-                        <div className="flex items-center gap-2">
-                          <Link href={`/invoices/${latestInvoice.id}`} className="text-primary hover:underline">
-                            {latestInvoice.invoiceNumber}
-                          </Link>
-                          <InvoiceBadge status={latestInvoice.status as InvoiceStatus} />
-                        </div>
-                        <p className="text-xs text-muted-foreground">{formatCurrency(latestInvoice.total, latestInvoice.currency)}</p>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      )}
+        <Card>
+          <CardContent className="p-5">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Billed This Month</p>
+            <p className="text-3xl font-bold">{formatCurrency(billedThisMonth, currency)}</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="p-5">
+            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Outstanding Balance</p>
+            <p className="text-3xl font-bold text-amber-600">{formatCurrency(outstanding, currency)}</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Activity feed */}
+      <Card>
+        <CardContent className="p-5">
+          <ActivityFeed
+            events={events}
+            emptyMessage="No activity yet. Create invoices and contracts to see events here."
+          />
+        </CardContent>
+      </Card>
     </div>
   )
 }

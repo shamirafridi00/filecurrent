@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
-import { submitContractSignature, getContractForSigning } from '@/lib/db/supabase'
+import { submitContractSignature, getContractForSigning, logClientActivity } from '@/lib/db/supabase'
 import { stripMarkdown } from '@/lib/utils'
 import { adminClient } from '@/lib/supabase/admin'
 import { sendEmail } from '@/lib/email'
@@ -53,6 +53,27 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
   }
 
   if (session) {
+    // Log contract_signed — look up user_id from contracts table
+    adminClient
+      .from('contracts')
+      .select('user_id')
+      .eq('id', session.contractId)
+      .single()
+      .then(({ data: cr }) => {
+        if (cr?.user_id) {
+          return logClientActivity({
+            userId: cr.user_id,
+            clientId: null,
+            clientName: session!.clientName,
+            eventType: 'contract_signed',
+            entityType: 'contract',
+            entityId: session!.contractId,
+            entityLabel: session!.contractTitle,
+            metadata: { signerEmail: session!.signerEmail },
+          })
+        }
+      })
+      .catch(() => {})
     const signedAt = new Date().toLocaleString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric',
       hour: 'numeric', minute: '2-digit', timeZoneName: 'short',

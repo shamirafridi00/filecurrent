@@ -546,6 +546,7 @@ CRON_SECRET=
 | 2026-06-07 | Fixed Ledger preview layout to match InvoiceDocument structure | `components/invoices/InvoicePreview.tsx` |
 | 2026-06-07 | Added % / flat discount toggle in invoice form | `components/invoices/InvoiceForm.tsx` |
 | 2026-06-07 | Complete email system: shared emailLayout wrapper, payment-received + welcome templates, payment-received trigger on payment record, welcome email on first signup, per-call replyTo override | `src/lib/email/**` |
+| 2026-06-07 | Complete client activity system: client_activity_log table, event logging at all triggers, redesigned /client-activity page, activity tab on /clients/[id], shared ActivityFeed component | `src/app/(dashboard)/client-activity/`, `src/components/clients/ActivityFeed.tsx`, `src/lib/db/supabase.ts`, `src/types/index.ts` |
 
 ---
 
