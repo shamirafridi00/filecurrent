@@ -407,7 +407,7 @@ Full shadcn/ui suite: accordion, alert, alert-dialog, avatar, badge, button, car
 3. `InvoiceThemePreviews.tsx` — tiny thumbnail cards in template selector
 4. `src/lib/pdf/InvoicePDF.tsx` — PDF generation via @react-pdf/renderer
 
-**Known issue (2026-06-07):** InvoicePreview Ledger layout structure doesn't fully match InvoiceDocument Ledger layout (sidebar date/due placement differs). Fix pending.
+**Ledger preview matches InvoiceDocument** (fixed 2026-06-07): dark sidebar shows brandName + INVOICE + number only; FROM/BILL TO section below header; totals use `border-t border-slate-200`.
 
 ---
 
@@ -543,6 +543,8 @@ CRON_SECRET=
 | 2026-06-07 | Invoice duplicate feature | `api/invoices/[id]/duplicate/route.ts`, `DuplicateInvoiceButton.tsx` |
 | 2026-06-07 | Recurring invoices (toggle + frequency + auto-generate) | `RecurringSettings.tsx`, `api/invoices/[id]/recurring/`, `supabase.ts` |
 | 2026-06-07 | Distinct theme headers in dashboard invoice detail page | `app/(dashboard)/invoices/[id]/page.tsx` |
+| 2026-06-07 | Fixed Ledger preview layout to match InvoiceDocument structure | `components/invoices/InvoicePreview.tsx` |
+| 2026-06-07 | Added % / flat discount toggle in invoice form | `components/invoices/InvoiceForm.tsx` |
 
 ---
 
