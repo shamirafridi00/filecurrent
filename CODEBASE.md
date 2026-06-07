@@ -545,6 +545,7 @@ CRON_SECRET=
 | 2026-06-07 | Distinct theme headers in dashboard invoice detail page | `app/(dashboard)/invoices/[id]/page.tsx` |
 | 2026-06-07 | Fixed Ledger preview layout to match InvoiceDocument structure | `components/invoices/InvoicePreview.tsx` |
 | 2026-06-07 | Added % / flat discount toggle in invoice form | `components/invoices/InvoiceForm.tsx` |
+| 2026-06-07 | Complete email system: shared emailLayout wrapper, payment-received + welcome templates, payment-received trigger on payment record, welcome email on first signup, per-call replyTo override | `src/lib/email/**` |
 
 ---
 
