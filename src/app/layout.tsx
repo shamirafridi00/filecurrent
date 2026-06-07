@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { SpeedInsights } from '@vercel/speed-insights/next'
 import { Toaster } from '@/components/ui/sonner'
 import { APP_DESCRIPTION, APP_NAME } from '@/lib/constants'
 import './globals.css'
@@ -26,6 +27,7 @@ export default function RootLayout({
       <body>
         {children}
         <Toaster />
+        <SpeedInsights />
       </body>
     </html>
   )

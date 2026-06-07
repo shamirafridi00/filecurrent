@@ -533,6 +533,7 @@ CRON_SECRET=
 
 | Date | Change | Files affected |
 |---|---|---|
+| 2026-06-07 | Add Vercel Speed Insights for performance monitoring | `src/app/layout.tsx` |
 | 2026-06-07 | Added 13 database performance indexes | Supabase DB |
 | 2026-06-07 | Set Vercel region to `sfo1` (matches Supabase `us-west-1`) | `vercel.json` |
 | 2026-06-07 | Removed Lifetime Deal from trial-expired page | `app/(marketing)/trial-expired/page.tsx` |
