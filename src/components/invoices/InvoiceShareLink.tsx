@@ -28,13 +28,13 @@ export function InvoiceShareLink({ shareToken, compact = false }: Props) {
   if (compact) {
     return (
       <div className="flex gap-1">
-        <Button size="sm" variant="outline" onClick={copy} className="border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800">
-          {copied ? <Check className="mr-1 h-3.5 w-3.5" /> : <Copy className="mr-1 h-3.5 w-3.5" />}
-          {copied ? 'Copied!' : 'Copy link'}
+        <Button size="default" variant="outline" onClick={copy} className="border-green-200 text-green-700 hover:bg-green-50 hover:text-green-800">
+          {copied ? <Check className="mr-1.5 h-4 w-4" /> : <Copy className="mr-1.5 h-4 w-4" />}
+          {copied ? 'Copied!' : 'Share your invoice'}
         </Button>
-        <Button size="sm" variant="ghost" asChild>
+        <Button size="default" variant="ghost" asChild>
           <a href={`/i/${shareToken}`} target="_blank" rel="noopener noreferrer">
-            <ArrowSquareOut className="h-3.5 w-3.5" />
+            <ArrowSquareOut className="h-4 w-4" />
           </a>
         </Button>
       </div>
