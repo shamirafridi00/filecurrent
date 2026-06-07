@@ -750,7 +750,7 @@ export interface InvoiceListRow {
 
 export interface InvoiceDetailRow extends InvoiceListRow {
   subtotal: number; taxRate: number; taxAmount: number; discountAmount: number
-  paidAmount: number; items: InvoiceItem[]; notes: string | null
+  depositAmount: number; paidAmount: number; items: InvoiceItem[]; notes: string | null
   paymentTerms: string | null; paymentInstructions: string | null
   clientEmail: string | null
   clientCompany: string | null; clientAddress: string | null
@@ -822,6 +822,7 @@ export async function getInvoice(id: string, userId: string): Promise<InvoiceDet
     status: data.status, invoiceDate: data.invoice_date, dueDate: data.due_date,
     shareToken: data.share_token, subtotal: data.subtotal, taxRate: data.tax_rate,
     taxAmount: data.tax_amount, discountAmount: data.discount_amount,
+    depositAmount: data.deposit_amount ?? 0,
     paidAmount: data.paid_amount,
     items: (typeof data.items === 'string' ? JSON.parse(data.items) : data.items) as InvoiceItem[],
     notes: data.notes, paymentTerms: data.payment_terms,
@@ -1057,7 +1058,7 @@ export async function recordPayment(
 export interface InvoicePublicRow {
   id: string; invoiceNumber: string; invoiceDate: string; dueDate: string | null
   currency: string; items: InvoiceItem[]; subtotal: number; taxRate: number
-  taxAmount: number; discountAmount: number; paidAmount: number; total: number
+  taxAmount: number; discountAmount: number; depositAmount: number; paidAmount: number; total: number
   notes: string | null; paymentTerms: string | null; paymentInstructions: string | null
   status: string
   hasBrandingFooter: boolean; clientName: string; clientEmail: string | null
@@ -1095,7 +1096,8 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
     dueDate: data.due_date, currency: data.currency,
     items: (typeof data.items === 'string' ? JSON.parse(data.items) : data.items) as InvoiceItem[],
     subtotal: data.subtotal, taxRate: data.tax_rate, taxAmount: data.tax_amount,
-    discountAmount: data.discount_amount, paidAmount: data.paid_amount, total: data.total,
+    discountAmount: data.discount_amount, depositAmount: data.deposit_amount ?? 0,
+    paidAmount: data.paid_amount, total: data.total,
     notes: data.notes, paymentTerms: data.payment_terms,
     paymentInstructions: data.payment_instructions ?? null,
     status: data.status,

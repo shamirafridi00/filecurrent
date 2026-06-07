@@ -215,7 +215,7 @@ export function InvoicePreview({ data, template, freelancerName }: InvoicePrevie
         ) : isAurora ? (
           <div
             className="px-5 py-4 flex items-start justify-between"
-            style={{ background: `linear-gradient(90deg, ${primaryColor} 0%, #14b8a6 100%)` }}
+            style={{ background: `linear-gradient(135deg, ${primaryColor}, #14b8a6)` }}
           >
             <div>
               <p className="text-white font-bold text-base tracking-wide">INVOICE</p>
