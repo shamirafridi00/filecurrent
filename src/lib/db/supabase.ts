@@ -1213,7 +1213,7 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
       adminClient
         .from('audit_events')
         .select('id, event_type, signer_name, signer_email, timestamp, contracts!inner(title)')
-        .in('contract_id', await adminClient.from('contracts').select('id').eq('user_id', userId).then(r => (r.data ?? []).map(c => c.id)))
+        .eq('contracts.user_id', userId)
         .order('timestamp', { ascending: false })
         .limit(5),
       adminClient

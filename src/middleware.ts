@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
     }
   )
 
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { session } } = await supabase.auth.getSession()
   const { pathname } = request.nextUrl
 
   const isPublic =
@@ -36,11 +36,11 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/_next/') ||
     pathname === '/favicon.ico'
 
-  if (!user && !isPublic) {
+  if (!session && !isPublic) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (user && (pathname === '/login' || pathname === '/signup')) {
+  if (session && (pathname === '/login' || pathname === '/signup')) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

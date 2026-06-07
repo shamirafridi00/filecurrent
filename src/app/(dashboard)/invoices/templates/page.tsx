@@ -36,22 +36,25 @@ export default async function InvoiceTemplatesPage() {
 
   let templates = await getInvoiceTemplates(user.id)
 
-  // Seed all defaults if user has none
+  // Seed defaults or missing themes, then re-fetch once if anything was seeded
+  let needsRefetch = false
   if (templates.length === 0) {
     try { await seedDefaultInvoiceTemplates(user.id) } catch {}
-    templates = await getInvoiceTemplates(user.id)
+    needsRefetch = true
   } else {
-    // For existing users: add Slate and Ivory if they don't have them yet
     const existingThemes = new Set(templates.map((t) => t.theme))
     const missingThemes = (['slate', 'ivory'] as const).filter((th) => !existingThemes.has(th))
     if (missingThemes.length > 0) {
       try {
         await seedMissingThemes(user.id, missingThemes)
+        needsRefetch = true
       } catch (err) {
         console.error('[templates page] seedMissingThemes failed:', err)
       }
-      templates = await getInvoiceTemplates(user.id)
     }
+  }
+  if (needsRefetch) {
+    templates = await getInvoiceTemplates(user.id)
   }
 
   return (

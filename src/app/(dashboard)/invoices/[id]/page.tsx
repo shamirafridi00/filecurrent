@@ -21,8 +21,8 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) { notFound(); return null }
 
-  await markOverdueInvoices(user.id)
-  const [profile, invoice, payments] = await Promise.all([
+  const [, profile, invoice, payments] = await Promise.all([
+    markOverdueInvoices(user.id),
     getCurrentProfile(user.id),
     getInvoice(params.id, user.id),
     getInvoicePayments(params.id),

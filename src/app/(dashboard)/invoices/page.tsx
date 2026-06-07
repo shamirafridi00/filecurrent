@@ -15,11 +15,11 @@ export default async function InvoicesPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  await Promise.all([
+  const [, , invoices] = await Promise.all([
     markOverdueInvoices(user.id),
     generateRecurringInvoices(user.id),
+    getInvoices(user.id),
   ])
-  const invoices = await getInvoices(user.id)
 
   return (
     <div>
