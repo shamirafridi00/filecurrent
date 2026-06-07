@@ -20,9 +20,9 @@ interface AppLayoutProps {
 export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
   return (
     <div className="min-h-screen bg-background">
-      <Topbar user={user} onLogout={onLogout} />
       <Sidebar />
-      <main className="ml-56 mt-14 min-h-[calc(100vh-56px)]">
+      <Topbar user={user} onLogout={onLogout} />
+      <main className="ml-56 pt-14 min-h-screen">
         <div className="p-6">{children}</div>
       </main>
     </div>

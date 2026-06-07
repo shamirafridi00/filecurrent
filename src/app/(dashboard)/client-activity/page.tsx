@@ -8,6 +8,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getClients, getAllClientActivity, getInvoices } from '@/lib/db/supabase'
 import { formatCurrency } from '@/lib/utils'
 import { ActivityFeed } from '@/components/clients/ActivityFeed'
+import Link from 'next/link'
 
 export default async function ClientActivityPage() {
   const supabase = createClient()
@@ -35,7 +36,7 @@ export default async function ClientActivityPage() {
   const currency = allInvoices[0]?.currency ?? 'USD'
 
   return (
-    <div>
+    <div className="space-y-6">
       <PageHeader
         title="Client Activity"
         subtitle="Recent events across all clients"
@@ -43,25 +44,22 @@ export default async function ClientActivityPage() {
       />
 
       {/* Stat cards */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3 mb-6">
-        <Card>
-          <CardContent className="p-5">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total Clients</p>
-            <p className="text-3xl font-bold">{clients.length}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Billed This Month</p>
-            <p className="text-3xl font-bold">{formatCurrency(billedThisMonth, currency)}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardContent className="p-5">
-            <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Outstanding Balance</p>
-            <p className="text-3xl font-bold text-amber-600">{formatCurrency(outstanding, currency)}</p>
-          </CardContent>
-        </Card>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+        <Link href="/clients" className="block rounded-xl border bg-card p-5 hover:border-primary/40 hover:shadow-sm transition-all">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Total Clients</p>
+          <p className="text-3xl font-bold">{clients.length}</p>
+          <p className="text-xs text-muted-foreground mt-2">View all clients →</p>
+        </Link>
+        <Link href="/invoices" className="block rounded-xl border bg-card p-5 hover:border-primary/40 hover:shadow-sm transition-all">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Billed This Month</p>
+          <p className="text-3xl font-bold">{formatCurrency(billedThisMonth, currency)}</p>
+          <p className="text-xs text-muted-foreground mt-2">View invoices →</p>
+        </Link>
+        <Link href="/invoices?status=sent" className="block rounded-xl border bg-card p-5 hover:border-amber-400/40 hover:shadow-sm transition-all">
+          <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">Outstanding Balance</p>
+          <p className="text-3xl font-bold text-amber-600">{formatCurrency(outstanding, currency)}</p>
+          <p className="text-xs text-muted-foreground mt-2">View unpaid invoices →</p>
+        </Link>
       </div>
 
       {/* Activity feed */}
