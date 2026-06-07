@@ -10,6 +10,7 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats } from '@/lib/db/supabase'
 import { DeleteClientButton } from '@/components/clients/DeleteClientButton'
+import { ClientReminderToggle } from '@/components/clients/ClientReminderToggle'
 import { ActivityFeed } from '@/components/clients/ActivityFeed'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
@@ -145,6 +146,18 @@ export default async function ClientDetailPage({
                   <span className="text-muted-foreground">Client since</span>
                   <span className="font-medium">{formatDate(client.createdAt)}</span>
                 </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardContent className="p-4">
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
+                  Reminders
+                </p>
+                <ClientReminderToggle
+                  clientId={params.id}
+                  remindersPaused={client.remindersPaused}
+                />
               </CardContent>
             </Card>
 

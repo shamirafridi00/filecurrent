@@ -175,6 +175,7 @@ export interface ClientDetailRow extends ClientRow {
   createdAt: string
   contractCount: number
   invoiceCount: number
+  remindersPaused: boolean
 }
 
 export async function getClients(userId: string): Promise<ClientRow[]> {
@@ -190,7 +191,7 @@ export async function getClients(userId: string): Promise<ClientRow[]> {
 export async function getClientById(id: string, userId: string): Promise<ClientDetailRow | null> {
   const { data, error } = await adminClient
     .from('clients')
-    .select('id, name, email, company, address, notes, created_at')
+    .select('id, name, email, company, address, notes, created_at, reminders_paused')
     .eq('id', id)
     .eq('user_id', userId)
     .single()
@@ -211,7 +212,21 @@ export async function getClientById(id: string, userId: string): Promise<ClientD
     createdAt: data.created_at,
     contractCount: contractCount ?? 0,
     invoiceCount: invoiceCount ?? 0,
+    remindersPaused: data.reminders_paused ?? false,
   }
+}
+
+export async function toggleClientRemindersPaused(
+  clientId: string,
+  userId: string,
+  paused: boolean
+): Promise<void> {
+  const { error } = await adminClient
+    .from('clients')
+    .update({ reminders_paused: paused })
+    .eq('id', clientId)
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
 }
 
 export async function createClient(

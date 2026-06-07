@@ -45,7 +45,7 @@ export async function GET(req: NextRequest) {
     // Get all open invoices for this user
     const { data: invoices } = await adminClient
       .from('invoices')
-      .select('id, invoice_number, total, paid_amount, currency, status, due_date, share_token, client_id, reminders_paused, clients!inner(name, email)')
+      .select('id, invoice_number, total, paid_amount, currency, status, due_date, share_token, client_id, reminders_paused, clients!inner(name, email, reminders_paused)')
       .eq('user_id', userId)
       .in('status', ['sent', 'partial'])
       .not('due_date', 'is', null)
@@ -53,7 +53,7 @@ export async function GET(req: NextRequest) {
     for (const invoice of invoices ?? []) {
       processed++
 
-      const client = invoice.clients as unknown as { name: string; email: string | null }
+      const client = invoice.clients as unknown as { name: string; email: string | null; reminders_paused: boolean }
       if (!client.email) { skipped++; continue }
 
       const balance = (invoice.total ?? 0) - (invoice.paid_amount ?? 0)
@@ -61,6 +61,7 @@ export async function GET(req: NextRequest) {
 
       if (balance <= skipThreshold) { skipped++; continue }
       if (invoice.reminders_paused) { skipped++; continue }
+      if (client.reminders_paused) { skipped++; continue }
 
       const dueDate = new Date(invoice.due_date as string)
       dueDate.setHours(0, 0, 0, 0)
