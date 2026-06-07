@@ -77,7 +77,8 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
       ? defaultTemplate.defaultTaxRate
       : (profile.defaultTaxRate ?? 0)
   )
-  const [discountAmount, setDiscountAmount] = useState(0)
+  const [discountType, setDiscountType] = useState<'flat' | 'pct'>('flat')
+  const [discountValue, setDiscountValue] = useState(0)
   const [depositAmount, setDepositAmount] = useState(0)
 
   // Display strings for decimal fields — kept in sync on blur/stepper
@@ -105,7 +106,8 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
       const d = JSON.parse(saved) as {
         clientId?: string; templateId?: string; invoiceNumber?: string
         invoiceDate?: string; dueDate?: string; currency?: string
-        taxRate?: number; discountAmount?: number; depositAmount?: number
+        taxRate?: number; discountType?: 'flat' | 'pct'; discountValue?: number
+        depositAmount?: number
         notes?: string; paymentTerms?: string; paymentInstructions?: string
         items?: ItemRow[]
       }
@@ -116,7 +118,8 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
       if (d.dueDate) setDueDate(d.dueDate)
       if (d.currency) setCurrency(d.currency)
       if (d.taxRate != null) setTaxRate(d.taxRate)
-      if (d.discountAmount != null) setDiscountAmount(d.discountAmount)
+      if (d.discountType) setDiscountType(d.discountType)
+      if (d.discountValue != null) { setDiscountValue(d.discountValue); setDiscountDisplay(d.discountValue.toFixed(2)) }
       if (d.depositAmount != null) setDepositAmount(d.depositAmount)
       if (d.notes != null) setNotes(d.notes)
       if (d.paymentTerms != null) setPaymentTerms(d.paymentTerms)
@@ -134,14 +137,14 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
       try {
         localStorage.setItem(DRAFT_KEY, JSON.stringify({
           clientId, templateId, invoiceNumber, invoiceDate, dueDate,
-          currency, taxRate, discountAmount, depositAmount,
+          currency, taxRate, discountType, discountValue, depositAmount,
           notes, paymentTerms, paymentInstructions, items,
         }))
       } catch {
         // storage full — ignore
       }
     }, 500)
-  }, [clientId, templateId, invoiceNumber, invoiceDate, dueDate, currency, taxRate, discountAmount, depositAmount, notes, paymentTerms, paymentInstructions, items])
+  }, [clientId, templateId, invoiceNumber, invoiceDate, dueDate, currency, taxRate, discountType, discountValue, depositAmount, notes, paymentTerms, paymentInstructions, items])
 
   useEffect(() => {
     persistDraft()
@@ -171,7 +174,11 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
 
   const removeItem = (id: string) => setItems((prev) => prev.filter((i) => i._id !== id))
 
-  const { subtotal, taxAmount, total } = calculateInvoiceTotals(items, taxRate, discountAmount)
+  const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
+  const discountAmount = discountType === 'pct'
+    ? parseFloat(((subtotal * discountValue) / 100).toFixed(2))
+    : discountValue
+  const { taxAmount, total } = calculateInvoiceTotals(items, taxRate, discountAmount)
   const balanceDue = Math.max(0, total - depositAmount)
 
   const handleSave = async (markAsSent: boolean) => {
@@ -446,10 +453,28 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label htmlFor="discount">Discount Amount</Label>
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="discount">Discount</Label>
+                    <div className="flex rounded-md border border-input overflow-hidden text-xs">
+                      <button
+                        type="button"
+                        onClick={() => { setDiscountType('flat'); setDiscountValue(0); setDiscountDisplay('0.00') }}
+                        className={`px-2 py-0.5 transition-colors ${discountType === 'flat' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}
+                      >$</button>
+                      <button
+                        type="button"
+                        onClick={() => { setDiscountType('pct'); setDiscountValue(0); setDiscountDisplay('0.00') }}
+                        className={`px-2 py-0.5 transition-colors ${discountType === 'pct' ? 'bg-primary text-primary-foreground' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}
+                      >%</button>
+                    </div>
+                  </div>
                   <div className="flex items-center">
                     <button type="button"
-                      onClick={() => { const n = Math.max(0, parseFloat((discountAmount - 1).toFixed(2))); setDiscountAmount(n); setDiscountDisplay(n.toFixed(2)) }}
+                      onClick={() => {
+                        const n = Math.max(0, parseFloat((discountValue - 1).toFixed(2)))
+                        setDiscountValue(n)
+                        setDiscountDisplay(n.toFixed(2))
+                      }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-l-md border border-r-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Minus size={11} /></button>
                     <input id="discount" type="text" inputMode="decimal" pattern="[0-9.]*"
@@ -460,14 +485,25 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                         if (/^[0-9]*\.?[0-9]*$/.test(v)) {
                           setDiscountDisplay(v)
                           const n = parseFloat(v)
-                          if (!isNaN(n)) setDiscountAmount(n)
+                          if (!isNaN(n)) {
+                            const capped = discountType === 'pct' ? Math.min(100, n) : n
+                            setDiscountValue(capped)
+                          }
                         }
                       }}
-                      onBlur={() => setDiscountDisplay(discountAmount.toFixed(2))}
+                      onBlur={() => {
+                        const capped = discountType === 'pct' ? Math.min(100, discountValue) : discountValue
+                        setDiscountDisplay(capped.toFixed(2))
+                      }}
                       className="h-9 w-full min-w-0 rounded-none border border-input bg-background px-2 text-center text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
                     />
                     <button type="button"
-                      onClick={() => { const n = parseFloat((discountAmount + 1).toFixed(2)); setDiscountAmount(n); setDiscountDisplay(n.toFixed(2)) }}
+                      onClick={() => {
+                        const max = discountType === 'pct' ? 100 : Infinity
+                        const n = Math.min(max, parseFloat((discountValue + 1).toFixed(2)))
+                        setDiscountValue(n)
+                        setDiscountDisplay(n.toFixed(2))
+                      }}
                       className="flex h-9 w-8 shrink-0 items-center justify-center rounded-r-md border border-l-0 border-input bg-muted/50 text-muted-foreground hover:bg-muted transition-colors"
                     ><Plus size={11} /></button>
                   </div>
@@ -514,7 +550,9 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                 )}
                 {discountAmount > 0 && (
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Discount</span>
+                    <span className="text-muted-foreground">
+                      Discount{discountType === 'pct' ? ` (${discountValue}%)` : ''}
+                    </span>
                     <span className="text-destructive">−{formatCurrency(discountAmount, currency)}</span>
                   </div>
                 )}
