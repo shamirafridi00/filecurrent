@@ -96,23 +96,6 @@ export default function TrialExpiredPage() {
           </div>
         </div>
 
-        {/* Lifetime deal */}
-        <div className="rounded-xl bg-[#0A2540] border border-[#1A3A5C] p-6 flex items-center justify-between gap-4 flex-wrap mb-8">
-          <div>
-            <p className="font-bold text-lg text-white">Launch Lifetime Deal — $49 one-time</p>
-            <p className="text-sm text-[#8898AA] mt-0.5">
-              Pay once, use FileCurrent Pro forever.
-            </p>
-          </div>
-          <Button
-            className="bg-[#635BFF] hover:bg-[#5145E5] text-white shrink-0"
-            disabled={loading !== null}
-            onClick={() => startCheckout('lifetime')}
-          >
-            {loading === 'lifetime' ? 'Redirecting…' : 'Get Lifetime Access'}
-          </Button>
-        </div>
-
         <div className="text-center space-y-3">
           <p className="text-sm text-[#8898AA]">
             Questions? Contact us at{' '}
