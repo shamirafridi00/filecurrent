@@ -29,7 +29,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
     // Get freelancer email and check notification prefs
     const { data: invoiceRow } = await adminClient
       .from('invoices')
-      .select('user_id, open_count')
+      .select('id, user_id, open_count')
       .eq('share_token', params.token)
       .single()
 
@@ -41,7 +41,7 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
         clientName: invoice.clientName,
         eventType: 'invoice_viewed',
         entityType: 'invoice',
-        entityId: String(invoiceRow.id ?? ''),
+        entityId: String(invoiceRow.id),
         entityLabel: invoice.invoiceNumber,
       }).catch(() => {})
     }

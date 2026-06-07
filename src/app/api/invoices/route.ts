@@ -60,35 +60,32 @@ export async function POST(req: NextRequest) {
       }).catch(() => {})
     }
 
-    // Send invoice email to client
-    const [invoice, profile] = await Promise.all([
-      getInvoice(id, user.id),
-      getCurrentProfile(user.id),
-    ])
+    // Send invoice email to client — reuse createdInvoice, only fetch profile
+    const profile = await getCurrentProfile(user.id)
 
-    if (invoice?.clientEmail) {
+    if (createdInvoice?.clientEmail) {
       const fmt = (n: number) => new Intl.NumberFormat('en-US', {
-        style: 'currency', currency: invoice.currency,
+        style: 'currency', currency: createdInvoice.currency,
       }).format(n)
 
       sendEmail({
-        to: invoice.clientEmail,
-        subject: `Invoice ${invoice.invoiceNumber} from ${profile.businessName || profile.fullName}`,
+        to: createdInvoice.clientEmail,
+        subject: `Invoice ${createdInvoice.invoiceNumber} from ${profile.businessName || profile.fullName}`,
         html: invoiceSentEmail({
-          clientName: invoice.clientName,
+          clientName: createdInvoice.clientName,
           freelancerName: profile.businessName || profile.fullName,
-          invoiceNumber: invoice.invoiceNumber,
-          total: fmt(invoice.total),
-          dueDate: invoice.dueDate ?? null,
-          items: invoice.items.map((item) => ({
+          invoiceNumber: createdInvoice.invoiceNumber,
+          total: fmt(createdInvoice.total),
+          dueDate: createdInvoice.dueDate ?? null,
+          items: createdInvoice.items.map((item) => ({
             description: item.description,
             quantity: item.quantity,
             unitPrice: fmt(item.unitPrice),
             amount: fmt(item.amount),
           })),
-          notes: invoice.notes,
-          paymentTerms: invoice.paymentTerms,
-          invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${invoice.shareToken}`,
+          notes: createdInvoice.notes,
+          paymentTerms: createdInvoice.paymentTerms,
+          invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${createdInvoice.shareToken}`,
           hasBrandingFooter: profile.plan === 'free',
         }),
       }).catch((err) => console.error('Invoice sent email failed:', err))

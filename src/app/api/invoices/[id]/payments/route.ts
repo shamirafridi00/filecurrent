@@ -25,8 +25,8 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     if (invoice) {
       const paidNow = parseFloat(amount)
-      const newPaid = (invoice.paidAmount ?? 0)
-      const eventType = newPaid >= invoice.total ? 'invoice_paid' : 'invoice_partial_paid'
+      // invoice.paidAmount already includes this payment (recordPayment updated it)
+      const eventType = invoice.paidAmount >= invoice.total ? 'invoice_paid' : 'invoice_partial_paid'
       logClientActivity({
         userId: user.id,
         clientId: invoice.clientId ?? null,
