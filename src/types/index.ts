@@ -3,7 +3,7 @@
 // All TypeScript interfaces for the app
 // ============================================================
 
-export type Plan = 'trial' | 'free' | 'pro_monthly' | 'pro_annual' | 'lifetime'
+export type Plan = 'trial' | 'free' | 'pro' | 'pro_monthly' | 'pro_annual' | 'lifetime'
 
 export type Profession =
   | 'web_developer'
