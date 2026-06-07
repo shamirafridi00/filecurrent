@@ -72,7 +72,7 @@ export function ReminderControls({ invoiceId, isPaid, remindersPaused }: Props) 
         </Label>
         <Switch
           id={`pause-${invoiceId}`}
-          checked={paused}
+          checked={!paused}
           onCheckedChange={(checked) => handleTogglePause(checked)}
           disabled={toggling}
         />

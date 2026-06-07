@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { SignOut, GearSix, ChatCircle, Lightning } from '@phosphor-icons/react'
 import { getInitials } from '@/lib/utils'
 import type { LayoutUser } from './AppLayout'
+import { LogoFull } from '@/components/logo/LogoMark'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -124,7 +125,11 @@ export function Topbar({ user, onLogout }: TopbarProps) {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   return (
-    <header className="fixed left-56 right-0 top-0 z-40 flex h-14 items-center justify-end border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
+    <header className="fixed left-56 right-0 top-0 z-40 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
+      <Link href="/dashboard">
+        <LogoFull size={28} />
+      </Link>
+
       <div className="flex items-center gap-3">
         <PlanBadge user={user} />
 
