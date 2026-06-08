@@ -36,7 +36,7 @@ export default async function DashboardPage() {
   const isUrgent = isTrial && daysLeft <= 2
 
   return (
-    <div className="flex gap-6">
+    <div className="flex flex-col xl:flex-row gap-6">
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
         {isUrgent && (
@@ -53,7 +53,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <StatCard
             label="Total Invoiced"
             value={formatCurrency(stats.totalInvoiced)}
@@ -76,7 +76,7 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <StatCard
             label="Active Clients"
             value={String(stats.activeClients)}
@@ -103,7 +103,7 @@ export default async function DashboardPage() {
           />
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-2">
           <Button asChild>
             <Link href="/contracts/new">
               <Plus className="mr-1 h-4 w-4" />
@@ -129,7 +129,7 @@ export default async function DashboardPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="flex items-center gap-2 text-base">

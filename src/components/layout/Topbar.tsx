@@ -6,6 +6,7 @@ import { SignOut, GearSix, ChatCircle, Lightning } from '@phosphor-icons/react'
 import { getInitials } from '@/lib/utils'
 import type { LayoutUser } from './AppLayout'
 import { LogoFull } from '@/components/logo/LogoMark'
+import { MobileSidebar } from './MobileSidebar'
 import {
   AlertDialog,
   AlertDialogAction,
@@ -125,11 +126,17 @@ export function Topbar({ user, onLogout }: TopbarProps) {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
-      <div className="flex w-56 items-center">
-        <Link href="/dashboard">
+    <header className="fixed left-0 right-0 top-0 z-50 md:left-0 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
+      <div className="flex items-center gap-2">
+        <MobileSidebar />
+        <Link href="/dashboard" className="md:hidden">
           <LogoFull size={28} />
         </Link>
+        <div className="hidden md:flex w-56 items-center">
+          <Link href="/dashboard">
+            <LogoFull size={28} />
+          </Link>
+        </div>
       </div>
 
       <div className="flex items-center gap-3">

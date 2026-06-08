@@ -17,7 +17,7 @@ export default async function RemindersPage() {
   return (
     <div>
       {/* Page header */}
-      <div className="mb-6 flex items-start justify-between">
+      <div className="mb-6 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Bell size={24} weight="duotone" className="text-primary" />

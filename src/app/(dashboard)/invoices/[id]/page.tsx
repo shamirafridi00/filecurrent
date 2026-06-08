@@ -61,7 +61,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
         backLabel="All Invoices"
         icon={<Receipt size={24} />}
         action={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <InvoiceBadge status={invoice.status as InvoiceStatus} />
             <DuplicateInvoiceButton invoiceId={invoice.id} />
             <InvoicePdfButton invoiceId={invoice.id} isPro={profile.plan !== 'free'} />

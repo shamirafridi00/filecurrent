@@ -101,9 +101,9 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
   return (
     <div className="space-y-4">
       {/* Filter bar */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-3">
         {/* Search */}
-        <div className="relative w-56">
+        <div className="relative w-full sm:w-56">
           <MagnifyingGlass
             size={14}
             className="absolute left-2.5 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none"
@@ -126,11 +126,11 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
         </div>
 
         {/* Client filter */}
-        <div className="relative">
+        <div className="relative w-full sm:w-auto">
           <select
             value={clientFilter}
             onChange={(e) => setClientFilter(e.target.value)}
-            className="h-8 rounded-md border border-input bg-background pl-2.5 pr-7 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring appearance-none text-foreground"
+            className="h-8 w-full sm:w-auto rounded-md border border-input bg-background pl-2.5 pr-7 text-sm focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring appearance-none text-foreground"
           >
             <option value="">All Clients</option>
             {clientNames.map((name) => (

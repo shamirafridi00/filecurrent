@@ -56,7 +56,7 @@ export default async function ClientDetailPage({
         backLabel="All Clients"
         icon={<Users size={24} />}
         action={
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <Button asChild variant="outline" size="sm">
               <Link href={`/clients/${params.id}/edit`}>
                 <PencilSimple className="mr-1 h-3.5 w-3.5" /> Edit

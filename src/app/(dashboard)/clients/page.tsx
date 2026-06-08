@@ -76,7 +76,7 @@ export default async function ClientsPage() {
                       )}
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 shrink-0">
+                  <div className="flex flex-wrap items-center gap-2 shrink-0">
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/contracts/new?clientId=${c.id}`}>+ Contract</Link>
                     </Button>

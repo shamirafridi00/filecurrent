@@ -22,7 +22,7 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
     <div className="min-h-screen bg-background">
       <Sidebar />
       <Topbar user={user} onLogout={onLogout} />
-      <main className="ml-56 pt-14 min-h-screen">
+      <main className="ml-0 md:ml-56 pt-14 min-h-screen">
         <div className="p-6">{children}</div>
       </main>
     </div>
