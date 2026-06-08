@@ -190,7 +190,7 @@ interface SectionCardProps {
 export function SectionCard({ title, icon, children, action, className }: SectionCardProps) {
   return (
     <ShadcnCard className={className}>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 p-5 pb-3">
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 px-6 py-4 pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
           {icon}
           {title}
@@ -212,7 +212,7 @@ interface EmptyStateProps {
 export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
-      {icon && <div className="mb-3 text-muted-foreground">{icon}</div>}
+      {icon && <div className="mb-4 opacity-40">{icon}</div>}
       <p className="font-medium text-foreground">{title}</p>
       {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       {action && <div className="mt-4">{action}</div>}

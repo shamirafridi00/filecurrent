@@ -13,7 +13,7 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { StatCard, InvoiceBadge, ContractBadge } from '@/components/ui'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getDashboardStats } from '@/lib/db/supabase'
 import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
@@ -35,15 +35,26 @@ export default async function DashboardPage() {
     : 0
   const isUrgent = isTrial && daysLeft <= 2
 
+  const hour = new Date().getHours()
+  const greeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening'
+  const displayName = profile.businessName || profile.fullName.split(' ')[0] || 'there'
+
   return (
     <div className="flex flex-col xl:flex-row gap-6">
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
+        <div className="mb-5">
+          <h1 className="text-2xl font-bold text-foreground">{greeting}, {displayName}</h1>
+          <p className="mt-0.5 text-sm text-muted-foreground">
+            Here&apos;s what&apos;s happening with your business today.
+          </p>
+        </div>
+
         {isUrgent && (
           <div className="flex items-center justify-between rounded-r-xl border-l-4 border-l-[#E6A817] bg-[#FFF9ED] p-4">
             <div className="flex items-center gap-3">
               <Lightning className="h-5 w-5 shrink-0 text-[#E6A817]" />
-              <p className="font-semibold text-[#0A2540]">
+              <p className="font-semibold text-foreground">
                 ⚠ Your trial ends in {daysLeft} day{daysLeft !== 1 ? 's' : ''} — upgrade to keep access.
               </p>
             </div>
@@ -106,24 +117,24 @@ export default async function DashboardPage() {
         <div className="flex flex-wrap items-center gap-2">
           <Button asChild>
             <Link href="/contracts/new">
-              <Plus className="mr-1 h-4 w-4" />
+              <Plus className="mr-1.5 h-4 w-4" />
               New Contract
             </Link>
           </Button>
           <Button asChild>
             <Link href="/invoices/new">
-              <Plus className="mr-1 h-4 w-4" />
+              <Plus className="mr-1.5 h-4 w-4" />
               New Invoice
             </Link>
           </Button>
           <Button asChild variant="outline">
             <Link href="/clients/new">
-              <Plus className="mr-1 h-4 w-4" />
+              <Plus className="mr-1.5 h-4 w-4" />
               Add Client
             </Link>
           </Button>
           <div className="ml-auto">
-            <Button asChild variant="ghost" size="sm">
+            <Button asChild variant="ghost">
               <Link href="/imports">Import Clients</Link>
             </Button>
           </div>
@@ -145,7 +156,7 @@ export default async function DashboardPage() {
                 <p className="py-6 text-center text-sm text-muted-foreground">No invoices yet</p>
               ) : (
                 stats.recentInvoices.map((inv) => (
-                  <div key={inv.id} className="flex items-center justify-between rounded-lg border p-3">
+                  <div key={inv.id} className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors">
                     <div>
                       <Link
                         href={`/invoices/${inv.id}`}
@@ -182,11 +193,11 @@ export default async function DashboardPage() {
                 <p className="py-6 text-center text-sm text-muted-foreground">No contracts yet</p>
               ) : (
                 stats.recentContracts.map((c) => (
-                  <div key={c.id} className="flex items-center justify-between rounded-lg border p-3">
+                  <div key={c.id} className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors">
                     <div>
                       <Link
                         href={`/contracts/${c.id}`}
-                        className="text-sm font-medium text-foreground hover:text-primary"
+                        className="text-sm font-medium text-primary hover:underline"
                       >
                         {c.title}
                       </Link>
@@ -216,17 +227,19 @@ export default async function DashboardPage() {
               <p className="text-sm text-muted-foreground">No activity yet</p>
             ) : (
               stats.recentActivity.map((event) => (
-                <div key={event.id} className="flex gap-2 text-sm">
-                  <div className="mt-0.5 shrink-0">
-                    {event.type === 'reminder' ? (
-                      <Bell className="h-4 w-4 text-amber-500" />
-                    ) : (
-                      <CalendarBlank className="h-4 w-4 text-primary" />
-                    )}
+                <div key={event.id} className="flex items-start gap-3 py-1.5">
+                  <div className={cn(
+                    "mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full",
+                    event.type === 'reminder' ? "bg-amber-50" : "bg-accent"
+                  )}>
+                    {event.type === 'reminder'
+                      ? <Bell className="h-3.5 w-3.5 text-amber-500" />
+                      : <CalendarBlank className="h-3.5 w-3.5 text-primary" />
+                    }
                   </div>
-                  <div>
-                    <p className="text-foreground">{event.description}</p>
-                    <p className="text-xs text-muted-foreground">{formatDate(event.timestamp)}</p>
+                  <div className="min-w-0">
+                    <p className="text-sm text-foreground leading-snug">{event.description}</p>
+                    <p className="mt-0.5 text-xs text-muted-foreground">{formatDate(event.timestamp)}</p>
                   </div>
                 </div>
               ))

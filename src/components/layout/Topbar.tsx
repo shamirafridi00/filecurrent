@@ -126,7 +126,7 @@ export function Topbar({ user, onLogout }: TopbarProps) {
   const [confirmLogoutOpen, setConfirmLogoutOpen] = useState(false)
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-50 md:left-0 flex h-14 items-center justify-between border-b border-[#E6EBF1] bg-white px-4 shadow-sm">
+    <header className="fixed left-0 right-0 top-0 z-50 md:left-0 flex h-14 items-center justify-between border-b border-border bg-white px-4 shadow-sm">
       <div className="flex items-center gap-2">
         <MobileSidebar />
         <Link href="/dashboard" className="md:hidden">
@@ -164,6 +164,10 @@ export function Topbar({ user, onLogout }: TopbarProps) {
             </div>
 
             <DropdownMenuSeparator />
+
+            <DropdownMenuLabel className="text-xs text-muted-foreground font-normal py-0 px-2">
+              Account
+            </DropdownMenuLabel>
 
             <DropdownMenuItem asChild>
               <Link href="/settings" className="cursor-pointer">

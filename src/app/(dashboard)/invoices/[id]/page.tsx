@@ -106,7 +106,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
         {/* Sidebar */}
         <div className="space-y-4">
           <Card>
-            <CardHeader><CardTitle className="text-base">Record Payment</CardTitle></CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3"><CardTitle className="text-base">Record Payment</CardTitle></CardHeader>
             <CardContent>
               <RecordPaymentModal invoiceId={invoice.id} currency={invoice.currency} balance={invoice.total - invoice.paidAmount} />
             </CardContent>
@@ -114,15 +114,15 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
 
           {payments.length > 0 && (
             <Card>
-              <CardHeader><CardTitle className="text-base">Payment History</CardTitle></CardHeader>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3"><CardTitle className="text-base">Payment History</CardTitle></CardHeader>
               <CardContent className="space-y-2">
                 {payments.map((p) => (
                   <div key={p.id} className="flex items-center justify-between text-sm">
                     <div>
-                      <p className="font-medium text-[#4F6AE6]">{formatCurrency(p.amount, invoice.currency)}</p>
+                      <p className="font-medium text-primary">{formatCurrency(p.amount, invoice.currency)}</p>
                       <p className="text-xs text-muted-foreground">{p.method} · {formatDate(p.paymentDate)}</p>
                     </div>
-                    <CheckCircle className="h-4 w-4 text-[#4F6AE6]" />
+                    <CheckCircle className="h-4 w-4 text-primary" />
                   </div>
                 ))}
               </CardContent>
@@ -130,7 +130,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
           )}
 
           <Card>
-            <CardHeader><CardTitle className="text-base">Reminders</CardTitle></CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3"><CardTitle className="text-base">Reminders</CardTitle></CardHeader>
             <CardContent className="space-y-4">
               <ReminderControls
                 invoiceId={invoice.id}

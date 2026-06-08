@@ -183,7 +183,7 @@ export default async function ClientDetailPage({
                 ) : (
                   <div className="space-y-2">
                     {contracts.map((c) => (
-                      <div key={c.id} className="flex items-center justify-between rounded-lg border p-3">
+                      <div key={c.id} className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors">
                         <div>
                           <Link href={`/contracts/${c.id}`} className="font-medium text-sm hover:text-primary">
                             {c.title}
@@ -218,7 +218,7 @@ export default async function ClientDetailPage({
                 ) : (
                   <div className="space-y-2">
                     {invoices.map((inv) => (
-                      <div key={inv.id} className="flex items-center justify-between rounded-lg border p-3">
+                      <div key={inv.id} className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors">
                         <div>
                           <Link href={`/invoices/${inv.id}`} className="font-medium text-sm text-primary hover:underline">
                             {inv.invoiceNumber}

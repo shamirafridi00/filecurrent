@@ -7,6 +7,7 @@ import {
   Bell,
   DownloadSimple,
   FileText,
+  GearSix,
   SquaresFour,
   Receipt,
   UploadSimple,
@@ -102,6 +103,30 @@ function NavGroup({ items }: { items: NavEntry[] }) {
   )
 }
 
+function SettingsLink() {
+  const pathname = usePathname()
+  const active = pathname === '/settings' || pathname.startsWith('/settings/')
+
+  return (
+    <Link
+      href="/settings"
+      className={cn(
+        'flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm transition-colors duration-150',
+        active
+          ? 'bg-[#1A3A5C] text-white font-semibold'
+          : 'text-[#8898AA] hover:bg-[#1A3A5C] hover:text-white'
+      )}
+    >
+      <GearSix
+        size={18}
+        weight={active ? 'fill' : 'regular'}
+        className={cn('shrink-0', active && 'text-[#635BFF]')}
+      />
+      <span>Settings</span>
+    </Link>
+  )
+}
+
 export function Sidebar() {
   return (
     <aside className="fixed bottom-0 left-0 top-14 z-40 hidden md:flex w-56 flex-col border-r border-[#0D2D4A] bg-[#0A2540]">
@@ -112,6 +137,9 @@ export function Sidebar() {
             <NavGroup items={TOOL_NAV} />
           </div>
         </div>
+      </div>
+      <div className="shrink-0 border-t border-[#0D2D4A] p-3">
+        <SettingsLink />
       </div>
     </aside>
   )
