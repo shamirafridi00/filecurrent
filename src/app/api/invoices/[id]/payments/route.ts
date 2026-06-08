@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { recordPayment, getInvoice, getCurrentProfile, logClientActivity } from '@/lib/db/supabase'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { paymentReceivedEmail } from '@/lib/email/templates/payment-received'
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
@@ -59,6 +59,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${invoice.shareToken}`,
         }),
         replyTo: profile.email ?? undefined,
+        fromName: buildSenderName(profile.businessName, profile.fullName),
       }).catch(() => {})
     }
   } catch {

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { adminClient } from '@/lib/supabase/admin'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { paymentReminderEmail } from '@/lib/email/templates/payment-reminder'
 import { verifyCronSecret } from '@/lib/cron'
 
@@ -143,6 +143,7 @@ export async function GET(req: NextRequest) {
             stage,
           }),
           replyTo: profile.email ?? undefined,
+          fromName: buildSenderName(profile.business_name, profile.full_name),
         })
 
         await adminClient.from('reminder_logs').insert({

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { adminClient } from '@/lib/supabase/admin'
 import { getInvoice } from '@/lib/db/supabase'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { paymentReminderEmail } from '@/lib/email/templates/payment-reminder'
 
 function fmt(amount: number, currency: string): string {
@@ -56,6 +56,7 @@ export async function POST(
         stage: 'overdue',
       }),
       replyTo: profile?.email ?? undefined,
+      fromName: buildSenderName(profile?.business_name, profile?.full_name),
     })
 
     await adminClient.from('reminder_logs').insert({

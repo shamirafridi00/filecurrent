@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { createInvoice, updateInvoiceStatus, checkDocLimit, getInvoice, getCurrentProfile, logClientActivity } from '@/lib/db/supabase'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { invoiceSentEmail } from '@/lib/email/templates/invoice-sent'
 
 export async function POST(req: NextRequest) {
@@ -89,6 +89,7 @@ export async function POST(req: NextRequest) {
           hasBrandingFooter: profile.plan === 'free',
         }),
         replyTo: profile.email ?? undefined,
+        fromName: buildSenderName(profile.businessName, profile.fullName),
       }).catch((err) => console.error('Invoice sent email failed:', err))
     }
   }

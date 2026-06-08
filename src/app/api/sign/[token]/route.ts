@@ -3,7 +3,7 @@ import { waitUntil } from '@vercel/functions'
 import { submitContractSignature, getContractForSigning, logClientActivity } from '@/lib/db/supabase'
 import { stripMarkdown } from '@/lib/utils'
 import { adminClient } from '@/lib/supabase/admin'
-import { sendEmail } from '@/lib/email'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { contractSignedEmail } from '@/lib/email/templates/contract-signed'
 import { renderToBuffer, type DocumentProps } from '@react-pdf/renderer'
 import React from 'react'
@@ -103,6 +103,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
           dashboardUrl: clientSignUrl,
           toFreelancer: false,
         }),
+        fromName: buildSenderName(profileRow?.business_name, profileRow?.full_name),
       })
       console.log('[sign] 7 — client email sent, messageId:', result?.messageId)
     } catch (err: unknown) {
