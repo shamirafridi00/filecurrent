@@ -8,9 +8,10 @@ import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats } from '@/lib/db/supabase'
+import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken } from '@/lib/db/supabase'
 import { DeleteClientButton } from '@/components/clients/DeleteClientButton'
 import { ClientReminderToggle } from '@/components/clients/ClientReminderToggle'
+import { ClientPortalLink } from '@/components/clients/ClientPortalLink'
 import { ActivityFeed } from '@/components/clients/ActivityFeed'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
@@ -29,12 +30,13 @@ export default async function ClientDetailPage({
 
   const activeTab: Tab = searchParams.tab === 'activity' ? 'activity' : 'overview'
 
-  const [client, allContracts, allInvoices, activityEvents, stats] = await Promise.all([
+  const [client, allContracts, allInvoices, activityEvents, stats, portalToken] = await Promise.all([
     getClientById(params.id, user.id),
     getContracts(user.id),
     getInvoices(user.id),
     getClientActivityLog(user.id, params.id, 50),
     getClientStats(user.id, params.id),
+    getClientPortalToken(params.id, user.id),
   ])
   if (!client) notFound()
 
@@ -160,6 +162,17 @@ export default async function ClientDetailPage({
                 />
               </CardContent>
             </Card>
+
+            {portalToken && (
+              <Card>
+                <CardContent className="p-4">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
+                    Client Portal
+                  </p>
+                  <ClientPortalLink clientId={params.id} portalToken={portalToken} />
+                </CardContent>
+              </Card>
+            )}
 
             <DeleteClientButton clientId={params.id} clientName={client.name} />
           </div>

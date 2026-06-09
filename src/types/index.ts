@@ -462,3 +462,40 @@ export const EXPENSE_CATEGORIES: SelectOption[] = [
   { value: 'utilities', label: 'Utilities & Internet' },
   { value: 'other', label: 'Other' },
 ]
+
+// ─── Client Portal ─────────────────────────────────────────
+
+export interface PortalInvoice {
+  id: string
+  invoiceNumber: string
+  invoiceDate: string
+  dueDate: string | null
+  total: number
+  paidAmount: number
+  currency: string
+  status: InvoiceStatus
+  shareToken: string | null
+}
+
+export interface PortalContract {
+  id: string
+  title: string
+  amount: number
+  currency: string
+  status: ContractStatus
+  createdAt: string
+  signedAt: string | null
+}
+
+export interface PortalData {
+  clientName: string
+  clientCompany: string | null
+  freelancerName: string
+  freelancerBusiness: string | null
+  freelancerLogo: string | null
+  invoices: PortalInvoice[]
+  contracts: PortalContract[]
+  totalOutstanding: number
+  totalPaid: number
+  currency: string
+}

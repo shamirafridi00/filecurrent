@@ -1535,6 +1535,123 @@ export async function deleteExpense(id: string, userId: string): Promise<void> {
   if (error) throw new Error(error.message)
 }
 
+// ── Client Portal ────────────────────────────────────────────
+
+export async function getClientPortalData(portalToken: string): Promise<{
+  clientName: string
+  clientCompany: string | null
+  clientId: string
+  userId: string
+  freelancerName: string
+  freelancerBusiness: string | null
+  freelancerLogo: string | null
+  invoices: Array<{
+    id: string
+    invoiceNumber: string
+    invoiceDate: string
+    dueDate: string | null
+    total: number
+    paidAmount: number
+    currency: string
+    status: string
+    shareToken: string | null
+  }>
+  contracts: Array<{
+    id: string
+    title: string
+    amount: number
+    currency: string
+    status: string
+    createdAt: string
+    signedAt: string | null
+  }>
+} | null> {
+  const { data: client, error: clientErr } = await adminClient
+    .from('clients')
+    .select('id, name, company, user_id')
+    .eq('portal_token', portalToken)
+    .single()
+
+  if (clientErr || !client) return null
+
+  const { data: profile } = await adminClient
+    .from('profiles')
+    .select('full_name, business_name, business_logo')
+    .eq('id', client.user_id)
+    .single()
+
+  const [invoicesRes, contractsRes] = await Promise.all([
+    adminClient
+      .from('invoices')
+      .select('id, invoice_number, invoice_date, due_date, total, paid_amount, currency, status, share_token')
+      .eq('client_id', client.id)
+      .eq('user_id', client.user_id)
+      .order('invoice_date', { ascending: false }),
+    adminClient
+      .from('contracts')
+      .select('id, title, amount, currency, status, created_at, signed_at')
+      .eq('client_id', client.id)
+      .eq('user_id', client.user_id)
+      .order('created_at', { ascending: false }),
+  ])
+
+  const invoices = (invoicesRes.data ?? []).map((r) => ({
+    id: r.id,
+    invoiceNumber: r.invoice_number,
+    invoiceDate: r.invoice_date,
+    dueDate: r.due_date ?? null,
+    total: Number(r.total),
+    paidAmount: Number(r.paid_amount),
+    currency: r.currency,
+    status: r.status,
+    shareToken: r.share_token ?? null,
+  }))
+
+  const contracts = (contractsRes.data ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    amount: Number(r.amount),
+    currency: r.currency,
+    status: r.status,
+    createdAt: r.created_at,
+    signedAt: r.signed_at ?? null,
+  }))
+
+  return {
+    clientName: client.name,
+    clientCompany: client.company ?? null,
+    clientId: client.id,
+    userId: client.user_id,
+    freelancerName: profile?.full_name ?? '',
+    freelancerBusiness: profile?.business_name ?? null,
+    freelancerLogo: profile?.business_logo ?? null,
+    invoices,
+    contracts,
+  }
+}
+
+export async function getClientPortalToken(clientId: string, userId: string): Promise<string | null> {
+  const { data, error } = await adminClient
+    .from('clients')
+    .select('portal_token')
+    .eq('id', clientId)
+    .eq('user_id', userId)
+    .single()
+  if (error || !data) return null
+  return data.portal_token ?? null
+}
+
+export async function regeneratePortalToken(clientId: string, userId: string): Promise<string> {
+  const newToken = crypto.randomUUID()
+  const { error } = await adminClient
+    .from('clients')
+    .update({ portal_token: newToken })
+    .eq('id', clientId)
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
+  return newToken
+}
+
 export async function getExpenseSummary(userId: string, year?: number): Promise<{
   totalExpenses: number
   byCategory: { category: string; total: number }[]

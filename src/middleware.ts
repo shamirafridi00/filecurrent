@@ -30,6 +30,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/auth/') ||
     pathname.startsWith('/sign/') ||
     pathname.startsWith('/i/') ||
+    pathname.startsWith('/portal/') ||
     pathname.startsWith('/api/sign/') ||
     pathname.startsWith('/api/webhooks/') ||
     pathname.startsWith('/api/cron/') ||
