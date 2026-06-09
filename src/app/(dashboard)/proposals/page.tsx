@@ -83,11 +83,17 @@ export default async function ProposalsPage() {
                     <Badge variant="secondary" className={`text-xs border ${STATUS_COLORS[p.status] ?? STATUS_COLORS.draft}`}>
                       {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
                     </Badge>
-                    {p.contractId && (
+                    {p.contractId ? (
                       <Button asChild variant="outline" size="sm">
                         <Link href={`/contracts/${p.contractId}`}>View Contract →</Link>
                       </Button>
-                    )}
+                    ) : p.status === 'accepted' ? (
+                      <Button asChild size="sm">
+                        <Link href={`/contracts/new?clientId=${p.clientId}&title=${encodeURIComponent(p.title)}&amount=${p.total}&currency=${p.currency}&proposalId=${p.id}`}>
+                          Create Contract →
+                        </Link>
+                      </Button>
+                    ) : null}
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/proposals/${p.id}`}>View →</Link>
                     </Button>

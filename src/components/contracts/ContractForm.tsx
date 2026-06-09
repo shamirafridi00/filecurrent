@@ -40,6 +40,10 @@ interface Props {
   defaultTemplateId?: string
   defaultClientId?: string
   returnTo?: string
+  defaultTitle?: string
+  defaultAmount?: string
+  defaultCurrency?: string
+  proposalId?: string
   profile: { fullName: string; businessName: string | null }
 }
 
@@ -89,13 +93,12 @@ function saveLastTemplate(t: ContractTemplate) {
   try { localStorage.setItem(LAST_TEMPLATE_KEY, JSON.stringify({ id: t.id, label: t.label })) } catch { /* ignore */ }
 }
 
-export function ContractForm({ clients, templates, defaultTemplateId, defaultClientId, returnTo, profile }: Props) {
+export function ContractForm({ clients, templates, defaultTemplateId, defaultClientId, returnTo, defaultTitle, defaultAmount, defaultCurrency, proposalId, profile }: Props) {
   const router = useRouter()
   const allTemplates = [...templates.my, ...templates.global]
 
-  // Restore draft from localStorage on first render
-  const draft = typeof window !== 'undefined' ? loadDraft() : null
-  // Last-used niche template survives draft clearing (persists across contracts)
+  // When arriving from a proposal, skip the draft restore so proposal values take priority
+  const draft = proposalId ? null : (typeof window !== 'undefined' ? loadDraft() : null)
   const lastTemplate = typeof window !== 'undefined' ? loadLastTemplate() : null
 
   const [saving, setSaving] = useState(false)
@@ -104,11 +107,11 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
   const [pendingTemplate, setPendingTemplate] = useState<ContractTemplate | null>(null)
   const [clientId, setClientId] = useState(draft?.clientId ?? defaultClientId ?? '')
   const [templateId, setTemplateId] = useState(draft?.templateId ?? defaultTemplateId ?? allTemplates[0]?.id ?? '')
-  const [title, setTitle] = useState(draft?.title ?? '')
+  const [title, setTitle] = useState(draft?.title ?? defaultTitle ?? '')
   const [contractContent, setContractContent] = useState(draft?.contractContent ?? '')
   const [projectDescription, setProjectDescription] = useState(draft?.projectDescription ?? '')
-  const [amount, setAmount] = useState(draft?.amount ?? '')
-  const [currency, setCurrency] = useState(draft?.currency ?? 'USD')
+  const [amount, setAmount] = useState(draft?.amount ?? defaultAmount ?? '')
+  const [currency, setCurrency] = useState(draft?.currency ?? defaultCurrency ?? 'USD')
   const [paymentTerms, setPaymentTerms] = useState(draft?.paymentTerms ?? '50% upfront, 50% on delivery')
   const [startDate, setStartDate] = useState(draft?.startDate ?? new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState(draft?.endDate ?? '')
@@ -212,6 +215,16 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
       if (!res.ok) throw new Error()
       const { id } = await res.json()
       try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
+
+      // If created from a proposal, link the contract back to that proposal
+      if (proposalId) {
+        await fetch(`/api/proposals/${proposalId}/link-contract`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ contractId: id }),
+        }).catch(() => {})
+      }
+
       toast.success('Contract created')
       router.push(`/contracts/${id}`)
       router.refresh()
@@ -258,6 +271,12 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
           backHref={returnTo ?? '/contracts'}
           backLabel={returnTo ? 'Back' : 'Back to Contracts'}
         />
+
+        {proposalId && (
+          <div className="mb-5 rounded-lg bg-blue-50 border border-blue-200 px-5 py-3 text-sm text-blue-700">
+            Fields pre-filled from accepted proposal. Choose a contract template, review everything, then save.
+          </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6 xl:grid-cols-2">
           {/* Form */}

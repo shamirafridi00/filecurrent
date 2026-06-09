@@ -13,47 +13,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   const proposal = await getProposalByShareToken(token)
   if (!proposal) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  // Auto-create contract draft — template_id is nullable so we pass null if none exists
-  const { data: templateRow } = await adminClient
-    .from('contract_templates')
-    .select('id')
-    .eq('user_id', proposal.userId)
-    .limit(1)
-    .maybeSingle()
-
-  let contractId: string | null = null
-  try {
-    const { data: contractRow, error: contractError } = await adminClient
-      .from('contracts')
-      .insert({
-        user_id: proposal.userId,
-        client_id: proposal.clientId,
-        template_id: templateRow?.id ?? null,
-        title: proposal.title,
-        project_description: proposal.summary ?? proposal.title,
-        amount: proposal.total,
-        currency: proposal.currency,
-        payment_terms: 'Net 30',
-        start_date: new Date().toISOString().slice(0, 10),
-        status: 'draft',
-        has_branding_footer: true,
-      })
-      .select('id')
-      .single()
-
-    if (contractError) throw contractError
-    contractId = contractRow.id
-
-    await adminClient
-      .from('proposals')
-      .update({ contract_id: contractId, updated_at: new Date().toISOString() })
-      .eq('share_token', token)
-  } catch (err) {
-    console.error('[accept-proposal] contract creation failed:', err)
-    // Non-fatal — proposal is still accepted
-  }
-
-  // Notify freelancer by email
+  // Notify freelancer by email — link to proposals dashboard so they can create the contract
   const { data: profile } = await adminClient
     .from('profiles')
     .select('email, full_name')
@@ -61,10 +21,6 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
     .single()
 
   if (profile?.email) {
-    const dashboardUrl = contractId
-      ? `${APP_URL}/contracts/${contractId}`
-      : `${APP_URL}/proposals`
-
     sendEmail({
       to: profile.email,
       subject: `${proposal.clientName} accepted your proposal: ${proposal.title}`,
@@ -72,11 +28,11 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
         freelancerName: profile.full_name,
         clientName: proposal.clientName,
         proposalTitle: proposal.title,
-        dashboardUrl,
-        contractCreated: !!contractId,
+        dashboardUrl: `${APP_URL}/proposals`,
+        contractCreated: false,
       }),
     }).catch(() => {})
   }
 
-  return NextResponse.json({ success: true, contractId })
+  return NextResponse.json({ success: true })
 }

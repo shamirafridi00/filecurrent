@@ -8,7 +8,15 @@ import { ContractForm } from '@/components/contracts/ContractForm'
 export default async function NewContractPage({
   searchParams,
 }: {
-  searchParams: { templateId?: string; clientId?: string; returnTo?: string }
+  searchParams: {
+    templateId?: string
+    clientId?: string
+    returnTo?: string
+    title?: string
+    amount?: string
+    currency?: string
+    proposalId?: string
+  }
 }) {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
@@ -27,6 +35,10 @@ export default async function NewContractPage({
       defaultTemplateId={searchParams.templateId}
       defaultClientId={searchParams.clientId}
       returnTo={searchParams.returnTo}
+      defaultTitle={searchParams.title}
+      defaultAmount={searchParams.amount}
+      defaultCurrency={searchParams.currency}
+      proposalId={searchParams.proposalId}
       profile={{ fullName: profile.fullName, businessName: profile.businessName }}
     />
   )
