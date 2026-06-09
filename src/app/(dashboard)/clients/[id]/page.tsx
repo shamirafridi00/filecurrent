@@ -185,7 +185,7 @@ export default async function ClientDetailPage({
                     {contracts.map((c) => (
                       <div key={c.id} className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors">
                         <div>
-                          <Link href={`/contracts/${c.id}`} className="font-medium text-sm hover:text-primary">
+                          <Link href={`/contracts/${c.id}`} className="font-medium text-sm text-foreground hover:text-primary transition-colors">
                             {c.title}
                           </Link>
                           <p className="text-xs text-muted-foreground">{formatDate(c.createdAt)}</p>
