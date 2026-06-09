@@ -93,13 +93,13 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
       </Button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose() }}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md overflow-y-auto max-h-[90vh]">
           <DialogHeader>
             <DialogTitle>Send for Signature</DialogTitle>
           </DialogHeader>
 
-          <div className="space-y-5">
-            {/* Email field — always visible */}
+          <div className="space-y-4">
+            {/* Email field */}
             <div className="space-y-1.5">
               <Label htmlFor="signer-email">Client&apos;s Email</Label>
               <Input
@@ -111,32 +111,23 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
                 disabled={!!loading}
               />
               <p className="text-xs text-muted-foreground">
-                {clientName} will receive a unique link to review and sign without creating an account.
+                {clientName} can review and sign without creating an account.
               </p>
             </div>
 
-            {/* Action buttons — always visible */}
+            {/* Action buttons */}
             <div className="flex flex-col gap-2">
-              <Button
-                className="w-full"
-                onClick={handleSendEmail}
-                disabled={!!loading}
-              >
+              <Button className="w-full" onClick={handleSendEmail} disabled={!!loading}>
                 <Envelope className="mr-1.5 h-4 w-4" />
                 {loading === 'email' ? 'Sending…' : emailSent ? 'Resend Email' : 'Generate & Send Email'}
               </Button>
-              <Button
-                variant="outline"
-                className="w-full"
-                onClick={handleGenerateLink}
-                disabled={!!loading}
-              >
+              <Button variant="outline" className="w-full" onClick={handleGenerateLink} disabled={!!loading}>
                 <Copy className="mr-1.5 h-4 w-4" />
                 {loading === 'link' ? 'Generating…' : 'Generate Link Only'}
               </Button>
             </div>
 
-            {/* Signing link — appears once generated, stays visible */}
+            {/* Signing link — shown once generated */}
             {signLink && (
               <div className="space-y-2">
                 <div className="flex items-center gap-2 rounded-lg border border-green-200 bg-green-50 px-3 py-2">
@@ -149,13 +140,13 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
                   <p className="flex-1 truncate text-xs font-mono text-foreground">{signLink}</p>
                   <Button size="sm" variant="default" onClick={copyLink} className="shrink-0">
                     <Copy className="mr-1 h-3.5 w-3.5" />
-                    Copy Link
+                    Copy
                   </Button>
                 </div>
               </div>
             )}
 
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-1">
               <Button variant="ghost" size="sm" onClick={handleClose}>Close</Button>
             </div>
           </div>
