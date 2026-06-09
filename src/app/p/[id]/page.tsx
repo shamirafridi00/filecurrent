@@ -1,16 +1,24 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
+import Link from 'next/link'
 import { getProposalByShareToken, markProposalViewed } from '@/lib/db/supabase'
+import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { APP_NAME } from '@/lib/constants'
 import { ProposalActions } from '@/components/proposals/ProposalActions'
 
 export default async function PublicProposalPage({ params }: { params: { id: string } }) {
-  const proposal = await getProposalByShareToken(params.id)
+  const [proposal, supabase] = await Promise.all([
+    getProposalByShareToken(params.id),
+    createClient(),
+  ])
   if (!proposal) notFound()
 
   void markProposalViewed(proposal.id)
+
+  const { data: { user } } = await supabase.auth.getUser()
+  const isOwner = user?.id === proposal.userId
 
   const isExpired = proposal.validUntil && new Date(proposal.validUntil) < new Date()
   const isResponded = proposal.status === 'accepted' || proposal.status === 'declined'
@@ -38,14 +46,41 @@ export default async function PublicProposalPage({ params }: { params: { id: str
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8 space-y-5">
-        {proposal.status === 'accepted' && (
+        {/* Freelancer preview banner — shown when the proposal owner visits the public link */}
+        {isOwner && (
+          <div className="rounded-lg bg-blue-50 border border-blue-200 px-5 py-3 flex items-center justify-between gap-4">
+            <p className="text-sm text-blue-700 font-medium">
+              You are previewing this proposal as your client sees it.
+            </p>
+            <Link
+              href={`/proposals/${proposal.id}`}
+              className="shrink-0 text-sm font-semibold text-blue-700 underline underline-offset-2 hover:text-blue-900"
+            >
+              Open in Dashboard →
+            </Link>
+          </div>
+        )}
+
+        {/* Status banners — only show to client (non-owner) */}
+        {!isOwner && proposal.status === 'accepted' && (
           <div className="rounded-lg bg-green-50 border border-green-200 px-5 py-3 text-sm text-green-700 font-medium">
             You accepted this proposal on {formatDate(proposal.acceptedAt!)}
           </div>
         )}
-        {proposal.status === 'declined' && (
+        {!isOwner && proposal.status === 'declined' && (
           <div className="rounded-lg bg-red-50 border border-red-200 px-5 py-3 text-sm text-red-700 font-medium">
             You declined this proposal
+          </div>
+        )}
+        {/* Owner status view */}
+        {isOwner && proposal.status === 'accepted' && (
+          <div className="rounded-lg bg-green-50 border border-green-200 px-5 py-3 text-sm text-green-700 font-medium">
+            {proposal.clientName} accepted this proposal on {formatDate(proposal.acceptedAt!)}
+          </div>
+        )}
+        {isOwner && proposal.status === 'declined' && (
+          <div className="rounded-lg bg-red-50 border border-red-200 px-5 py-3 text-sm text-red-700 font-medium">
+            {proposal.clientName} declined this proposal
           </div>
         )}
         {isExpired && !isResponded && (
@@ -131,8 +166,8 @@ export default async function PublicProposalPage({ params }: { params: { id: str
           </div>
         )}
 
-        {/* Accept / Decline actions */}
-        {!isResponded && !isExpired && (
+        {/* Accept / Decline actions — only for clients, not the proposal owner */}
+        {!isOwner && !isResponded && !isExpired && (
           <ProposalActions shareToken={params.id} />
         )}
 
