@@ -87,13 +87,17 @@ export default async function ProposalsPage() {
                       <Button asChild variant="outline" size="sm">
                         <Link href={`/contracts/${p.contractId}`}>View Contract →</Link>
                       </Button>
-                    ) : p.status === 'accepted' ? (
-                      <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white">
+                    ) : (
+                      <Button
+                        asChild
+                        size="sm"
+                        variant={p.status === 'accepted' ? 'default' : 'outline'}
+                      >
                         <Link href={`/contracts/new?proposalId=${p.id}`}>
                           Create Contract →
                         </Link>
                       </Button>
-                    ) : null}
+                    )}
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/proposals/${p.id}`}>View →</Link>
                     </Button>
