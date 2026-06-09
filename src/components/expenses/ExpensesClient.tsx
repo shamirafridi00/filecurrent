@@ -1,8 +1,9 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { CurrencyDollar, Plus, PencilSimple, Trash } from '@phosphor-icons/react'
-import { StatCard, PageHeader, EmptyState } from '@/components/ui'
+import { StatCard, PageHeader, EmptyState, ConfirmDialog } from '@/components/ui'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -127,6 +128,7 @@ function ExpenseForm({
                   placeholder="0.00"
                   value={form.amount}
                   onChange={(e) => set('amount', e.target.value)}
+                  onWheel={(e) => e.currentTarget.blur()}
                   className="pl-7"
                   required
                 />
@@ -139,6 +141,7 @@ function ExpenseForm({
             <Input
               id="expense-description"
               type="text"
+              autoComplete="off"
               placeholder="e.g. Adobe Creative Cloud subscription"
               value={form.description}
               onChange={(e) => set('description', e.target.value)}
@@ -191,14 +194,28 @@ const CURRENT_YEAR = new Date().getFullYear()
 const YEAR_OPTIONS = [CURRENT_YEAR, CURRENT_YEAR - 1, CURRENT_YEAR - 2]
 
 export function ExpensesClient({ expenses: initialExpenses, summary: initialSummary }: ExpensesClientProps) {
+  const searchParams = useSearchParams()
+  const router = useRouter()
+
   const [expenses, setExpenses] = useState<ExpenseRow[]>(initialExpenses)
   const [summary, setSummary] = useState<ExpenseSummary>(initialSummary)
   const [showForm, setShowForm] = useState(false)
   const [editingExpense, setEditingExpense] = useState<ExpenseRow | null>(null)
-  const [filterCategory, setFilterCategory] = useState('')
-  const [filterYear, setFilterYear] = useState(CURRENT_YEAR)
+  const [filterCategory, setFilterCategory] = useState(searchParams.get('cat') ?? '')
+  const [filterYear, setFilterYear] = useState(
+    searchParams.get('year') ? Number(searchParams.get('year')) : CURRENT_YEAR
+  )
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [deletingId, setDeletingId] = useState<string | null>(null)
+  const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null)
+
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (filterYear !== CURRENT_YEAR) params.set('year', String(filterYear))
+    if (filterCategory) params.set('cat', filterCategory)
+    const qs = params.toString()
+    router.replace(qs ? `/expenses?${qs}` : '/expenses', { scroll: false })
+  }, [filterYear, filterCategory, router])
 
   const topCategory = summary.byCategory[0]
     ? getCategoryLabel(summary.byCategory[0].category)
@@ -304,7 +321,6 @@ export function ExpensesClient({ expenses: initialExpenses, summary: initialSumm
   }
 
   async function handleDelete(id: string) {
-    if (!window.confirm('Delete this expense?')) return
     setDeletingId(id)
     try {
       const res = await fetch(`/api/expenses/${id}`, { method: 'DELETE' })
@@ -316,6 +332,7 @@ export function ExpensesClient({ expenses: initialExpenses, summary: initialSumm
       toast.error('Failed to delete expense')
     } finally {
       setDeletingId(null)
+      setConfirmDeleteId(null)
     }
   }
 
@@ -511,7 +528,7 @@ export function ExpensesClient({ expenses: initialExpenses, summary: initialSumm
                             <PencilSimple size={14} />
                           </button>
                           <button
-                            onClick={() => handleDelete(expense.id)}
+                            onClick={() => setConfirmDeleteId(expense.id)}
                             disabled={deletingId === expense.id}
                             className="flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors duration-150 disabled:opacity-50"
                             aria-label="Delete expense"
@@ -528,6 +545,17 @@ export function ExpensesClient({ expenses: initialExpenses, summary: initialSumm
           )}
         </CardContent>
       </Card>
+
+      <ConfirmDialog
+        open={confirmDeleteId !== null}
+        title="Delete Expense"
+        description="Are you sure you want to delete this expense? This action cannot be undone."
+        confirmLabel={deletingId ? 'Deleting...' : 'Delete'}
+        cancelLabel="Cancel"
+        variant="danger"
+        onConfirm={() => confirmDeleteId && handleDelete(confirmDeleteId)}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
     </div>
   )
 }

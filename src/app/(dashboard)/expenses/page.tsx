@@ -1,5 +1,6 @@
 export const dynamic = 'force-dynamic'
 
+import { Suspense } from 'react'
 import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import { getExpenses, getExpenseSummary } from '@/lib/db/supabase'
@@ -15,5 +16,9 @@ export default async function ExpensesPage() {
     getExpenseSummary(user.id),
   ])
 
-  return <ExpensesClient expenses={expenses} summary={summary} />
+  return (
+    <Suspense>
+      <ExpensesClient expenses={expenses} summary={summary} />
+    </Suspense>
+  )
 }
