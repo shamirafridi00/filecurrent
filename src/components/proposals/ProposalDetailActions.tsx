@@ -16,7 +16,7 @@ interface Props {
 export function ProposalDetailActions({ proposalId, shareToken, status, clientEmail }: Props) {
   const [sending, setSending] = useState(false)
 
-  const proposalUrl = shareToken ? `${APP_URL}/proposals/${shareToken}` : null
+  const proposalUrl = shareToken ? `${APP_URL}/p/${shareToken}` : null
 
   async function handleSend() {
     if (!clientEmail) {

@@ -5,11 +5,12 @@ import { sendEmail } from '@/lib/email'
 import { proposalAcceptedEmail } from '@/lib/email/templates/proposal-accepted'
 import { APP_URL } from '@/lib/constants'
 
-export async function POST(_req: NextRequest, { params }: { params: { token: string } }) {
-  const result = await acceptProposal(params.token)
+export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
+  const token = params.id
+  const result = await acceptProposal(token)
   if (!result) return NextResponse.json({ error: 'Proposal not found or already responded' }, { status: 404 })
 
-  const proposal = await getProposalByShareToken(params.token)
+  const proposal = await getProposalByShareToken(token)
   if (!proposal) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
   // Auto-create contract draft from proposal data
@@ -38,7 +39,7 @@ export async function POST(_req: NextRequest, { params }: { params: { token: str
     await adminClient
       .from('proposals')
       .update({ contract_id: contractId })
-      .eq('share_token', params.token)
+      .eq('share_token', token)
   } catch {
     // Contract creation failure is non-fatal — proposal is still accepted
   }

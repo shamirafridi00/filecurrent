@@ -6,8 +6,8 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { APP_NAME } from '@/lib/constants'
 import { ProposalActions } from '@/components/proposals/ProposalActions'
 
-export default async function PublicProposalPage({ params }: { params: { token: string } }) {
-  const proposal = await getProposalByShareToken(params.token)
+export default async function PublicProposalPage({ params }: { params: { id: string } }) {
+  const proposal = await getProposalByShareToken(params.id)
   if (!proposal) notFound()
 
   void markProposalViewed(proposal.id)
@@ -133,7 +133,7 @@ export default async function PublicProposalPage({ params }: { params: { token: 
 
         {/* Accept / Decline actions */}
         {!isResponded && !isExpired && (
-          <ProposalActions shareToken={params.token} />
+          <ProposalActions shareToken={params.id} />
         )}
 
         <p className="text-center text-xs text-gray-400 pb-4">

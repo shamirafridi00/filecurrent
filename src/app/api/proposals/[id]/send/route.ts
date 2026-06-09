@@ -18,7 +18,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   if (!proposal) return NextResponse.json({ error: 'Not found' }, { status: 404 })
   if (!proposal.clientEmail) return NextResponse.json({ error: 'Client has no email' }, { status: 422 })
 
-  const proposalUrl = `${APP_URL}/proposals/${proposal.shareToken}`
+  const proposalUrl = `${APP_URL}/p/${proposal.shareToken}`
   const total = new Intl.NumberFormat('en-US', { style: 'currency', currency: proposal.currency }).format(proposal.total)
 
   await sendEmail({
