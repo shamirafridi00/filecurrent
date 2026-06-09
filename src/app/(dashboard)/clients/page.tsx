@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button'
 import { PageHeader, EmptyState } from '@/components/ui'
 import { createClient } from '@/lib/supabase/server'
 import { getClients } from '@/lib/db/supabase'
+import { PortalCopyButton } from '@/components/clients/PortalCopyButton'
 
 export default async function ClientsPage() {
   const supabase = createClient()
@@ -83,6 +84,9 @@ export default async function ClientsPage() {
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/invoices/new?clientId=${c.id}`}>+ Invoice</Link>
                     </Button>
+                    {c.portalToken && (
+                      <PortalCopyButton portalToken={c.portalToken} clientName={c.name} />
+                    )}
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/clients/${c.id}`}>View →</Link>
                     </Button>

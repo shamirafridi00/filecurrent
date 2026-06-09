@@ -169,7 +169,7 @@ export default async function ClientDetailPage({
                   <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
                     Client Portal
                   </p>
-                  <ClientPortalLink clientId={params.id} portalToken={portalToken} />
+                  <ClientPortalLink clientId={params.id} portalToken={portalToken} clientEmail={client.email ?? null} />
                 </CardContent>
               </Card>
             )}

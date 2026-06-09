@@ -167,6 +167,7 @@ export interface ClientRow {
   name: string
   email: string | null
   company: string | null
+  portalToken: string | null
 }
 
 export interface ClientDetailRow extends ClientRow {
@@ -181,11 +182,17 @@ export interface ClientDetailRow extends ClientRow {
 export async function getClients(userId: string): Promise<ClientRow[]> {
   const { data, error } = await adminClient
     .from('clients')
-    .select('id, name, email, company')
+    .select('id, name, email, company, portal_token')
     .eq('user_id', userId)
     .order('name')
   if (error) throw new Error(error.message)
-  return (data ?? []).map((r) => ({ id: r.id, name: r.name, email: r.email, company: r.company }))
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    name: r.name,
+    email: r.email,
+    company: r.company,
+    portalToken: r.portal_token ?? null,
+  }))
 }
 
 export async function getClientById(id: string, userId: string): Promise<ClientDetailRow | null> {
