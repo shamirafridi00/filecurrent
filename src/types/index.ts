@@ -415,3 +415,50 @@ export const TIMEZONES: SelectOption[] = [
   { value: 'Asia/Karachi', label: 'Karachi' },
   { value: 'Asia/Dubai', label: 'Dubai' },
 ]
+
+// ─── Expenses ──────────────────────────────────────────────
+
+export type ExpenseCategory =
+  | 'software'
+  | 'hardware'
+  | 'travel'
+  | 'meals'
+  | 'marketing'
+  | 'office'
+  | 'professional_services'
+  | 'education'
+  | 'utilities'
+  | 'other'
+
+export interface Expense {
+  id: string
+  userId: string
+  date: string
+  description: string
+  amount: number
+  category: ExpenseCategory
+  notes?: string
+  createdAt: string
+  updatedAt: string
+}
+
+export interface ExpenseFormData {
+  date: string
+  description: string
+  amount: number
+  category: ExpenseCategory
+  notes?: string
+}
+
+export const EXPENSE_CATEGORIES: SelectOption[] = [
+  { value: 'software', label: 'Software & Subscriptions' },
+  { value: 'hardware', label: 'Hardware & Equipment' },
+  { value: 'travel', label: 'Travel' },
+  { value: 'meals', label: 'Meals & Entertainment' },
+  { value: 'marketing', label: 'Marketing & Advertising' },
+  { value: 'office', label: 'Office Supplies' },
+  { value: 'professional_services', label: 'Professional Services' },
+  { value: 'education', label: 'Education & Training' },
+  { value: 'utilities', label: 'Utilities & Internet' },
+  { value: 'other', label: 'Other' },
+]

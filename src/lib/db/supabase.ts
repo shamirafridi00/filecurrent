@@ -1441,3 +1441,137 @@ function formatAuditDescription(
     default: return `Activity on "${contractTitle}"`
   }
 }
+
+// ── Expenses ────────────────────────────────────────────────
+
+export interface ExpenseRow {
+  id: string
+  userId: string
+  date: string
+  description: string
+  amount: number
+  category: string
+  notes: string | null
+  createdAt: string
+  updatedAt: string
+}
+
+export async function getExpenses(userId: string): Promise<ExpenseRow[]> {
+  const { data, error } = await adminClient
+    .from('expenses')
+    .select('*')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
+
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    userId: r.user_id,
+    date: r.date,
+    description: r.description,
+    amount: Number(r.amount),
+    category: r.category,
+    notes: r.notes ?? null,
+    createdAt: r.created_at,
+    updatedAt: r.updated_at,
+  }))
+}
+
+export async function createExpense(userId: string, data: {
+  date: string
+  description: string
+  amount: number
+  category: string
+  notes?: string
+}): Promise<string> {
+  const { data: row, error } = await adminClient
+    .from('expenses')
+    .insert({
+      user_id: userId,
+      date: data.date,
+      description: data.description,
+      amount: data.amount,
+      category: data.category,
+      notes: data.notes ?? null,
+    })
+    .select('id')
+    .single()
+
+  if (error || !row) throw new Error(error?.message ?? 'Failed to create expense')
+  return row.id
+}
+
+export async function updateExpense(id: string, userId: string, data: {
+  date?: string
+  description?: string
+  amount?: number
+  category?: string
+  notes?: string
+}): Promise<void> {
+  const update: Record<string, unknown> = { updated_at: new Date().toISOString() }
+  if (data.date !== undefined) update.date = data.date
+  if (data.description !== undefined) update.description = data.description
+  if (data.amount !== undefined) update.amount = data.amount
+  if (data.category !== undefined) update.category = data.category
+  if (data.notes !== undefined) update.notes = data.notes
+
+  const { error } = await adminClient
+    .from('expenses')
+    .update(update)
+    .eq('id', id)
+    .eq('user_id', userId)
+
+  if (error) throw new Error(error.message)
+}
+
+export async function deleteExpense(id: string, userId: string): Promise<void> {
+  const { error } = await adminClient
+    .from('expenses')
+    .delete()
+    .eq('id', id)
+    .eq('user_id', userId)
+
+  if (error) throw new Error(error.message)
+}
+
+export async function getExpenseSummary(userId: string, year?: number): Promise<{
+  totalExpenses: number
+  byCategory: { category: string; total: number }[]
+  byMonth: { month: string; total: number }[]
+}> {
+  const currentYear = year ?? new Date().getFullYear()
+  const from = `${currentYear}-01-01`
+  const to = `${currentYear}-12-31`
+
+  const { data, error } = await adminClient
+    .from('expenses')
+    .select('amount, category, date')
+    .eq('user_id', userId)
+    .gte('date', from)
+    .lte('date', to)
+
+  if (error) throw new Error(error.message)
+  const rows = data ?? []
+
+  const totalExpenses = rows.reduce((sum, r) => sum + Number(r.amount), 0)
+
+  const catMap: Record<string, number> = {}
+  const monthMap: Record<string, number> = {}
+
+  for (const r of rows) {
+    catMap[r.category] = (catMap[r.category] ?? 0) + Number(r.amount)
+    const month = r.date.slice(0, 7)
+    monthMap[month] = (monthMap[month] ?? 0) + Number(r.amount)
+  }
+
+  const byCategory = Object.entries(catMap)
+    .map(([category, total]) => ({ category, total }))
+    .sort((a, b) => b.total - a.total)
+
+  const byMonth = Object.entries(monthMap)
+    .map(([month, total]) => ({ month, total }))
+    .sort((a, b) => a.month.localeCompare(b.month))
+
+  return { totalExpenses, byCategory, byMonth }
+}

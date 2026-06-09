@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { StatCard, InvoiceBadge, ContractBadge } from '@/components/ui'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentProfile, getDashboardStats } from '@/lib/db/supabase'
+import { getCurrentProfile, getDashboardStats, getExpenseSummary } from '@/lib/db/supabase'
 import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
 import type { InvoiceStatus, ContractStatus } from '@/types'
 
@@ -24,10 +24,13 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [profile, stats] = await Promise.all([
+  const [profile, stats, expenseSummary] = await Promise.all([
     getCurrentProfile(user.id),
     getDashboardStats(user.id),
+    getExpenseSummary(user.id),
   ])
+
+  const netProfit = stats.totalPaid - expenseSummary.totalExpenses
 
   const isTrial = profile.plan === 'trial'
   const daysLeft = isTrial && profile.trialEndsAt
@@ -64,7 +67,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
             label="Total Invoiced"
             value={formatCurrency(stats.totalInvoiced)}
@@ -84,6 +87,13 @@ export default async function DashboardPage() {
             subValue={`${stats.overdueCount} overdue`}
             valueColor="text-[#E6A817]"
             accent="border-l-[#E6A817]"
+          />
+          <StatCard
+            label="Total Expenses (YTD)"
+            value={formatCurrency(expenseSummary.totalExpenses)}
+            subValue={`Net: ${formatCurrency(netProfit)}`}
+            valueColor="text-destructive"
+            accent="border-l-destructive"
           />
         </div>
 
