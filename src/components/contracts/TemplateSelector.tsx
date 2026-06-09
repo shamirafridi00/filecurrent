@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Globe, Camera, Heart, PenNib, PencilLine,
   VideoCamera, ChartBar, FileText, Check,
@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { CONTRACT_TEMPLATES, type ContractTemplate } from '@/lib/contracts/templates'
+import { CONTRACT_TEMPLATES, type ContractTemplate, type ContractNiche } from '@/lib/contracts/templates'
 
 const ICON_MAP: Record<string, Icon> = {
   Globe,
@@ -26,14 +26,35 @@ const ICON_MAP: Record<string, Icon> = {
   FileText,
 }
 
+// Maps Profession DB values → niche template IDs
+const PROFESSION_TO_TEMPLATE: Record<string, ContractNiche> = {
+  web_developer: 'web-designer',
+  photographer:  'photographer',
+  designer:      'graphic-designer',
+  copywriter:    'copywriter',
+  marketer:      'social-media-manager',
+}
+
 interface Props {
   open: boolean
   onSelect: (template: ContractTemplate) => void
   onSkip: () => void
+  profession?: string | null
 }
 
-export function TemplateSelector({ open, onSelect, onSkip }: Props) {
-  const [selected, setSelected] = useState<ContractTemplate | null>(null)
+export function TemplateSelector({ open, onSelect, onSkip, profession }: Props) {
+  const professionTemplateId = profession ? (PROFESSION_TO_TEMPLATE[profession] ?? null) : null
+  const defaultSelected = professionTemplateId
+    ? (CONTRACT_TEMPLATES.find((t) => t.id === professionTemplateId) ?? null)
+    : null
+
+  const [selected, setSelected] = useState<ContractTemplate | null>(defaultSelected)
+
+  // When dialog opens, reset to profession-based default (so re-opens always start fresh)
+  useEffect(() => {
+    if (open) setSelected(defaultSelected)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open])
 
   const handleUse = () => {
     if (!selected) return

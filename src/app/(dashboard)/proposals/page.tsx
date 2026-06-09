@@ -89,7 +89,7 @@ export default async function ProposalsPage() {
                       </Button>
                     ) : p.status === 'accepted' ? (
                       <Button asChild size="sm">
-                        <Link href={`/contracts/new?clientId=${p.clientId}&title=${encodeURIComponent(p.title)}&amount=${p.total}&currency=${p.currency}&proposalId=${p.id}`}>
+                        <Link href={`/contracts/new?proposalId=${p.id}`}>
                           Create Contract →
                         </Link>
                       </Button>

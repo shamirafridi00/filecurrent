@@ -34,16 +34,24 @@ import { formatDate } from '@/lib/utils'
 import type { ClientRow, ContractTemplateRow } from '@/lib/db/supabase'
 import type { ContractTemplate } from '@/lib/contracts/templates'
 
+interface ProposalDefaults {
+  proposalId: string
+  clientId: string
+  title: string
+  amount: number
+  currency: string
+  projectDescription: string
+  additionalTerms: string
+}
+
 interface Props {
   clients: ClientRow[]
   templates: { my: ContractTemplateRow[]; global: ContractTemplateRow[] }
   defaultTemplateId?: string
   defaultClientId?: string
   returnTo?: string
-  defaultTitle?: string
-  defaultAmount?: string
-  defaultCurrency?: string
-  proposalId?: string
+  proposalDefaults?: ProposalDefaults
+  profession?: string | null
   profile: { fullName: string; businessName: string | null }
 }
 
@@ -93,29 +101,30 @@ function saveLastTemplate(t: ContractTemplate) {
   try { localStorage.setItem(LAST_TEMPLATE_KEY, JSON.stringify({ id: t.id, label: t.label })) } catch { /* ignore */ }
 }
 
-export function ContractForm({ clients, templates, defaultTemplateId, defaultClientId, returnTo, defaultTitle, defaultAmount, defaultCurrency, proposalId, profile }: Props) {
+export function ContractForm({ clients, templates, defaultTemplateId, defaultClientId, returnTo, proposalDefaults, profession, profile }: Props) {
   const router = useRouter()
   const allTemplates = [...templates.my, ...templates.global]
 
   // When arriving from a proposal, skip the draft restore so proposal values take priority
-  const draft = proposalId ? null : (typeof window !== 'undefined' ? loadDraft() : null)
+  const draft = proposalDefaults ? null : (typeof window !== 'undefined' ? loadDraft() : null)
   const lastTemplate = typeof window !== 'undefined' ? loadLastTemplate() : null
 
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  const [showTemplateSelector, setShowTemplateSelector] = useState(!draft && !lastTemplate)
+  // When from a proposal: open the template selector so user picks a template (with profession pre-highlighted)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(!!proposalDefaults || (!draft && !lastTemplate))
   const [pendingTemplate, setPendingTemplate] = useState<ContractTemplate | null>(null)
-  const [clientId, setClientId] = useState(draft?.clientId ?? defaultClientId ?? '')
+  const [clientId, setClientId] = useState(draft?.clientId ?? proposalDefaults?.clientId ?? defaultClientId ?? '')
   const [templateId, setTemplateId] = useState(draft?.templateId ?? defaultTemplateId ?? allTemplates[0]?.id ?? '')
-  const [title, setTitle] = useState(draft?.title ?? defaultTitle ?? '')
+  const [title, setTitle] = useState(draft?.title ?? proposalDefaults?.title ?? '')
   const [contractContent, setContractContent] = useState(draft?.contractContent ?? '')
-  const [projectDescription, setProjectDescription] = useState(draft?.projectDescription ?? '')
-  const [amount, setAmount] = useState(draft?.amount ?? defaultAmount ?? '')
-  const [currency, setCurrency] = useState(draft?.currency ?? defaultCurrency ?? 'USD')
+  const [projectDescription, setProjectDescription] = useState(draft?.projectDescription ?? proposalDefaults?.projectDescription ?? '')
+  const [amount, setAmount] = useState(draft?.amount ?? (proposalDefaults ? String(proposalDefaults.amount) : ''))
+  const [currency, setCurrency] = useState(draft?.currency ?? proposalDefaults?.currency ?? 'USD')
   const [paymentTerms, setPaymentTerms] = useState(draft?.paymentTerms ?? '50% upfront, 50% on delivery')
   const [startDate, setStartDate] = useState(draft?.startDate ?? new Date().toISOString().split('T')[0])
   const [endDate, setEndDate] = useState(draft?.endDate ?? '')
-  const [additionalTerms, setAdditionalTerms] = useState(draft?.additionalTerms ?? '')
+  const [additionalTerms, setAdditionalTerms] = useState(draft?.additionalTerms ?? proposalDefaults?.additionalTerms ?? '')
   const [appliedTemplate, setAppliedTemplate] = useState<ContractTemplate | null>(
     draft?.appliedTemplateId
       ? { id: draft.appliedTemplateId as ContractTemplate['id'], label: draft.appliedTemplateLabel ?? '', description: '', icon: '', suggestedTitle: '', suggestedPaymentTerms: '', content: draft.contractContent }
@@ -140,7 +149,8 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
 
   const applyTemplate = (template: ContractTemplate) => {
     setAppliedTemplate(template)
-    setTitle(template.suggestedTitle)
+    // Keep the proposal title if we came from a proposal; only use template's suggested title otherwise
+    if (!proposalDefaults) setTitle(template.suggestedTitle)
     setPaymentTerms(template.suggestedPaymentTerms)
     setContractContent(template.id === 'blank' ? '' : template.content)
     if (template.id !== 'blank') {
@@ -217,8 +227,8 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
       try { localStorage.removeItem(DRAFT_KEY) } catch { /* ignore */ }
 
       // If created from a proposal, link the contract back to that proposal
-      if (proposalId) {
-        await fetch(`/api/proposals/${proposalId}/link-contract`, {
+      if (proposalDefaults?.proposalId) {
+        await fetch(`/api/proposals/${proposalDefaults.proposalId}/link-contract`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ contractId: id }),
@@ -242,6 +252,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
         open={showTemplateSelector}
         onSelect={handleTemplateSelect}
         onSkip={() => setShowTemplateSelector(false)}
+        profession={profession}
       />
       <AlertDialog open={!!pendingTemplate} onOpenChange={(v) => { if (!v) setPendingTemplate(null) }}>
         <AlertDialogContent>
@@ -272,7 +283,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
           backLabel={returnTo ? 'Back' : 'Back to Contracts'}
         />
 
-        {proposalId && (
+        {proposalDefaults && (
           <div className="mb-5 rounded-lg bg-blue-50 border border-blue-200 px-5 py-3 text-sm text-blue-700">
             Fields pre-filled from accepted proposal. Choose a contract template, review everything, then save.
           </div>

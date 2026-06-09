@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentProfile, getClients, getContractTemplates } from '@/lib/db/supabase'
+import { getCurrentProfile, getClients, getContractTemplates, getProposal } from '@/lib/db/supabase'
 import { ContractForm } from '@/components/contracts/ContractForm'
 
 export default async function NewContractPage({
@@ -12,9 +12,6 @@ export default async function NewContractPage({
     templateId?: string
     clientId?: string
     returnTo?: string
-    title?: string
-    amount?: string
-    currency?: string
     proposalId?: string
   }
 }) {
@@ -28,6 +25,32 @@ export default async function NewContractPage({
     getContractTemplates(user.id, profile.profession),
   ])
 
+  // Load proposal data server-side — never expose in URL
+  let proposalDefaults: {
+    proposalId: string
+    clientId: string
+    title: string
+    amount: number
+    currency: string
+    projectDescription: string
+    additionalTerms: string
+  } | undefined
+
+  if (searchParams.proposalId) {
+    const proposal = await getProposal(searchParams.proposalId, user.id)
+    if (proposal) {
+      proposalDefaults = {
+        proposalId: proposal.id,
+        clientId: proposal.clientId,
+        title: proposal.title,
+        amount: proposal.total,
+        currency: proposal.currency,
+        projectDescription: proposal.summary ?? '',
+        additionalTerms: proposal.notes ?? '',
+      }
+    }
+  }
+
   return (
     <ContractForm
       clients={clients}
@@ -35,10 +58,8 @@ export default async function NewContractPage({
       defaultTemplateId={searchParams.templateId}
       defaultClientId={searchParams.clientId}
       returnTo={searchParams.returnTo}
-      defaultTitle={searchParams.title}
-      defaultAmount={searchParams.amount}
-      defaultCurrency={searchParams.currency}
-      proposalId={searchParams.proposalId}
+      proposalDefaults={proposalDefaults}
+      profession={profile.profession}
       profile={{ fullName: profile.fullName, businessName: profile.businessName }}
     />
   )
