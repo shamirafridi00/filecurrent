@@ -93,12 +93,13 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
       </Button>
 
       <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose() }}>
-        <DialogContent className="max-w-md overflow-y-auto max-h-[90vh]">
-          <DialogHeader>
-            <DialogTitle>Send for Signature</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="w-[calc(100%-2rem)] max-w-md p-0">
+          {/* Scrollable inner wrapper — keeps the dialog box fixed, content scrolls */}
+          <div className="max-h-[85vh] overflow-y-auto p-6 space-y-4">
+            <DialogHeader>
+              <DialogTitle>Send for Signature</DialogTitle>
+            </DialogHeader>
 
-          <div className="space-y-4">
             {/* Email field */}
             <div className="space-y-1.5">
               <Label htmlFor="signer-email">Client&apos;s Email</Label>
@@ -136,8 +137,8 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
                     {emailSent ? `Email sent to ${email}` : 'Link ready — copy and share it'}
                   </p>
                 </div>
-                <div className="flex items-center gap-2 rounded-md border bg-muted px-3 py-2">
-                  <p className="flex-1 truncate text-xs font-mono text-foreground">{signLink}</p>
+                <div className="flex items-center gap-2 rounded-md border bg-muted px-3 py-2 min-w-0">
+                  <p className="flex-1 truncate text-xs font-mono text-foreground min-w-0">{signLink}</p>
                   <Button size="sm" variant="default" onClick={copyLink} className="shrink-0">
                     <Copy className="mr-1 h-3.5 w-3.5" />
                     Copy
