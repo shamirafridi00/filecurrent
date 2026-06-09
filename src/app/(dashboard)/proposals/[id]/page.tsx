@@ -41,9 +41,13 @@ export default async function ProposalDetailPage({ params }: { params: { id: str
             <Badge variant="secondary" className={`border ${STATUS_COLORS[proposal.status] ?? STATUS_COLORS.draft}`}>
               {proposal.status.charAt(0).toUpperCase() + proposal.status.slice(1)}
             </Badge>
-            {proposal.contractId && (
+            {proposal.contractId ? (
               <Button asChild variant="outline" size="sm">
                 <Link href={`/contracts/${proposal.contractId}`}>View Contract →</Link>
+              </Button>
+            ) : (
+              <Button asChild size="sm" variant={proposal.status === 'accepted' ? 'default' : 'outline'}>
+                <Link href={`/contracts/new?proposalId=${proposal.id}`}>Create Contract →</Link>
               </Button>
             )}
           </div>
@@ -220,16 +224,25 @@ export default async function ProposalDetailPage({ params }: { params: { id: str
             </CardContent>
           </Card>
 
-          {proposal.contractId && (
-            <Card>
-              <CardContent className="pt-5">
-                <p className="text-xs text-muted-foreground mb-2">Contract auto-created on acceptance</p>
-                <Button asChild variant="outline" size="sm" className="w-full">
-                  <Link href={`/contracts/${proposal.contractId}`}>View Contract →</Link>
-                </Button>
-              </CardContent>
-            </Card>
-          )}
+          <Card>
+            <CardContent className="pt-5">
+              {proposal.contractId ? (
+                <>
+                  <p className="text-xs text-muted-foreground mb-2">Contract linked to this proposal</p>
+                  <Button asChild variant="outline" size="sm" className="w-full">
+                    <Link href={`/contracts/${proposal.contractId}`}>View Contract →</Link>
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <p className="text-xs text-muted-foreground mb-2">No contract yet — create one from this proposal</p>
+                  <Button asChild size="sm" className="w-full">
+                    <Link href={`/contracts/new?proposalId=${proposal.id}`}>Create Contract →</Link>
+                  </Button>
+                </>
+              )}
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
