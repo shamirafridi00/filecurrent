@@ -167,7 +167,7 @@ export interface ClientRow {
   name: string
   email: string | null
   company: string | null
-  portalToken: string | null
+  portalToken?: string | null
 }
 
 export interface ClientDetailRow extends ClientRow {
