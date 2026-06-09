@@ -397,6 +397,38 @@ export const FEEDBACK_TYPES: SelectOption[] = [
   { value: 'other', label: 'Other' },
 ]
 
+// ─── Proposals ─────────────────────────────────────────────
+
+export type ProposalStatus = 'draft' | 'sent' | 'accepted' | 'declined' | 'expired'
+
+export interface ProposalLineItem {
+  id: string
+  description: string
+  quantity: number
+  unitPrice: number
+  amount: number
+}
+
+export interface ProposalFormData {
+  clientId: string
+  title: string
+  summary: string
+  lineItems: Omit<ProposalLineItem, 'id'>[]
+  taxRate: number
+  discountAmount: number
+  currency: string
+  validUntil: string
+  notes: string
+}
+
+export const PROPOSAL_STATUSES: SelectOption[] = [
+  { value: 'draft', label: 'Draft' },
+  { value: 'sent', label: 'Sent' },
+  { value: 'accepted', label: 'Accepted' },
+  { value: 'declined', label: 'Declined' },
+  { value: 'expired', label: 'Expired' },
+]
+
 export const INVOICE_STATUSES: SelectOption[] = [
   { value: '', label: 'All Statuses' },
   { value: 'draft', label: 'Draft' },

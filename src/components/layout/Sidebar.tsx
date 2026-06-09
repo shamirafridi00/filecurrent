@@ -14,6 +14,7 @@ import {
   UploadSimple,
   Users,
   Rows,
+  Note,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
@@ -24,6 +25,7 @@ const ICON_MAP = {
   Download: DownloadSimple,
   FileText,
   LayoutDashboard: SquaresFour,
+  Note,
   Receipt,
   Upload: UploadSimple,
   Users,
@@ -36,6 +38,7 @@ type NavEntry =
 const MAIN_NAV: NavEntry[] = [
   { label: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard' },
   { label: 'Clients', href: '/clients', icon: 'Users' },
+  { label: 'Proposals', href: '/proposals', icon: 'Note' },
   { label: 'Contracts', href: '/contracts', icon: 'FileText' },
   { label: 'Templates', href: '/contracts/templates', sub: true },
   { label: 'Invoices', href: '/invoices', icon: 'Receipt' },

@@ -1699,3 +1699,197 @@ export async function getExpenseSummary(userId: string, year?: number): Promise<
 
   return { totalExpenses, byCategory, byMonth }
 }
+
+// ── Proposals ────────────────────────────────────────────────
+
+export interface ProposalListRow {
+  id: string
+  clientId: string
+  clientName: string
+  title: string
+  total: number
+  currency: string
+  status: string
+  createdAt: string
+  validUntil: string | null
+  shareToken: string | null
+  contractId: string | null
+}
+
+export interface ProposalDetailRow {
+  id: string
+  clientId: string
+  clientName: string
+  clientEmail: string | null
+  clientCompany: string | null
+  title: string
+  summary: string | null
+  lineItems: Array<{ id: string; description: string; quantity: number; unitPrice: number; amount: number }>
+  subtotal: number
+  taxRate: number
+  taxAmount: number
+  discountAmount: number
+  total: number
+  currency: string
+  validUntil: string | null
+  notes: string | null
+  status: string
+  shareToken: string | null
+  acceptedAt: string | null
+  declinedAt: string | null
+  viewedAt: string | null
+  contractId: string | null
+  createdAt: string
+}
+
+export async function getProposals(userId: string): Promise<ProposalListRow[]> {
+  const { data, error } = await adminClient
+    .from('proposals')
+    .select('id, client_id, title, total, currency, status, created_at, valid_until, share_token, contract_id, clients!inner(name)')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    clientId: r.client_id,
+    clientName: (r.clients as unknown as { name: string })?.name ?? '',
+    title: r.title,
+    total: Number(r.total),
+    currency: r.currency,
+    status: r.status,
+    createdAt: r.created_at,
+    validUntil: r.valid_until ?? null,
+    shareToken: r.share_token ?? null,
+    contractId: r.contract_id ?? null,
+  }))
+}
+
+export async function getProposal(id: string, userId: string): Promise<ProposalDetailRow | null> {
+  const { data } = await adminClient
+    .from('proposals')
+    .select('*, clients!inner(name, email, company)')
+    .eq('id', id)
+    .eq('user_id', userId)
+    .single()
+  if (!data) return null
+  const client = data.clients as unknown as { name: string; email: string | null; company: string | null }
+  return {
+    id: data.id, clientId: data.client_id,
+    clientName: client.name, clientEmail: client.email ?? null,
+    clientCompany: client.company ?? null, title: data.title,
+    summary: data.summary ?? null,
+    lineItems: (typeof data.line_items === 'string' ? JSON.parse(data.line_items) : data.line_items) ?? [],
+    subtotal: Number(data.subtotal), taxRate: Number(data.tax_rate),
+    taxAmount: Number(data.tax_amount), discountAmount: Number(data.discount_amount),
+    total: Number(data.total), currency: data.currency,
+    validUntil: data.valid_until ?? null, notes: data.notes ?? null,
+    status: data.status, shareToken: data.share_token ?? null,
+    acceptedAt: data.accepted_at ?? null, declinedAt: data.declined_at ?? null,
+    viewedAt: data.viewed_at ?? null, contractId: data.contract_id ?? null,
+    createdAt: data.created_at,
+  }
+}
+
+export async function getProposalByShareToken(token: string): Promise<(ProposalDetailRow & {
+  freelancerName: string
+  freelancerBusiness: string | null
+  freelancerLogo: string | null
+  userId: string
+}) | null> {
+  const { data } = await adminClient
+    .from('proposals')
+    .select('*, clients!inner(name, email, company), profiles!inner(full_name, business_name, business_logo)')
+    .eq('share_token', token)
+    .single()
+  if (!data) return null
+  const client = data.clients as unknown as { name: string; email: string | null; company: string | null }
+  const profile = data.profiles as unknown as { full_name: string; business_name: string | null; business_logo: string | null }
+  return {
+    id: data.id, clientId: data.client_id,
+    clientName: client.name, clientEmail: client.email ?? null,
+    clientCompany: client.company ?? null, title: data.title,
+    summary: data.summary ?? null,
+    lineItems: (typeof data.line_items === 'string' ? JSON.parse(data.line_items) : data.line_items) ?? [],
+    subtotal: Number(data.subtotal), taxRate: Number(data.tax_rate),
+    taxAmount: Number(data.tax_amount), discountAmount: Number(data.discount_amount),
+    total: Number(data.total), currency: data.currency,
+    validUntil: data.valid_until ?? null, notes: data.notes ?? null,
+    status: data.status, shareToken: data.share_token ?? null,
+    acceptedAt: data.accepted_at ?? null, declinedAt: data.declined_at ?? null,
+    viewedAt: data.viewed_at ?? null, contractId: data.contract_id ?? null,
+    createdAt: data.created_at,
+    freelancerName: profile.full_name, freelancerBusiness: profile.business_name ?? null,
+    freelancerLogo: profile.business_logo ?? null,
+    userId: data.user_id,
+  }
+}
+
+export async function createProposal(userId: string, data: {
+  clientId: string; title: string; summary?: string
+  lineItems: Array<{ description: string; quantity: number; unitPrice: number; amount: number }>
+  subtotal: number; taxRate: number; taxAmount: number; discountAmount: number; total: number
+  currency: string; validUntil?: string; notes?: string
+}): Promise<string> {
+  const { data: row, error } = await adminClient
+    .from('proposals')
+    .insert({
+      user_id: userId, client_id: data.clientId, title: data.title,
+      summary: data.summary ?? null,
+      line_items: data.lineItems, subtotal: data.subtotal,
+      tax_rate: data.taxRate, tax_amount: data.taxAmount,
+      discount_amount: data.discountAmount, total: data.total,
+      currency: data.currency, valid_until: data.validUntil ?? null,
+      notes: data.notes ?? null, status: 'draft',
+    })
+    .select('id').single()
+  if (error || !row) throw new Error(error?.message ?? 'Failed to create proposal')
+  return row.id
+}
+
+export async function updateProposalStatus(
+  id: string,
+  userId: string,
+  status: string,
+  extra?: { contractId?: string; acceptedAt?: string; declinedAt?: string }
+): Promise<void> {
+  const update: Record<string, unknown> = { status, updated_at: new Date().toISOString() }
+  if (extra?.contractId) update.contract_id = extra.contractId
+  if (extra?.acceptedAt) update.accepted_at = extra.acceptedAt
+  if (extra?.declinedAt) update.declined_at = extra.declinedAt
+  const { error } = await adminClient.from('proposals').update(update).eq('id', id).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function deleteProposal(id: string, userId: string): Promise<void> {
+  const { error } = await adminClient.from('proposals').delete().eq('id', id).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function markProposalViewed(id: string): Promise<void> {
+  await adminClient
+    .from('proposals')
+    .update({ viewed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq('id', id)
+    .is('viewed_at', null)
+}
+
+export async function acceptProposal(shareToken: string): Promise<{ proposalId: string; userId: string; clientId: string } | null> {
+  const { data } = await adminClient
+    .from('proposals')
+    .update({ status: 'accepted', accepted_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq('share_token', shareToken)
+    .in('status', ['sent', 'draft'])
+    .select('id, user_id, client_id')
+    .single()
+  if (!data) return null
+  return { proposalId: data.id, userId: data.user_id, clientId: data.client_id }
+}
+
+export async function declineProposal(shareToken: string): Promise<boolean> {
+  const { error } = await adminClient
+    .from('proposals')
+    .update({ status: 'declined', declined_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+    .eq('share_token', shareToken)
+    .in('status', ['sent', 'draft'])
+  return !error
+}
