@@ -78,7 +78,7 @@ export default async function ProposalsPage() {
                       {p.validUntil ? ` · Valid until ${formatDate(p.validUntil)}` : ''}
                     </p>
                   </div>
-                  <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
                     <span className="text-sm font-medium">{formatCurrency(p.total, p.currency)}</span>
                     <Badge variant="secondary" className={`text-xs border ${STATUS_COLORS[p.status] ?? STATUS_COLORS.draft}`}>
                       {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
@@ -88,7 +88,7 @@ export default async function ProposalsPage() {
                         <Link href={`/contracts/${p.contractId}`}>View Contract →</Link>
                       </Button>
                     ) : p.status === 'accepted' ? (
-                      <Button asChild size="sm">
+                      <Button asChild size="sm" className="bg-green-600 hover:bg-green-700 text-white">
                         <Link href={`/contracts/new?proposalId=${p.id}`}>
                           Create Contract →
                         </Link>

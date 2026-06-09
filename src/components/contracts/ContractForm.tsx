@@ -58,6 +58,17 @@ interface Props {
 const CURRENCIES = ['USD', 'EUR', 'GBP', 'CAD', 'AUD']
 const DRAFT_KEY = 'filecurrent_contract_draft'
 const LAST_TEMPLATE_KEY = 'filecurrent_last_template'
+// Set to '1' after any template choice (including skip/blank) so selector doesn't re-open on next visit
+const TEMPLATE_CHOSEN_KEY = 'filecurrent_template_chosen'
+
+function hasChosenTemplate(): boolean {
+  if (typeof window === 'undefined') return false
+  try { return localStorage.getItem(TEMPLATE_CHOSEN_KEY) === '1' } catch { return false }
+}
+
+function markTemplateChosen(): void {
+  try { localStorage.setItem(TEMPLATE_CHOSEN_KEY, '1') } catch { /* ignore */ }
+}
 
 interface DraftState {
   clientId: string
@@ -108,11 +119,14 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
   // When arriving from a proposal, skip the draft restore so proposal values take priority
   const draft = proposalDefaults ? null : (typeof window !== 'undefined' ? loadDraft() : null)
   const lastTemplate = typeof window !== 'undefined' ? loadLastTemplate() : null
+  const alreadyChosen = typeof window !== 'undefined' ? hasChosenTemplate() : false
 
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  // When from a proposal: open the template selector so user picks a template (with profession pre-highlighted)
-  const [showTemplateSelector, setShowTemplateSelector] = useState(!!proposalDefaults || (!draft && !lastTemplate))
+  // Open selector when: coming from proposal (always pick template), OR first-ever visit (never chosen before and no draft/lastTemplate)
+  const [showTemplateSelector, setShowTemplateSelector] = useState(
+    !!proposalDefaults || (!alreadyChosen && !draft && !lastTemplate)
+  )
   const [pendingTemplate, setPendingTemplate] = useState<ContractTemplate | null>(null)
   const [clientId, setClientId] = useState(draft?.clientId ?? proposalDefaults?.clientId ?? defaultClientId ?? '')
   const [templateId, setTemplateId] = useState(draft?.templateId ?? defaultTemplateId ?? allTemplates[0]?.id ?? '')
@@ -149,6 +163,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
 
   const applyTemplate = (template: ContractTemplate) => {
     setAppliedTemplate(template)
+    markTemplateChosen()
     // Keep the proposal title if we came from a proposal; only use template's suggested title otherwise
     if (!proposalDefaults) setTitle(template.suggestedTitle)
     setPaymentTerms(template.suggestedPaymentTerms)
@@ -251,7 +266,7 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
       <TemplateSelector
         open={showTemplateSelector}
         onSelect={handleTemplateSelect}
-        onSkip={() => setShowTemplateSelector(false)}
+        onSkip={() => { markTemplateChosen(); setShowTemplateSelector(false) }}
         profession={profession}
       />
       <AlertDialog open={!!pendingTemplate} onOpenChange={(v) => { if (!v) setPendingTemplate(null) }}>
