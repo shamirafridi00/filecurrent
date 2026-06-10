@@ -1893,3 +1893,155 @@ export async function declineProposal(shareToken: string): Promise<boolean> {
     .in('status', ['sent', 'draft'])
   return !error
 }
+
+// ── Time Tracking ────────────────────────────────────────────
+
+export interface TimeEntryRow {
+  id: string
+  clientId: string | null
+  clientName: string | null
+  description: string
+  date: string
+  durationMinutes: number
+  hourlyRate: number
+  amount: number
+  isBillable: boolean
+  isInvoiced: boolean
+  invoiceId: string | null
+  notes: string | null
+  createdAt: string
+}
+
+export async function getTimeEntries(userId: string): Promise<TimeEntryRow[]> {
+  const { data, error } = await adminClient
+    .from('time_entries')
+    .select('*, clients(name)')
+    .eq('user_id', userId)
+    .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    clientId: r.client_id ?? null,
+    clientName: (r.clients as unknown as { name: string } | null)?.name ?? null,
+    description: r.description,
+    date: r.date,
+    durationMinutes: r.duration_minutes,
+    hourlyRate: Number(r.hourly_rate),
+    amount: Number(r.amount),
+    isBillable: r.is_billable,
+    isInvoiced: r.is_invoiced,
+    invoiceId: r.invoice_id ?? null,
+    notes: r.notes ?? null,
+    createdAt: r.created_at,
+  }))
+}
+
+export async function getUnbilledTimeEntries(userId: string, clientId?: string): Promise<TimeEntryRow[]> {
+  let query = adminClient
+    .from('time_entries')
+    .select('*, clients(name)')
+    .eq('user_id', userId)
+    .eq('is_billable', true)
+    .eq('is_invoiced', false)
+    .order('date', { ascending: false })
+  if (clientId) query = query.eq('client_id', clientId)
+  const { data, error } = await query
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    clientId: r.client_id ?? null,
+    clientName: (r.clients as unknown as { name: string } | null)?.name ?? null,
+    description: r.description,
+    date: r.date,
+    durationMinutes: r.duration_minutes,
+    hourlyRate: Number(r.hourly_rate),
+    amount: Number(r.amount),
+    isBillable: r.is_billable,
+    isInvoiced: r.is_invoiced,
+    invoiceId: r.invoice_id ?? null,
+    notes: r.notes ?? null,
+    createdAt: r.created_at,
+  }))
+}
+
+export async function createTimeEntry(userId: string, data: {
+  clientId?: string; description: string; date: string
+  durationMinutes: number; hourlyRate: number; isBillable: boolean; notes?: string
+}): Promise<string> {
+  const { data: row, error } = await adminClient
+    .from('time_entries')
+    .insert({
+      user_id: userId,
+      client_id: data.clientId ?? null,
+      description: data.description,
+      date: data.date,
+      duration_minutes: data.durationMinutes,
+      hourly_rate: data.hourlyRate,
+      is_billable: data.isBillable,
+      notes: data.notes ?? null,
+    })
+    .select('id').single()
+  if (error || !row) throw new Error(error?.message ?? 'Failed to create')
+  return row.id
+}
+
+export async function updateTimeEntry(id: string, userId: string, data: {
+  clientId?: string | null; description?: string; date?: string
+  durationMinutes?: number; hourlyRate?: number; isBillable?: boolean
+  isInvoiced?: boolean; notes?: string
+}): Promise<void> {
+  const update: Record<string, unknown> = { updated_at: new Date().toISOString() }
+  if (data.clientId !== undefined) update.client_id = data.clientId
+  if (data.description !== undefined) update.description = data.description
+  if (data.date !== undefined) update.date = data.date
+  if (data.durationMinutes !== undefined) update.duration_minutes = data.durationMinutes
+  if (data.hourlyRate !== undefined) update.hourly_rate = data.hourlyRate
+  if (data.isBillable !== undefined) update.is_billable = data.isBillable
+  if (data.isInvoiced !== undefined) update.is_invoiced = data.isInvoiced
+  if (data.notes !== undefined) update.notes = data.notes
+  const { error } = await adminClient.from('time_entries').update(update).eq('id', id).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function deleteTimeEntry(id: string, userId: string): Promise<void> {
+  const { error } = await adminClient.from('time_entries').delete().eq('id', id).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function markTimeEntriesInvoiced(ids: string[], userId: string, invoiceId: string): Promise<void> {
+  const { error } = await adminClient
+    .from('time_entries')
+    .update({ is_invoiced: true, invoice_id: invoiceId, updated_at: new Date().toISOString() })
+    .in('id', ids)
+    .eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function getTimeTrackingSummary(userId: string): Promise<{
+  totalHours: number
+  billableHours: number
+  unbilledAmount: number
+  thisWeekHours: number
+}> {
+  const { data } = await adminClient
+    .from('time_entries')
+    .select('duration_minutes, hourly_rate, is_billable, is_invoiced, amount, date')
+    .eq('user_id', userId)
+
+  const rows = data ?? []
+  const totalHours = rows.reduce((s, r) => s + r.duration_minutes, 0) / 60
+  const billableHours = rows.filter((r) => r.is_billable).reduce((s, r) => s + r.duration_minutes, 0) / 60
+  const unbilledAmount = rows
+    .filter((r) => r.is_billable && !r.is_invoiced)
+    .reduce((s, r) => s + Number(r.amount), 0)
+
+  const weekStart = new Date()
+  weekStart.setDate(weekStart.getDate() - weekStart.getDay())
+  const weekStartStr = weekStart.toISOString().slice(0, 10)
+  const thisWeekHours = rows
+    .filter((r) => r.date >= weekStartStr)
+    .reduce((s, r) => s + r.duration_minutes, 0) / 60
+
+  return { totalHours, billableHours, unbilledAmount, thisWeekHours }
+}

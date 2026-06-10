@@ -15,6 +15,7 @@ import {
   Users,
   Rows,
   Note,
+  Timer,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 
@@ -27,6 +28,7 @@ const ICON_MAP = {
   LayoutDashboard: SquaresFour,
   Note,
   Receipt,
+  Timer,
   Upload: UploadSimple,
   Users,
 }
@@ -46,6 +48,7 @@ const MAIN_NAV: NavEntry[] = [
   { label: 'Client Activity', href: '/client-activity', icon: 'Activity' },
   { label: 'Payment Reminders', href: '/reminders', icon: 'Bell' },
   { label: 'Expenses', href: '/expenses', icon: 'CurrencyDollar' },
+  { label: 'Time Tracking', href: '/time-tracking', icon: 'Timer' },
 ]
 
 const TOOL_NAV: NavEntry[] = [

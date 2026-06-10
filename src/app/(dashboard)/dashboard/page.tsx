@@ -15,7 +15,7 @@ import { Button } from '@/components/ui/button'
 import { StatCard, InvoiceBadge, ContractBadge } from '@/components/ui'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentProfile, getDashboardStats, getExpenseSummary } from '@/lib/db/supabase'
+import { getCurrentProfile, getDashboardStats, getExpenseSummary, getTimeTrackingSummary } from '@/lib/db/supabase'
 import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
 import type { InvoiceStatus, ContractStatus } from '@/types'
 
@@ -24,10 +24,11 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [profile, stats, expenseSummary] = await Promise.all([
+  const [profile, stats, expenseSummary, timeSummary] = await Promise.all([
     getCurrentProfile(user.id),
     getDashboardStats(user.id),
     getExpenseSummary(user.id),
+    getTimeTrackingSummary(user.id),
   ])
 
   const netProfit = stats.totalPaid - expenseSummary.totalExpenses
@@ -117,9 +118,10 @@ export default async function DashboardPage() {
             accentPosition="top"
           />
           <StatCard
-            label="Drafts"
-            value={String(stats.draftInvoices)}
-            accent="border-t-[#8898AA]"
+            label="Unbilled Hours"
+            value={`${timeSummary.billableHours.toFixed(1)} hrs`}
+            subValue={`${formatCurrency(timeSummary.unbilledAmount)} unbilled`}
+            accent="border-t-primary"
             accentPosition="top"
           />
         </div>

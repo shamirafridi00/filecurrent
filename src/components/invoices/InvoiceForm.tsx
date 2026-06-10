@@ -4,6 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Trash, FileText, FloppyDisk, X, CaretDown, Check, Minus } from '@phosphor-icons/react'
+import { TimeLogImportButton } from '@/components/invoices/TimeLogImportButton'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -174,6 +175,20 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
 
   const removeItem = (id: string) => setItems((prev) => prev.filter((i) => i._id !== id))
 
+  function handleImportFromTimeLog(newItems: Array<{ description: string; quantity: number; unitPrice: number; amount: number }>) {
+    setItems((prev) => [
+      ...prev.filter((i) => i.description !== '' || i.unitPrice !== 0),
+      ...newItems.map((item) => ({
+        _id: crypto.randomUUID(),
+        description: item.description,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        amount: item.amount,
+      })),
+    ])
+    toast.success(`${newItems.length} time ${newItems.length === 1 ? 'entry' : 'entries'} added to invoice`)
+  }
+
   const subtotal = items.reduce((sum, item) => sum + item.quantity * item.unitPrice, 0)
   const discountAmount = discountType === 'pct'
     ? parseFloat(((subtotal * discountValue) / 100).toFixed(2))
@@ -322,9 +337,16 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0">
             <CardTitle className="text-base">Line Items</CardTitle>
-            <Button size="sm" variant="outline" onClick={addItem}>
-              <Plus className="mr-1 h-3.5 w-3.5" /> Add Item
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button size="sm" variant="outline" onClick={addItem}>
+                <Plus className="mr-1 h-3.5 w-3.5" /> Add Item
+              </Button>
+              <TimeLogImportButton
+                clientId={clientId}
+                currency={currency}
+                onImport={handleImportFromTimeLog}
+              />
+            </div>
           </CardHeader>
           <CardContent>
             <div className="space-y-2">

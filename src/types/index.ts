@@ -531,3 +531,32 @@ export interface PortalData {
   totalPaid: number
   currency: string
 }
+
+// ─── Time Tracking ─────────────────────────────────────────
+
+export interface TimeEntry {
+  id: string
+  userId: string
+  clientId: string | null
+  clientName: string | null
+  description: string
+  date: string
+  durationMinutes: number
+  hourlyRate: number
+  amount: number
+  isBillable: boolean
+  isInvoiced: boolean
+  invoiceId: string | null
+  notes: string | null
+  createdAt: string
+}
+
+export interface TimeEntryFormData {
+  clientId: string
+  description: string
+  date: string
+  durationMinutes: number
+  hourlyRate: number
+  isBillable: boolean
+  notes: string
+}
