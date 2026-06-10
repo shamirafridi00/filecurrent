@@ -8,11 +8,13 @@ import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/components/ui'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken } from '@/lib/db/supabase'
+import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken, getIntakeForms } from '@/lib/db/supabase'
 import { DeleteClientButton } from '@/components/clients/DeleteClientButton'
 import { ClientReminderToggle } from '@/components/clients/ClientReminderToggle'
 import { ClientPortalLink } from '@/components/clients/ClientPortalLink'
 import { ActivityFeed } from '@/components/clients/ActivityFeed'
+import { CopyIntakeLink } from '@/components/intake-forms/CopyIntakeLink'
+import { APP_URL } from '@/lib/constants'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
 type Tab = 'overview' | 'activity'
@@ -30,18 +32,20 @@ export default async function ClientDetailPage({
 
   const activeTab: Tab = searchParams.tab === 'activity' ? 'activity' : 'overview'
 
-  const [client, allContracts, allInvoices, activityEvents, stats, portalToken] = await Promise.all([
+  const [client, allContracts, allInvoices, activityEvents, stats, portalToken, intakeForms] = await Promise.all([
     getClientById(params.id, user.id),
     getContracts(user.id),
     getInvoices(user.id),
     getClientActivityLog(user.id, params.id, 50),
     getClientStats(user.id, params.id),
     getClientPortalToken(params.id, user.id),
+    getIntakeForms(user.id),
   ])
   if (!client) notFound()
 
   const contracts = allContracts.filter((c) => c.clientId === params.id)
   const invoices = allInvoices.filter((i) => i.clientId === params.id)
+  const activeForms = intakeForms.filter((f) => f.isActive)
 
   // Client since: earliest invoice or contract date
   const dates = [
@@ -170,6 +174,24 @@ export default async function ClientDetailPage({
                     Client Portal
                   </p>
                   <ClientPortalLink clientId={params.id} portalToken={portalToken} clientEmail={client.email ?? null} />
+                </CardContent>
+              </Card>
+            )}
+
+            {activeForms.length > 0 && (
+              <Card>
+                <CardContent className="p-4">
+                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
+                    Intake Forms
+                  </p>
+                  <div className="space-y-2">
+                    {activeForms.map((form) => (
+                      <div key={form.id} className="flex items-center justify-between">
+                        <span className="text-sm text-foreground truncate">{form.title}</span>
+                        <CopyIntakeLink url={`${APP_URL}/intake/${form.shareToken}`} />
+                      </div>
+                    ))}
+                  </div>
                 </CardContent>
               </Card>
             )}

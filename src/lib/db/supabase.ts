@@ -1,7 +1,7 @@
 import 'server-only'
 
 import { adminClient } from '@/lib/supabase/admin'
-import type { Plan, Profession } from '@/types'
+import type { Plan, Profession, IntakeField, IntakeForm, IntakeResponse } from '@/types'
 
 // ── Auth helper ────────────────────────────────────────────
 // API routes and server actions import this to get the current user.
@@ -2044,4 +2044,176 @@ export async function getTimeTrackingSummary(userId: string): Promise<{
     .reduce((s, r) => s + r.duration_minutes, 0) / 60
 
   return { totalHours, billableHours, unbilledAmount, thisWeekHours }
+}
+
+// ── Intake Forms ─────────────────────────────────────────────
+
+export async function getIntakeForms(userId: string): Promise<IntakeForm[]> {
+  const { data, error } = await adminClient
+    .from('intake_forms')
+    .select('*, intake_responses(count)')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    userId: r.user_id,
+    title: r.title,
+    description: r.description ?? null,
+    fields: r.fields as IntakeField[],
+    shareToken: r.share_token,
+    isActive: r.is_active,
+    createdAt: r.created_at,
+    responseCount: (r.intake_responses as unknown as { count: number }[])?.[0]?.count ?? 0,
+  }))
+}
+
+export async function getIntakeFormById(id: string, userId: string): Promise<IntakeForm | null> {
+  const { data, error } = await adminClient
+    .from('intake_forms')
+    .select('*')
+    .eq('id', id)
+    .eq('user_id', userId)
+    .single()
+  if (error || !data) return null
+  return {
+    id: data.id,
+    userId: data.user_id,
+    title: data.title,
+    description: data.description ?? null,
+    fields: data.fields as IntakeField[],
+    shareToken: data.share_token,
+    isActive: data.is_active,
+    createdAt: data.created_at,
+  }
+}
+
+export async function getIntakeFormByToken(token: string): Promise<IntakeForm | null> {
+  const { data, error } = await adminClient
+    .from('intake_forms')
+    .select('*')
+    .eq('share_token', token)
+    .eq('is_active', true)
+    .single()
+  if (error || !data) return null
+  return {
+    id: data.id,
+    userId: data.user_id,
+    title: data.title,
+    description: data.description ?? null,
+    fields: data.fields as IntakeField[],
+    shareToken: data.share_token,
+    isActive: data.is_active,
+    createdAt: data.created_at,
+  }
+}
+
+export async function createIntakeForm(userId: string, data: {
+  title: string
+  description?: string
+  fields: IntakeField[]
+}): Promise<string> {
+  const { data: row, error } = await adminClient
+    .from('intake_forms')
+    .insert({
+      user_id: userId,
+      title: data.title,
+      description: data.description ?? null,
+      fields: data.fields,
+    })
+    .select('id').single()
+  if (error || !row) throw new Error(error?.message ?? 'Failed to create form')
+  return row.id
+}
+
+export async function updateIntakeForm(id: string, userId: string, data: {
+  title?: string
+  description?: string | null
+  fields?: IntakeField[]
+  isActive?: boolean
+}): Promise<void> {
+  const update: Record<string, unknown> = { updated_at: new Date().toISOString() }
+  if (data.title !== undefined) update.title = data.title
+  if (data.description !== undefined) update.description = data.description
+  if (data.fields !== undefined) update.fields = data.fields
+  if (data.isActive !== undefined) update.is_active = data.isActive
+  const { error } = await adminClient
+    .from('intake_forms').update(update).eq('id', id).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function deleteIntakeForm(id: string, userId: string): Promise<void> {
+  const { error } = await adminClient
+    .from('intake_forms').delete().eq('id', id).eq('user_id', userId)
+  if (error) throw new Error(error.message)
+}
+
+export async function getIntakeResponses(formId: string, userId: string): Promise<IntakeResponse[]> {
+  const { data, error } = await adminClient
+    .from('intake_responses')
+    .select('*, intake_forms(title), clients(name)')
+    .eq('form_id', formId)
+    .eq('user_id', userId)
+    .order('submitted_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    formId: r.form_id,
+    formTitle: (r.intake_forms as unknown as { title: string } | null)?.title ?? '',
+    clientId: r.client_id ?? null,
+    clientName: (r.clients as unknown as { name: string } | null)?.name ?? null,
+    respondentName: r.respondent_name ?? null,
+    respondentEmail: r.respondent_email ?? null,
+    answers: r.answers as Record<string, string | boolean | string[]>,
+    submittedAt: r.submitted_at,
+  }))
+}
+
+export async function submitIntakeResponse(data: {
+  formId: string
+  userId: string
+  respondentName: string
+  respondentEmail: string
+  answers: Record<string, string | boolean | string[]>
+  createClient: boolean
+}): Promise<{ responseId: string; clientId: string | null }> {
+  let clientId: string | null = null
+
+  if (data.createClient && data.respondentName) {
+    const existing = data.respondentEmail
+      ? await adminClient
+          .from('clients')
+          .select('id')
+          .eq('user_id', data.userId)
+          .eq('email', data.respondentEmail)
+          .maybeSingle()
+      : { data: null }
+    if (existing.data) {
+      clientId = existing.data.id
+    } else {
+      const { data: newClient } = await adminClient
+        .from('clients')
+        .insert({
+          user_id: data.userId,
+          name: data.respondentName,
+          email: data.respondentEmail || null,
+        })
+        .select('id').single()
+      if (newClient) clientId = newClient.id
+    }
+  }
+
+  const { data: row, error } = await adminClient
+    .from('intake_responses')
+    .insert({
+      form_id: data.formId,
+      user_id: data.userId,
+      client_id: clientId,
+      respondent_name: data.respondentName,
+      respondent_email: data.respondentEmail,
+      answers: data.answers,
+    })
+    .select('id').single()
+  if (error || !row) throw new Error(error?.message ?? 'Failed to submit')
+  return { responseId: row.id, clientId }
 }

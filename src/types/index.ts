@@ -560,3 +560,50 @@ export interface TimeEntryFormData {
   isBillable: boolean
   notes: string
 }
+
+// ─── Intake Forms ───────────────────────────────────────────
+
+export type IntakeFieldType =
+  | 'text'
+  | 'textarea'
+  | 'email'
+  | 'phone'
+  | 'number'
+  | 'date'
+  | 'select'
+  | 'checkbox'
+  | 'heading'
+
+export interface IntakeField {
+  id: string
+  type: IntakeFieldType
+  label: string
+  placeholder?: string
+  required: boolean
+  options?: string[]
+  helpText?: string
+}
+
+export interface IntakeForm {
+  id: string
+  userId: string
+  title: string
+  description: string | null
+  fields: IntakeField[]
+  shareToken: string
+  isActive: boolean
+  createdAt: string
+  responseCount?: number
+}
+
+export interface IntakeResponse {
+  id: string
+  formId: string
+  formTitle: string
+  clientId: string | null
+  clientName: string | null
+  respondentName: string | null
+  respondentEmail: string | null
+  answers: Record<string, string | boolean | string[]>
+  submittedAt: string
+}

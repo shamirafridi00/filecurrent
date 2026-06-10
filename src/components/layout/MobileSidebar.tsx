@@ -3,12 +3,12 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
-import { List, X, ChartLine, Bell, CurrencyDollar, DownloadSimple, FileText, Note, SquaresFour, Receipt, UploadSimple, Users, Rows, Timer } from '@phosphor-icons/react'
+import { List, X, ChartLine, Bell, ClipboardText, CurrencyDollar, DownloadSimple, FileText, Note, SquaresFour, Receipt, UploadSimple, Users, Rows, Timer } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { LogoFull } from '@/components/logo/LogoMark'
 
 const ICON_MAP = {
-  Activity: ChartLine, Bell, CurrencyDollar, Download: DownloadSimple, FileText,
+  Activity: ChartLine, Bell, ClipboardText, CurrencyDollar, Download: DownloadSimple, FileText,
   LayoutDashboard: SquaresFour, Note, Receipt, Timer, Upload: UploadSimple, Users,
 }
 
@@ -28,6 +28,7 @@ const MAIN_NAV: NavEntry[] = [
   { label: 'Payment Reminders', href: '/reminders', icon: 'Bell' },
   { label: 'Expenses', href: '/expenses', icon: 'CurrencyDollar' },
   { label: 'Time Tracking', href: '/time-tracking', icon: 'Timer' },
+  { label: 'Intake Forms', href: '/intake-forms', icon: 'ClipboardText' },
 ]
 
 const TOOL_NAV: NavEntry[] = [

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import {
   ChartLine,
   Bell,
+  ClipboardText,
   CurrencyDollar,
   DownloadSimple,
   FileText,
@@ -22,6 +23,7 @@ import { cn } from '@/lib/utils'
 const ICON_MAP = {
   Activity: ChartLine,
   Bell,
+  ClipboardText,
   CurrencyDollar,
   Download: DownloadSimple,
   FileText,
@@ -49,6 +51,7 @@ const MAIN_NAV: NavEntry[] = [
   { label: 'Payment Reminders', href: '/reminders', icon: 'Bell' },
   { label: 'Expenses', href: '/expenses', icon: 'CurrencyDollar' },
   { label: 'Time Tracking', href: '/time-tracking', icon: 'Timer' },
+  { label: 'Intake Forms', href: '/intake-forms', icon: 'ClipboardText' },
 ]
 
 const TOOL_NAV: NavEntry[] = [
