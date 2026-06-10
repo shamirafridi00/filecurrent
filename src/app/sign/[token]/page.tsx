@@ -80,7 +80,15 @@ export default async function SignPage({ params }: { params: { token: string } }
         <div className="mx-auto flex max-w-4xl items-center justify-between px-4 py-3">
           <div className="flex items-center gap-2">
             {session.freelancerLogo ? (
-              <img src={session.freelancerLogo} alt="Logo" className="h-8 w-auto object-contain" />
+              <img
+                src={session.freelancerLogo}
+                alt={session.freelancerBusiness ?? session.freelancerName}
+                width={120}
+                height={32}
+                loading="eager"
+                decoding="async"
+                className="h-8 w-auto object-contain"
+              />
             ) : (
               <span className="text-sm font-bold text-primary">{session.freelancerBusiness ?? session.freelancerName}</span>
             )}

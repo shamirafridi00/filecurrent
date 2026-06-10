@@ -77,6 +77,8 @@ export function paymentReminderEmail({
   })
 }
 
+// Tone escalates with how late the invoice is:
+// before/on due → friendly · ≤7 days late → direct · >7 days late → firm.
 function getStageContent(
   stage: 'before_due' | 'on_due' | 'overdue',
   daysOverdue: number,
@@ -87,28 +89,35 @@ function getStageContent(
 ) {
   if (stage === 'before_due') {
     return {
-      heading: `Friendly reminder: Invoice ${invoiceNumber} due soon`,
-      intro: `Just a heads-up that invoice ${invoiceNumber} for ${amount} is coming due on ${dueDate}. No action needed if you've already arranged payment &mdash; we just wanted to give you advance notice.`,
+      heading: `Heads-up: Invoice ${invoiceNumber} due soon`,
+      intro: `Just a friendly note that Invoice ${invoiceNumber} for ${amount} comes due on ${dueDate}. No action needed if you've already arranged payment.`,
       tone: { headerColor: '#635BFF', borderColor: '#D1FAE5', bgColor: '#F0FDF4', amountColor: '#065F46' },
     }
   }
   if (stage === 'on_due') {
     return {
-      heading: `Payment due today: Invoice ${invoiceNumber}`,
-      intro: `This is a reminder that invoice ${invoiceNumber} for ${amount} is due today. Please arrange payment at your earliest convenience.`,
+      heading: `Invoice ${invoiceNumber} is due today`,
+      intro: `A quick reminder that Invoice ${invoiceNumber} for ${amount} is due today. Here's the link in case it got buried.`,
+      tone: { headerColor: '#D97706', borderColor: '#FDE68A', bgColor: '#FFFBEB', amountColor: '#92400E' },
+    }
+  }
+  if (daysOverdue <= 3) {
+    return {
+      heading: `Friendly nudge: Invoice ${invoiceNumber}`,
+      intro: `Just a friendly nudge &mdash; Invoice ${invoiceNumber} for ${amount} was due on ${dueDate}. Here's the link if it got buried in your inbox.`,
       tone: { headerColor: '#D97706', borderColor: '#FDE68A', bgColor: '#FFFBEB', amountColor: '#92400E' },
     }
   }
   if (daysOverdue <= 7) {
     return {
       heading: `Overdue: Invoice ${invoiceNumber}`,
-      intro: `Invoice ${invoiceNumber} for ${amount} was due on ${dueDate} and remains unpaid. Please arrange payment as soon as possible. If you have any questions, please reply to this email.`,
+      intro: `Invoice ${invoiceNumber} for ${amount} is now ${daysOverdue} days overdue. Please arrange payment at your earliest convenience. If you have any questions, just reply to this email.`,
       tone: { headerColor: '#DC2626', borderColor: '#FECACA', bgColor: '#FEF2F2', amountColor: '#991B1B' },
     }
   }
   return {
-    heading: `OVERDUE NOTICE: Invoice ${invoiceNumber}`,
-    intro: `Invoice ${invoiceNumber} for ${amount} is now ${daysOverdue} days past due. Please arrange immediate payment to avoid further action. If there is a dispute or issue, please contact ${sender} directly by replying to this email.`,
+    heading: `Overdue notice: Invoice ${invoiceNumber}`,
+    intro: `Invoice ${invoiceNumber} for ${amount} remains unpaid ${daysOverdue} days after its due date. This invoice may be subject to late fees if not settled promptly. If there is a dispute or issue, please contact ${sender} directly by replying to this email.`,
     tone: { headerColor: '#7F1D1D', borderColor: '#FECACA', bgColor: '#FEF2F2', amountColor: '#991B1B' },
   }
 }

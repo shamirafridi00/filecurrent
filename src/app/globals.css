@@ -75,6 +75,8 @@
   body {
     @apply bg-background text-foreground;
     margin: 0;
+    /* Inter alternate glyphs — single-story a, open digits. Linear/Vercel standard. */
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
   }
 
   a {
@@ -84,8 +86,14 @@
 }
 
 /* ── Landing page animations ── */
-.hero-bg {
-  background: linear-gradient(135deg, #0A2540 0%, #1a1f6e 50%, #0A2540 100%);
+.hero-grid-bg {
+  background-color: #0A2540;
+  background-image:
+    radial-gradient(circle at 20% 20%, rgba(99, 91, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(99, 91, 255, 0.08) 0%, transparent 50%),
+    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 40px 40px, 40px 40px;
 }
 
 .hero-headline {
@@ -101,6 +109,31 @@
 @keyframes fadeUp {
   from { opacity: 0; transform: translateY(20px); }
   to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Bouncing scroll-down chevron below the hero CTAs */
+.scroll-indicator {
+  animation: bounceDown 1.6s ease-in-out infinite;
+}
+@keyframes bounceDown {
+  0%, 100% { transform: translateY(0); opacity: 0.6; }
+  50%      { transform: translateY(6px); opacity: 1; }
+}
+
+/* CSS-only marquee for the social proof strip */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(90deg, transparent, black 10%, black 90%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee 30s linear infinite;
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to   { transform: translateX(-50%); }
 }
 
 /* ── Global page scrollbar — thin, always visible ── */

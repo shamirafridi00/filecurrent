@@ -6,9 +6,12 @@ import { Copy } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { toast } from 'sonner'
 
-interface Props { invoiceId: string }
+interface Props {
+  invoiceId: string
+  variant?: 'outline' | 'ghost'
+}
 
-export function DuplicateInvoiceButton({ invoiceId }: Props) {
+export function DuplicateInvoiceButton({ invoiceId, variant = 'outline' }: Props) {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
 
@@ -28,7 +31,7 @@ export function DuplicateInvoiceButton({ invoiceId }: Props) {
   }
 
   return (
-    <Button variant="outline" size="sm" onClick={handleDuplicate} disabled={loading}>
+    <Button variant={variant} size="sm" onClick={handleDuplicate} disabled={loading}>
       <Copy className="mr-1 h-4 w-4" />
       {loading ? 'Duplicating…' : 'Duplicate'}
     </Button>

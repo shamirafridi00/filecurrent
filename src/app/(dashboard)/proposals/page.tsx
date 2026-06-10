@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader, EmptyState } from '@/components/ui'
+import { HelpHint } from '@/components/ui/HelpHint'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getProposals } from '@/lib/db/supabase'
@@ -30,8 +31,18 @@ export default async function ProposalsPage() {
     <div>
       <PageHeader
         title="Proposals"
-        subtitle="Send project proposals to clients"
+        subtitle="Send project proposals, convert to contracts"
         icon={<FileText size={24} weight="duotone" className="text-primary" />}
+        help={
+          <HelpHint
+            title="Proposals"
+            example="Send a proposal to a new client outlining scope and pricing. When they accept, FileCurrent generates a contract automatically."
+          >
+            A proposal is a quoted scope of work sent to a prospective client
+            before a contract. When accepted, it automatically drafts a
+            contract with the same details.
+          </HelpHint>
+        }
         action={
           <Button asChild>
             <Link href="/proposals/new">
@@ -55,6 +66,7 @@ export default async function ProposalsPage() {
                   </Link>
                 </Button>
               }
+              tip="Tip: when a client accepts a proposal, FileCurrent drafts the contract for you."
             />
           </CardContent>
         </Card>
@@ -79,7 +91,7 @@ export default async function ProposalsPage() {
                     </p>
                   </div>
                   <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end">
-                    <span className="text-sm font-medium">{formatCurrency(p.total, p.currency)}</span>
+                    <span className="hidden sm:inline text-sm font-medium">{formatCurrency(p.total, p.currency)}</span>
                     <Badge variant="secondary" className={`text-xs border ${STATUS_COLORS[p.status] ?? STATUS_COLORS.draft}`}>
                       {p.status.charAt(0).toUpperCase() + p.status.slice(1)}
                     </Badge>

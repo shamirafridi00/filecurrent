@@ -36,9 +36,10 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
 
     await sendEmail({
       to: signerEmail,
-      subject: `Please sign: ${contract.title}`,
+      subject: `${profile.businessName || profile.fullName} sent you a contract to sign`,
       html: contractSignatureRequestEmail({
         freelancerName: profile.fullName,
+        businessName: profile.businessName,
         clientName: contract.clientName,
         contractTitle: contract.title,
         projectAmount: amount,

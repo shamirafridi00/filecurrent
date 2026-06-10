@@ -2,6 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import { Receipt, FileText } from '@phosphor-icons/react/dist/ssr'
 import { getClientPortalData } from '@/lib/db/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { APP_NAME } from '@/lib/constants'
@@ -44,7 +45,15 @@ export default async function ClientPortalPage({ params }: { params: { token: st
         <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-4">
           <div className="flex items-center gap-3">
             {data.freelancerLogo ? (
-              <img src={data.freelancerLogo} alt="Logo" className="h-8 w-auto object-contain" />
+              <img
+                src={data.freelancerLogo}
+                alt={data.freelancerBusiness ?? data.freelancerName}
+                width={120}
+                height={32}
+                loading="eager"
+                decoding="async"
+                className="h-8 w-auto object-contain"
+              />
             ) : null}
             <div>
               <p className="font-semibold text-gray-900 text-sm">
@@ -63,10 +72,10 @@ export default async function ClientPortalPage({ params }: { params: { token: st
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-8 space-y-6">
-        {/* Summary cards */}
+        {/* Summary cards — outstanding balance gets gentle amber urgency */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-          <div className="rounded-lg border bg-white p-4 shadow-sm">
-            <p className="text-xs text-gray-500 mb-1">Outstanding</p>
+          <div className={`rounded-lg border p-4 shadow-sm ${outstanding > 0 ? 'border-amber-200 bg-amber-50' : 'bg-white'}`}>
+            <p className={`text-xs mb-1 ${outstanding > 0 ? 'text-amber-700' : 'text-gray-500'}`}>Outstanding balance</p>
             <p className="text-xl font-bold text-amber-600">{formatCurrency(outstanding, currency)}</p>
           </div>
           <div className="rounded-lg border bg-white p-4 shadow-sm">
@@ -86,7 +95,10 @@ export default async function ClientPortalPage({ params }: { params: { token: st
         {data.invoices.length > 0 && (
           <div className="rounded-lg border bg-white shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b">
-              <h2 className="font-semibold text-gray-900">Invoices</h2>
+              <h2 className="flex items-center gap-2 font-semibold text-gray-900">
+                <Receipt size={16} className="text-gray-400" />
+                Invoices
+              </h2>
             </div>
             <div className="divide-y">
               {data.invoices.map((inv) => (
@@ -128,7 +140,10 @@ export default async function ClientPortalPage({ params }: { params: { token: st
         {data.contracts.length > 0 && (
           <div className="rounded-lg border bg-white shadow-sm overflow-hidden">
             <div className="px-5 py-4 border-b">
-              <h2 className="font-semibold text-gray-900">Contracts</h2>
+              <h2 className="flex items-center gap-2 font-semibold text-gray-900">
+                <FileText size={16} className="text-gray-400" />
+                Contracts
+              </h2>
             </div>
             <div className="divide-y">
               {data.contracts.map((c) => (
@@ -154,7 +169,7 @@ export default async function ClientPortalPage({ params }: { params: { token: st
         {data.invoices.length === 0 && data.contracts.length === 0 && (
           <div className="rounded-lg border bg-white shadow-sm p-12 text-center">
             <p className="font-medium text-gray-900">No documents yet</p>
-            <p className="text-sm text-gray-500 mt-1">Your invoices and contracts will appear here.</p>
+            <p className="text-sm text-gray-500 mt-1">Your documents will appear here once they&apos;re shared with you.</p>
           </div>
         )}
 

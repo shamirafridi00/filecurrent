@@ -8,6 +8,7 @@ import { getReminderLogs } from '@/lib/db/supabase'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { EmptyState } from '@/components/ui'
+import { HelpHint } from '@/components/ui/HelpHint'
 
 export default async function RemindersPage() {
   const supabase = createClient()
@@ -23,10 +24,19 @@ export default async function RemindersPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight text-foreground flex items-center gap-2">
             <Bell size={24} weight="duotone" className="text-primary" />
-            Payment Reminders
+            Reminder Logs
+            <HelpHint
+              title="Payment Reminders"
+              example="An invoice due June 20 gets a friendly nudge June 17, a due-date notice June 20, and escalating follow-ups until paid."
+            >
+              FileCurrent sends automatic emails to clients with unpaid
+              invoices. Unlike other tools, there is no daily sending cap —
+              reminders run on your configured schedule until the invoice is
+              paid.
+            </HelpHint>
           </h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            Automated reminders sent to clients for unpaid invoices
+            All automated reminder emails sent from your account
           </p>
         </div>
         <Button asChild variant="outline">
@@ -80,6 +90,12 @@ export default async function RemindersPage() {
             icon={<Bell size={40} weight="duotone" className="text-muted-foreground" />}
             title="No reminders sent yet"
             description="Reminders will appear here once sent automatically or manually"
+            action={
+              <Button asChild variant="outline">
+                <Link href="/reminders/settings">Configure schedule</Link>
+              </Button>
+            }
+            tip="Tip: reminders only go out for invoices with a due date and a client email on file."
           />
         ) : (
           <div className="overflow-x-auto">

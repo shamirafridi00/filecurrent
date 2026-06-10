@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { PageHeader, EmptyState, GlobalBadge } from '@/components/ui'
+import { HelpHint } from '@/components/ui/HelpHint'
 import { truncate, formatDate } from '@/lib/utils'
 import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
@@ -27,6 +28,15 @@ export default async function ContractTemplatesPage() {
         title="Contract Templates"
         subtitle="Browse profession-matched templates or create your own"
         icon={<Rows size={24} />}
+        help={
+          <HelpHint
+            title="Contract Templates"
+            example="A web developer sees the Web Development Agreement first — placeholders like {{client_name}} fill in automatically."
+          >
+            Reusable contract templates pre-filled for your profession. You can
+            create custom templates or modify the system ones.
+          </HelpHint>
+        }
         action={
           <Button asChild>
             <Link href="/contracts/templates/new">

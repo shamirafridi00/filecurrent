@@ -19,6 +19,7 @@ import {
   Timer,
 } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
+import { NAV_GROUPS, TOOL_NAV, type NavEntry } from './nav-items'
 
 const ICON_MAP = {
   Activity: ChartLine,
@@ -34,30 +35,6 @@ const ICON_MAP = {
   Upload: UploadSimple,
   Users,
 }
-
-type NavEntry =
-  | { label: string; href: string; icon: keyof typeof ICON_MAP; sub?: never }
-  | { label: string; href: string; icon?: never; sub: true }
-
-const MAIN_NAV: NavEntry[] = [
-  { label: 'Dashboard', href: '/dashboard', icon: 'LayoutDashboard' },
-  { label: 'Clients', href: '/clients', icon: 'Users' },
-  { label: 'Proposals', href: '/proposals', icon: 'Note' },
-  { label: 'Contracts', href: '/contracts', icon: 'FileText' },
-  { label: 'Templates', href: '/contracts/templates', sub: true },
-  { label: 'Invoices', href: '/invoices', icon: 'Receipt' },
-  { label: 'Templates', href: '/invoices/templates', sub: true },
-  { label: 'Client Activity', href: '/client-activity', icon: 'Activity' },
-  { label: 'Payment Reminders', href: '/reminders', icon: 'Bell' },
-  { label: 'Expenses', href: '/expenses', icon: 'CurrencyDollar' },
-  { label: 'Time Tracking', href: '/time-tracking', icon: 'Timer' },
-  { label: 'Intake Forms', href: '/intake-forms', icon: 'ClipboardText' },
-]
-
-const TOOL_NAV: NavEntry[] = [
-  { label: 'Export Data', href: '/exports', icon: 'Download' },
-  { label: 'Import Clients', href: '/imports', icon: 'Upload' },
-]
 
 function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
   if (entry.sub) {
@@ -99,16 +76,41 @@ function NavItem({ entry, active }: { entry: NavEntry; active: boolean }) {
   )
 }
 
-function NavGroup({ items }: { items: NavEntry[] }) {
+function useIsActive() {
   const pathname = usePathname()
-  const isActive = (href: string) => {
+  return (href: string) => {
     if (href === '/dashboard') return pathname === '/dashboard'
     return pathname === href || pathname.startsWith(href + '/')
   }
+}
 
+function GroupedNav() {
+  const isActive = useIsActive()
+  return (
+    <nav>
+      {NAV_GROUPS.map((group, gi) => (
+        <div key={group.label ?? gi}>
+          {group.label && (
+            <p className="px-3 mb-1 mt-3 text-[10px] font-semibold uppercase tracking-wider text-[#4F6B8A]">
+              {group.label}
+            </p>
+          )}
+          <div className="space-y-0.5">
+            {group.items.map((item) => (
+              <NavItem key={item.href} entry={item} active={isActive(item.href)} />
+            ))}
+          </div>
+        </div>
+      ))}
+    </nav>
+  )
+}
+
+function ToolNav() {
+  const isActive = useIsActive()
   return (
     <nav className="space-y-0.5">
-      {items.map((item) => (
+      {TOOL_NAV.map((item) => (
         <NavItem key={item.href} entry={item} active={isActive(item.href)} />
       ))}
     </nav>
@@ -144,9 +146,9 @@ export function Sidebar() {
     <aside className="fixed bottom-0 left-0 top-14 z-40 hidden md:flex w-56 flex-col border-r border-[#0D2D4A] bg-[#0A2540]">
       <div className="sidebar-scroll flex-1 overflow-y-auto p-3 pt-4">
         <div className="space-y-4">
-          <NavGroup items={MAIN_NAV} />
+          <GroupedNav />
           <div className="border-t border-[#0D2D4A] pt-3">
-            <NavGroup items={TOOL_NAV} />
+            <ToolNav />
           </div>
         </div>
       </div>

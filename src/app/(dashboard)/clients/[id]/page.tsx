@@ -6,6 +6,7 @@ import { Users, Plus, FileText, Receipt, PencilSimple, Envelope, Buildings, Phon
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/components/ui'
+import { HelpHint } from '@/components/ui/HelpHint'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken, getIntakeForms } from '@/lib/db/supabase'
@@ -170,8 +171,16 @@ export default async function ClientDetailPage({
             {portalToken && (
               <Card>
                 <CardContent className="p-4">
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
+                  <p className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">
                     Client Portal
+                    <HelpHint
+                      title="Client Portal"
+                      example="Send the portal link once — your client bookmarks it and checks invoice status without emailing you."
+                    >
+                      A unique link for each client showing all their invoices,
+                      contracts, and outstanding balance. Share it once — they
+                      can bookmark it.
+                    </HelpHint>
                   </p>
                   <ClientPortalLink clientId={params.id} portalToken={portalToken} clientEmail={client.email ?? null} />
                 </CardContent>

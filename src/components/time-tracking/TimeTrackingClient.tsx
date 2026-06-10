@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Timer, Plus, PencilSimple, Trash, Clock } from '@phosphor-icons/react'
 import { StatCard, PageHeader, EmptyState, ConfirmDialog } from '@/components/ui'
+import { HelpHint } from '@/components/ui/HelpHint'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -419,7 +420,17 @@ export function TimeTrackingClient({ entries: initialEntries, summary: initialSu
     <div>
       <PageHeader
         title="Time Tracking"
-        subtitle="Log billable hours and add them directly to invoices"
+        subtitle="Log billable hours and pull them into invoices"
+        help={
+          <HelpHint
+            title="Time Tracking"
+            example="Log 3.5 hours at $80/hr for Acme Co — when invoicing Acme, 'Add from Time Log' turns it into a $280 line item."
+          >
+            Log hours worked on a project. When creating an invoice, use
+            &ldquo;Add from Time Log&rdquo; to automatically convert unbilled
+            hours into invoice line items.
+          </HelpHint>
+        }
         icon={<Timer size={24} weight="duotone" className="text-primary" />}
         action={
           !showForm ? (

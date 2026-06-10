@@ -130,6 +130,7 @@ interface PageHeaderProps {
   backHref?: string
   backLabel?: string
   icon?: React.ReactNode
+  help?: React.ReactNode
 }
 
 export function PageHeader({
@@ -139,6 +140,7 @@ export function PageHeader({
   backHref,
   backLabel,
   icon,
+  help,
 }: PageHeaderProps) {
   return (
     <div className="mb-6">
@@ -156,10 +158,11 @@ export function PageHeader({
           <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground">
             {icon}
             {title}
+            {help}
           </h1>
           {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
         </div>
-        {action && <div className="shrink-0">{action}</div>}
+        {action && <div className="flex shrink-0 flex-wrap items-center gap-2">{action}</div>}
       </div>
     </div>
   )
@@ -207,15 +210,17 @@ interface EmptyStateProps {
   title: string
   description?: string
   action?: React.ReactNode
+  tip?: string
 }
 
-export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action, tip }: EmptyStateProps) {
   return (
     <div className="flex flex-col items-center justify-center py-12 text-center">
       {icon && <div className="mb-4 opacity-40">{icon}</div>}
       <p className="font-medium text-foreground">{title}</p>
       {description && <p className="mt-1 text-sm text-muted-foreground">{description}</p>}
       {action && <div className="mt-4">{action}</div>}
+      {tip && <p className="mt-3 max-w-sm text-xs text-muted-foreground/80">{tip}</p>}
     </div>
   )
 }
@@ -230,14 +235,19 @@ interface StatCardProps {
   accentPosition?: 'left' | 'top'
 }
 
-export function StatCard({ label, value, subValue, valueColor, accent, accentPosition = 'left' }: StatCardProps) {
+export function StatCard({ label, value, subValue, icon, valueColor, accent, accentPosition = 'left' }: StatCardProps) {
   return (
     <ShadcnCard className={cn(
       'overflow-hidden shadow-sm',
       accent && accentPosition === 'left' && `border-l-4 ${accent}`,
       accent && accentPosition === 'top' && `border-t-2 ${accent}`,
     )}>
-      <CardContent className="p-5">
+      <CardContent className="relative p-5">
+        {icon && (
+          <span className="absolute right-4 top-4 text-muted-foreground/50" aria-hidden>
+            {icon}
+          </span>
+        )}
         <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
         </p>

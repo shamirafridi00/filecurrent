@@ -31,7 +31,7 @@ const CATEGORY_COLORS: Record<string, string> = {
   office: 'bg-teal-50 text-teal-700 border-teal-200',
   professional_services: 'bg-cyan-50 text-cyan-700 border-cyan-200',
   education: 'bg-green-50 text-green-700 border-green-200',
-  utilities: 'bg-slate-50 text-slate-600 border-slate-200',
+  utilities: 'bg-muted/60 text-muted-foreground border-border',
   other: 'bg-muted text-muted-foreground border-border',
 }
 
@@ -360,7 +360,7 @@ export function ExpensesClient({ expenses: initialExpenses, summary: initialSumm
     <div>
       <PageHeader
         title="Expenses"
-        subtitle="Track your business expenses for tax time"
+        subtitle="Track business expenses and calculate net profit"
         icon={<CurrencyDollar size={24} weight="duotone" className="text-primary" />}
         action={
           !showForm ? (

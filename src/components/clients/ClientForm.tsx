@@ -55,7 +55,7 @@ export function ClientForm({ mode, initialData = {}, clientId }: ClientFormProps
         backLabel="Back to Clients"
       />
 
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div className="bg-card rounded-lg border border-border shadow-sm p-6 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <Input
             label="Client Name"

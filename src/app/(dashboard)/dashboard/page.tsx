@@ -9,6 +9,11 @@ import {
   Bell,
   CalendarBlank,
   Receipt,
+  CheckCircle,
+  Warning,
+  CurrencyDollar,
+  Users,
+  Timer,
 } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -17,6 +22,7 @@ import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getDashboardStats, getExpenseSummary, getTimeTrackingSummary } from '@/lib/db/supabase'
 import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
+import { GettingStartedCard } from '@/components/onboarding/GettingStartedCard'
 import type { InvoiceStatus, ContractStatus } from '@/types'
 
 export default async function DashboardPage() {
@@ -48,11 +54,19 @@ export default async function DashboardPage() {
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
         <div className="mb-5">
-          <h1 className="text-2xl font-bold text-foreground">{greeting}, {displayName}</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">{greeting}, {displayName}</h1>
           <p className="mt-0.5 text-sm text-muted-foreground">
-            Here&apos;s what&apos;s happening with your business today.
+            Your business at a glance
           </p>
         </div>
+
+        {stats.recentInvoices.length === 0 && stats.recentContracts.length === 0 && (
+          <GettingStartedCard
+            hasClients={stats.activeClients > 0}
+            hasContracts={stats.recentContracts.length > 0}
+            hasInvoices={stats.recentInvoices.length > 0}
+          />
+        )}
 
         {isUrgent && (
           <div className="flex items-center justify-between rounded-r-xl border-l-4 border-l-[#E6A817] bg-[#FFF9ED] p-4">
@@ -73,12 +87,14 @@ export default async function DashboardPage() {
             label="Total Invoiced"
             value={formatCurrency(stats.totalInvoiced)}
             subValue={`${stats.pendingInvoices} pending`}
+            icon={<Receipt size={18} />}
             accent="border-l-[#635BFF]"
           />
           <StatCard
             label="Total Paid"
             value={formatCurrency(stats.totalPaid)}
             subValue={`${formatCurrency(stats.paidLast30Days)} last 30 days`}
+            icon={<CheckCircle size={18} />}
             valueColor="text-[#1DB954]"
             accent="border-l-[#1DB954]"
           />
@@ -86,6 +102,7 @@ export default async function DashboardPage() {
             label="Outstanding"
             value={formatCurrency(stats.outstanding)}
             subValue={`${stats.overdueCount} overdue`}
+            icon={<Warning size={18} />}
             valueColor="text-[#E6A817]"
             accent="border-l-[#E6A817]"
           />
@@ -93,6 +110,7 @@ export default async function DashboardPage() {
             label="Total Expenses (YTD)"
             value={formatCurrency(expenseSummary.totalExpenses)}
             subValue={`Net: ${formatCurrency(netProfit)}`}
+            icon={<CurrencyDollar size={18} />}
             valueColor="text-destructive"
             accent="border-l-destructive"
           />
@@ -102,18 +120,21 @@ export default async function DashboardPage() {
           <StatCard
             label="Active Clients"
             value={String(stats.activeClients)}
+            icon={<Users size={16} />}
             accent="border-t-[#635BFF]"
             accentPosition="top"
           />
           <StatCard
             label="Signed Contracts"
             value={String(stats.signedContracts)}
+            icon={<FileText size={16} />}
             accent="border-t-[#1DB954]"
             accentPosition="top"
           />
           <StatCard
             label="Pending"
             value={String(stats.pendingInvoices)}
+            icon={<Bell size={16} />}
             accent="border-t-[#E6A817]"
             accentPosition="top"
           />
@@ -121,18 +142,14 @@ export default async function DashboardPage() {
             label="Unbilled Hours"
             value={`${timeSummary.billableHours.toFixed(1)} hrs`}
             subValue={`${formatCurrency(timeSummary.unbilledAmount)} unbilled`}
+            icon={<Timer size={16} />}
             accent="border-t-primary"
             accentPosition="top"
           />
         </div>
 
+        {/* One primary action per page — invoices are the money path */}
         <div className="flex flex-wrap items-center gap-2">
-          <Button asChild>
-            <Link href="/contracts/new">
-              <Plus className="mr-1.5 h-4 w-4" />
-              New Contract
-            </Link>
-          </Button>
           <Button asChild>
             <Link href="/invoices/new">
               <Plus className="mr-1.5 h-4 w-4" />
@@ -140,6 +157,12 @@ export default async function DashboardPage() {
             </Link>
           </Button>
           <Button asChild variant="outline">
+            <Link href="/contracts/new">
+              <Plus className="mr-1.5 h-4 w-4" />
+              New Contract
+            </Link>
+          </Button>
+          <Button asChild variant="ghost">
             <Link href="/clients/new">
               <Plus className="mr-1.5 h-4 w-4" />
               Add Client

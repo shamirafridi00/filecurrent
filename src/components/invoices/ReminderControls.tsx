@@ -12,9 +12,11 @@ interface Props {
   invoiceId: string
   isPaid: boolean
   remindersPaused: boolean
+  /** Invoice status — drives how prominent the Send Reminder button is. */
+  invoiceStatus?: string
 }
 
-export function ReminderControls({ invoiceId, isPaid, remindersPaused }: Props) {
+export function ReminderControls({ invoiceId, isPaid, remindersPaused, invoiceStatus }: Props) {
   const router = useRouter()
   const [sending, setSending] = useState(false)
   const [paused, setPaused] = useState(remindersPaused)
@@ -26,7 +28,7 @@ export function ReminderControls({ invoiceId, isPaid, remindersPaused }: Props) 
       const res = await fetch(`/api/invoices/${invoiceId}/remind`, { method: 'POST' })
       const json = await res.json()
       if (!res.ok) throw new Error(json.error ?? 'Failed to send')
-      toast.success('Reminder sent')
+      toast.success(json.sentTo ? `Reminder sent to ${json.sentTo}` : 'Reminder sent to client')
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to send reminder')
     } finally {
@@ -53,10 +55,16 @@ export function ReminderControls({ invoiceId, isPaid, remindersPaused }: Props) 
     }
   }
 
+  // Overdue invoices make "Send Reminder" the urgent primary action.
+  const sendVariant =
+    invoiceStatus === 'overdue' ? 'destructive'
+    : invoiceStatus === 'sent' || invoiceStatus === 'partial' ? 'default'
+    : 'outline'
+
   return (
     <div className="space-y-3">
       <Button
-        variant="outline"
+        variant={sendVariant}
         size="sm"
         onClick={handleSend}
         disabled={isPaid || sending}

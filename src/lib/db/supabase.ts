@@ -1252,7 +1252,7 @@ export interface DashboardStats {
 export async function getDashboardStats(userId: string): Promise<DashboardStats> {
   const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString()
 
-  const [invoicesRes, clientsRes, contractsRes, recentInvRes, recentConRes, auditRes, reminderRes] =
+  const [invoicesRes, clientsRes, contractsRes, recentInvRes, recentConRes, auditRes, reminderRes, paidInvRes] =
     await Promise.all([
       adminClient.from('invoices').select('total, status, paid_amount').eq('user_id', userId),
       adminClient.from('clients').select('id', { count: 'exact', head: true }).eq('user_id', userId),
@@ -1281,6 +1281,12 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
         .eq('user_id', userId)
         .order('sent_at', { ascending: false })
         .limit(5),
+      adminClient
+        .from('invoices')
+        .select('total')
+        .eq('user_id', userId)
+        .eq('status', 'paid')
+        .gte('updated_at', thirtyDaysAgo),
     ])
 
   const invoices = invoicesRes.data ?? []
@@ -1291,12 +1297,6 @@ export async function getDashboardStats(userId: string): Promise<DashboardStats>
   const pendingInvoices = invoices.filter(i => ['sent', 'partial'].includes(i.status)).length
   const draftInvoices = invoices.filter(i => i.status === 'draft').length
 
-  const paidInvRes = await adminClient
-    .from('invoices')
-    .select('total')
-    .eq('user_id', userId)
-    .eq('status', 'paid')
-    .gte('updated_at', thirtyDaysAgo)
   const paidLast30Days = (paidInvRes.data ?? []).reduce((s, i) => s + (i.total ?? 0), 0)
 
   const recentInvoices = (recentInvRes.data ?? []).map((r) => ({

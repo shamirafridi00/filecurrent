@@ -1,6 +1,23 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
+const SECURITY_HEADERS: Record<string, string> = {
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-XSS-Protection': '1; mode=block',
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
+  'Content-Security-Policy':
+    "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://va.vercel-scripts.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co https://va.vercel-scripts.com; frame-ancestors 'none';",
+}
+
+function withSecurityHeaders(response: NextResponse): NextResponse {
+  for (const [key, value] of Object.entries(SECURITY_HEADERS)) {
+    response.headers.set(key, value)
+  }
+  return response
+}
+
 export async function middleware(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
@@ -42,14 +59,14 @@ export async function middleware(request: NextRequest) {
     pathname === '/favicon.ico'
 
   if (!session && !isPublic) {
-    return NextResponse.redirect(new URL('/login', request.url))
+    return withSecurityHeaders(NextResponse.redirect(new URL('/login', request.url)))
   }
 
   if (session && (pathname === '/login' || pathname === '/signup')) {
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return withSecurityHeaders(NextResponse.redirect(new URL('/dashboard', request.url)))
   }
 
-  return supabaseResponse
+  return withSecurityHeaders(supabaseResponse)
 }
 
 export const config = {

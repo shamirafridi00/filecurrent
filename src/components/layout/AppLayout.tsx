@@ -23,7 +23,7 @@ export function AppLayout({ children, user, onLogout }: AppLayoutProps) {
       <Sidebar />
       <Topbar user={user} onLogout={onLogout} />
       <main className="ml-0 md:ml-56 pt-14 min-h-screen">
-        <div className="p-6">{children}</div>
+        <div className="p-4 sm:p-6">{children}</div>
       </main>
     </div>
   )

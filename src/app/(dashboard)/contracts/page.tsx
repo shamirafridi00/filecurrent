@@ -22,7 +22,7 @@ export default async function ContractsPage() {
     <div>
       <PageHeader
         title="Contracts"
-        subtitle="Manage your client contracts and agreements"
+        subtitle="Create and track client contracts"
         icon={<FileText size={24} />}
         action={
           <Button asChild>
@@ -49,6 +49,7 @@ export default async function ContractsPage() {
                   </Link>
                 </Button>
               }
+              tip="Tip: start by adding a client — then create a contract or invoice from their profile."
             />
           </CardContent>
         </Card>
@@ -72,8 +73,8 @@ export default async function ContractsPage() {
                       {c.clientName} · {formatDate(c.createdAt)}
                     </p>
                   </div>
-                  <div className="flex items-center gap-4 shrink-0">
-                    <span className="text-sm font-medium">{formatCurrency(c.amount, c.currency)}</span>
+                  <div className="flex items-center gap-2 sm:gap-4 shrink-0">
+                    <span className="hidden sm:inline text-sm font-medium">{formatCurrency(c.amount, c.currency)}</span>
                     <ContractBadge status={c.status as 'draft' | 'sent' | 'opened' | 'signed'} />
                     <Button asChild variant="ghost" size="sm">
                       <Link href={`/contracts/${c.id}`}>View →</Link>

@@ -46,7 +46,9 @@ export default async function ProposalDetailPage({ params }: { params: { id: str
                 <Link href={`/contracts/${proposal.contractId}`}>View Contract →</Link>
               </Button>
             ) : (
-              <Button asChild size="sm" variant={proposal.status === 'accepted' ? 'default' : 'outline'}>
+              // The accepted-state nudge card below carries the primary CTA,
+              // so the header copy of this action stays secondary.
+              <Button asChild size="sm" variant="outline">
                 <Link href={`/contracts/new?proposalId=${proposal.id}`}>Create Contract →</Link>
               </Button>
             )}
@@ -57,6 +59,39 @@ export default async function ProposalDetailPage({ params }: { params: { id: str
       <div className="grid grid-cols-1 xl:grid-cols-[1fr_280px] gap-5">
         {/* Main content */}
         <div className="space-y-5">
+          {/* Accepted → clear next step nudge */}
+          {proposal.status === 'accepted' && !proposal.contractId && (
+            <Card className="border-green-200 bg-green-50">
+              <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-semibold text-green-800">✓ Proposal Accepted</p>
+                  <p className="mt-0.5 text-sm text-green-700">
+                    Ready to move forward? Create a contract from this proposal —
+                    client details and scope are pre-filled automatically.
+                  </p>
+                </div>
+                <Button asChild className="shrink-0">
+                  <Link href={`/contracts/new?proposalId=${proposal.id}`}>Create Contract →</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+          {proposal.status === 'accepted' && proposal.contractId && (
+            <Card className="border-green-200 bg-green-50">
+              <CardContent className="flex flex-col gap-3 pt-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                  <p className="font-semibold text-green-800">✓ Proposal Accepted</p>
+                  <p className="mt-0.5 text-sm text-green-700">
+                    A contract has been created from this proposal.
+                  </p>
+                </div>
+                <Button asChild variant="outline" className="shrink-0 border-green-300 bg-white">
+                  <Link href={`/contracts/${proposal.contractId}`}>View Contract →</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Actions */}
           <Card>
             <CardContent className="pt-5">
@@ -236,7 +271,7 @@ export default async function ProposalDetailPage({ params }: { params: { id: str
               ) : (
                 <>
                   <p className="text-xs text-muted-foreground mb-2">No contract yet — create one from this proposal</p>
-                  <Button asChild size="sm" className="w-full">
+                  <Button asChild size="sm" variant="outline" className="w-full">
                     <Link href={`/contracts/new?proposalId=${proposal.id}`}>Create Contract →</Link>
                   </Button>
                 </>

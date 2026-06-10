@@ -61,10 +61,20 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
         backLabel="All Invoices"
         icon={<Receipt size={24} />}
         action={
+          // Paid invoices: PDF is the primary action. Unpaid: the primary
+          // action (Send Reminder / Record Payment) lives in the sidebar,
+          // so header actions stay secondary/tertiary.
           <div className="flex flex-wrap items-center gap-2">
             <InvoiceBadge status={invoice.status as InvoiceStatus} />
-            <DuplicateInvoiceButton invoiceId={invoice.id} />
-            <InvoicePdfButton invoiceId={invoice.id} isPro={profile.plan !== 'free'} />
+            <InvoicePdfButton
+              invoiceId={invoice.id}
+              isPro={profile.plan !== 'free'}
+              variant={invoice.status === 'paid' ? 'default' : 'outline'}
+            />
+            <DuplicateInvoiceButton
+              invoiceId={invoice.id}
+              variant={invoice.status === 'paid' ? 'outline' : 'ghost'}
+            />
             {invoice.shareToken && <InvoiceShareLink shareToken={invoice.shareToken} compact />}
           </div>
         }
@@ -136,6 +146,7 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
                 invoiceId={invoice.id}
                 isPaid={invoice.status === 'paid'}
                 remindersPaused={remindersPaused}
+                invoiceStatus={invoice.status}
               />
 
               <div>

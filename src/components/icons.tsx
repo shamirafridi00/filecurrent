@@ -52,6 +52,8 @@ export {
   ChartBar,
   // misc
   Copy,
+  CurrencyDollar,
+  Timer,
   Link as PhLink,
   MagnifyingGlass,
   Spinner,

@@ -232,8 +232,8 @@ export function InvoiceList({ invoices: initialInvoices }: Props) {
                   {inv.dueDate && ` · Due ${formatDate(inv.dueDate)}`}
                 </p>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
-                <span className="text-sm font-medium">{formatCurrency(inv.total, inv.currency)}</span>
+              <div className="flex items-center gap-2 sm:gap-3 shrink-0">
+                <span className="hidden sm:inline text-sm font-medium">{formatCurrency(inv.total, inv.currency)}</span>
                 <InvoiceBadge status={inv.status as InvoiceStatus} />
                 {inv.isRecurring && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-[10px] font-medium text-blue-600">

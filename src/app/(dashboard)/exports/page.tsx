@@ -92,10 +92,10 @@ async function exportExpenses() {
 }
 
 const EXPORT_ITEMS = [
-  { label: 'Clients', desc: 'All client contact info', fn: exportClients },
-  { label: 'Contracts', desc: 'Contract status and amounts', fn: exportContracts },
-  { label: 'Invoices', desc: 'Invoice details and payments', fn: exportInvoices },
-  { label: 'Expenses', desc: 'All expense records by category', fn: exportExpenses },
+  { label: 'Clients', desc: 'Names, emails, phone numbers, companies, addresses, and notes', fn: exportClients },
+  { label: 'Contracts', desc: 'Titles, clients, statuses, amounts, and start/end dates', fn: exportContracts },
+  { label: 'Invoices', desc: 'Invoice numbers, totals, paid amounts, balances, and due dates', fn: exportInvoices },
+  { label: 'Expenses', desc: 'Dates, descriptions, categories, and amounts — ready for your tax preparer', fn: exportExpenses },
 ]
 
 export default function ExportsPage() {
@@ -112,7 +112,7 @@ export default function ExportsPage() {
     <div>
       <PageHeader
         title="Export Data"
-        subtitle="Download your data as CSV"
+        subtitle="Download your data as CSV — opens in Excel, Google Sheets, or any accounting tool"
         icon={<DownloadSimple size={24} />}
       />
 

@@ -68,15 +68,20 @@ export async function POST(req: NextRequest) {
         style: 'currency', currency: createdInvoice.currency,
       }).format(n)
 
+      const dueDateLabel = createdInvoice.dueDate
+        ? new Date(createdInvoice.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : null
+
       sendEmail({
         to: createdInvoice.clientEmail,
-        subject: `Invoice ${createdInvoice.invoiceNumber} from ${profile.businessName || profile.fullName}`,
+        subject: `Invoice ${createdInvoice.invoiceNumber} from ${profile.businessName || profile.fullName} — ${fmt(createdInvoice.total)}${dueDateLabel ? ` due ${dueDateLabel}` : ''}`,
         html: invoiceSentEmail({
           clientName: createdInvoice.clientName,
-          freelancerName: profile.businessName || profile.fullName,
+          freelancerName: profile.fullName,
+          businessName: profile.businessName,
           invoiceNumber: createdInvoice.invoiceNumber,
           total: fmt(createdInvoice.total),
-          dueDate: createdInvoice.dueDate ?? null,
+          dueDate: dueDateLabel,
           items: createdInvoice.items.map((item) => ({
             description: item.description,
             quantity: item.quantity,
@@ -85,6 +90,7 @@ export async function POST(req: NextRequest) {
           })),
           notes: createdInvoice.notes,
           paymentTerms: createdInvoice.paymentTerms,
+          paymentInstructions: createdInvoice.paymentInstructions,
           invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${createdInvoice.shareToken}`,
           hasBrandingFooter: profile.plan === 'free',
         }),

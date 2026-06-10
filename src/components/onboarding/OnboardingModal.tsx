@@ -8,10 +8,13 @@ import {
   Camera,
   Code,
   DotsThree,
+  FileText,
   Palette,
   PenNib,
+  Receipt,
 } from '@phosphor-icons/react'
 import type { Profession } from '@/types'
+import { TRIAL_DAYS } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
 import {
   Dialog,
@@ -53,6 +56,25 @@ const professions: Array<{
   { value: 'other', label: 'Other', icon: DotsThree },
 ]
 
+const TOTAL_STEPS = 3
+
+function StepDots({ step }: { step: number }) {
+  return (
+    <div className="flex items-center justify-center gap-1.5 pt-1" aria-label={`Step ${step} of ${TOTAL_STEPS}`}>
+      {Array.from({ length: TOTAL_STEPS }, (_, i) => (
+        <span
+          key={i}
+          className={cn(
+            'h-1.5 rounded-full transition-all duration-200',
+            i + 1 === step ? 'w-6 bg-primary' : 'w-1.5 bg-muted-foreground/30',
+            i + 1 < step && 'bg-primary/50'
+          )}
+        />
+      ))}
+    </div>
+  )
+}
+
 export function OnboardingModal({
   firstName,
   fullName,
@@ -67,27 +89,40 @@ export function OnboardingModal({
   const [businessNameValue, setBusinessNameValue] = useState(businessName || '')
   const [fullNameValue, setFullNameValue] = useState(fullName)
   const [phoneValue, setPhoneValue] = useState(phone || '')
+  const [firstDoc, setFirstDoc] = useState<'contract' | 'invoice'>('contract')
   const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
 
-  const finish = () => {
-    if (!profession) return
-
+  const complete = (destination?: string) => {
     startTransition(async () => {
       setError('')
       try {
         await onComplete({
-          profession,
-          businessName: businessNameValue,
-          fullName: fullNameValue,
+          profession: profession ?? 'other',
+          businessName: businessNameValue.trim() || fullNameValue.trim() || fullName,
+          fullName: fullNameValue.trim() || fullName,
           phone: phoneValue,
         })
+        if (destination) {
+          router.push(destination)
+        }
         router.refresh()
       } catch {
-        setError('Could not save onboarding. Please try again.')
+        setError('Could not save your setup. Please try again.')
       }
     })
   }
+
+  const skipLink = (
+    <button
+      type="button"
+      disabled={isPending}
+      onClick={() => complete()}
+      className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+    >
+      Skip for now →
+    </button>
+  )
 
   return (
     <Dialog open>
@@ -97,6 +132,8 @@ export function OnboardingModal({
         onEscapeKeyDown={(event) => event.preventDefault()}
         onInteractOutside={(event) => event.preventDefault()}
       >
+        <StepDots step={step} />
+
         {step === 1 && (
           <>
             <DialogHeader>
@@ -128,7 +165,8 @@ export function OnboardingModal({
               })}
             </div>
 
-            <DialogFooter>
+            <DialogFooter className="items-center gap-3 sm:justify-between">
+              {skipLink}
               <Button disabled={!profession} onClick={() => setStep(2)}>
                 Next
               </Button>
@@ -176,16 +214,19 @@ export function OnboardingModal({
               </div>
             </div>
 
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setStep(1)}>
-                Back
-              </Button>
-              <Button
-                disabled={!businessNameValue.trim() || !fullNameValue.trim()}
-                onClick={() => setStep(3)}
-              >
-                Next
-              </Button>
+            <DialogFooter className="items-center gap-3 sm:justify-between">
+              {skipLink}
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setStep(1)}>
+                  Back
+                </Button>
+                <Button
+                  disabled={!businessNameValue.trim() || !fullNameValue.trim()}
+                  onClick={() => setStep(3)}
+                >
+                  Next
+                </Button>
+              </div>
             </DialogFooter>
           </>
         )}
@@ -193,31 +234,63 @@ export function OnboardingModal({
         {step === 3 && (
           <>
             <DialogHeader>
-              <DialogTitle>You&apos;re all set!</DialogTitle>
+              <DialogTitle>Your first document</DialogTitle>
               <DialogDescription id="forced-modal-description">
-                You have 5 days of full access — no credit card required.
+                Which would you like to start with? Your {TRIAL_DAYS}-day free
+                trial includes everything — no credit card required.
               </DialogDescription>
             </DialogHeader>
 
-            <div className="rounded-xl border border-[#C7C4FF] bg-[#F0EFFF] p-5 space-y-2">
-              <p className="font-semibold text-[#0A2540]">Your 5-day free trial includes:</p>
-              <ul className="space-y-1.5 text-sm text-[#5145E5]">
-                <li>✓ Unlimited invoices &amp; contracts</li>
-                <li>✓ E-signatures</li>
-                <li>✓ Automated payment reminders</li>
-                <li>✓ All invoice &amp; contract templates</li>
-              </ul>
+            <div className="grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={() => setFirstDoc('contract')}
+                className={cn(
+                  'flex flex-col items-start gap-2 rounded-lg border bg-card p-5 text-left transition hover:bg-accent',
+                  firstDoc === 'contract' && 'border-primary bg-accent'
+                )}
+              >
+                <FileText className="h-6 w-6 text-primary" />
+                <span className="font-semibold text-foreground">A Contract</span>
+                <span className="text-sm text-muted-foreground">
+                  Protect the engagement before work starts. Client signs online.
+                </span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setFirstDoc('invoice')}
+                className={cn(
+                  'flex flex-col items-start gap-2 rounded-lg border bg-card p-5 text-left transition hover:bg-accent',
+                  firstDoc === 'invoice' && 'border-primary bg-accent'
+                )}
+              >
+                <Receipt className="h-6 w-6 text-primary" />
+                <span className="font-semibold text-foreground">An Invoice</span>
+                <span className="text-sm text-muted-foreground">
+                  Bill for finished work. Reminders chase payment automatically.
+                </span>
+              </button>
             </div>
 
             {error && <p className="text-sm text-destructive">{error}</p>}
 
-            <DialogFooter>
-              <Button variant="outline" disabled={isPending} onClick={() => setStep(2)}>
-                Back
-              </Button>
-              <Button disabled={isPending} onClick={finish}>
-                {isPending ? 'Setting up…' : 'Start My Trial →'}
-              </Button>
+            <DialogFooter className="items-center gap-3 sm:justify-between">
+              {skipLink}
+              <div className="flex gap-2">
+                <Button variant="outline" disabled={isPending} onClick={() => setStep(2)}>
+                  Back
+                </Button>
+                <Button
+                  disabled={isPending}
+                  onClick={() => complete(firstDoc === 'contract' ? '/contracts/new' : '/invoices/new')}
+                >
+                  {isPending
+                    ? 'Setting up…'
+                    : firstDoc === 'contract'
+                      ? 'Create My First Contract →'
+                      : 'Create My First Invoice →'}
+                </Button>
+              </div>
             </DialogFooter>
           </>
         )}
@@ -225,4 +298,3 @@ export function OnboardingModal({
     </Dialog>
   )
 }
-

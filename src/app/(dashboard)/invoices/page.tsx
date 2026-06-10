@@ -25,7 +25,7 @@ export default async function InvoicesPage() {
     <div>
       <PageHeader
         title="Invoices"
-        subtitle="Manage and track all your invoices"
+        subtitle="Send invoices and track payments"
         icon={<Receipt size={24} />}
         action={
           <Button asChild>
@@ -52,6 +52,7 @@ export default async function InvoicesPage() {
                   </Link>
                 </Button>
               }
+              tip="Tip: invoices created from a signed contract pre-fill the client and amount automatically."
             />
           </CardContent>
         </Card>

@@ -71,6 +71,13 @@ export default async function ContractDetailPage({ params }: { params: { id: str
                 </a>
               </Button>
             )}
+            {contract.status === 'signed' && (
+              <Button asChild size="sm" variant="outline">
+                <Link href={`/invoices/new?contractId=${contract.id}&clientId=${contract.clientId}`}>
+                  Create Invoice →
+                </Link>
+              </Button>
+            )}
             {/* Polls every 10s and reloads the page when contract becomes signed */}
             {contract.status !== 'signed' && (
               <ContractStatusPoller contractId={contract.id} currentStatus={contract.status} />
@@ -80,10 +87,18 @@ export default async function ContractDetailPage({ params }: { params: { id: str
       />
 
       {/* Document header — mirrors the signing page */}
-      <div className="mb-4 flex items-center justify-between rounded-xl border bg-card px-6 py-4 shadow-sm">
+      <div className="mb-4 flex items-center justify-between rounded-lg border bg-card px-6 py-4 shadow-sm">
         <div className="flex items-center gap-3">
           {profile.businessLogo ? (
-            <img src={profile.businessLogo} alt="Logo" className="h-10 w-auto max-w-[120px] object-contain" />
+            <img
+              src={profile.businessLogo}
+              alt={profile.businessName || profile.fullName}
+              width={120}
+              height={40}
+              loading="lazy"
+              decoding="async"
+              className="h-10 w-auto max-w-[120px] object-contain"
+            />
           ) : null}
           <div>
             <p className="font-semibold text-foreground">{profile.businessName || profile.fullName}</p>

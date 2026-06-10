@@ -108,22 +108,22 @@ export function InvoiceTemplateFormPage({ mode, templateId, initial }: Props) {
                       key={value}
                       type="button"
                       onClick={() => setTheme(value)}
-                      className={`relative text-left rounded-xl border-2 p-3 transition-all w-full ${
+                      className={`relative text-left rounded-lg border-2 p-3 transition-all w-full ${
                         theme === value
-                          ? 'border-[#635BFF] bg-[#F0EFFF] shadow-sm'
-                          : 'border-slate-200 hover:border-slate-300 bg-white'
+                          ? 'border-primary bg-accent shadow-sm'
+                          : 'border-border hover:border-muted-foreground/40 bg-card'
                       }`}
                     >
                       {theme === value && (
-                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-[#635BFF] flex items-center justify-center">
+                        <div className="absolute top-2 right-2 w-5 h-5 rounded-full bg-primary flex items-center justify-center">
                           <span className="text-white text-[9px] font-bold">✓</span>
                         </div>
                       )}
-                      <div className="rounded-lg overflow-hidden border border-slate-100 mb-2.5 shadow-sm">
+                      <div className="rounded-lg overflow-hidden border border-border/60 mb-2.5 shadow-sm">
                         <Preview primaryColor={primaryColor} />
                       </div>
-                      <p className="font-semibold text-sm text-slate-800">{label}</p>
-                      <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                      <p className="font-semibold text-sm text-foreground">{label}</p>
+                      <p className="text-xs text-muted-foreground mt-0.5">{desc}</p>
                     </button>
                   ))}
                 </div>

@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { HelpHint } from '@/components/ui/HelpHint'
 import { toast } from 'sonner'
 
 type Interval = 'weekly' | 'biweekly' | 'monthly' | 'quarterly'
@@ -64,6 +65,14 @@ export function RecurringSettings({ invoiceId, isRecurring, recurrenceInterval, 
         <CardTitle className="text-base flex items-center gap-2">
           <ArrowsClockwise className="h-4 w-4" />
           Recurring
+          <HelpHint
+            title="Recurring Invoices"
+            example="A $500/month retainer set to Monthly creates a fresh draft invoice on the 1st — review and send in one click."
+          >
+            For retainer clients, set an invoice to repeat automatically on a
+            weekly, monthly, or custom schedule. FileCurrent creates draft
+            copies on the due date.
+          </HelpHint>
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">

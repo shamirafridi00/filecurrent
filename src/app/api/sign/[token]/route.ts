@@ -62,7 +62,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     console.log('[sign] 4 — fetching freelancer profile for contractId:', session.contractId)
     const { data: contractRow } = await adminClient
       .from('contracts')
-      .select('user_id')
+      .select('user_id, client_id')
       .eq('id', session.contractId)
       .single()
 
@@ -119,12 +119,14 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
       try {
         const result = await sendEmail({
           to: freelancerEmail,
-          subject: `✅ ${signerName.trim()} signed ${session.contractTitle}`,
+          subject: `✓ ${signerName.trim()} signed "${session.contractTitle}"`,
           html: contractSignedEmail({
             signerName: signerName.trim(),
             contractTitle: session.contractTitle,
             signedAt,
+            signerIp: ip,
             dashboardUrl: freelancerDashUrl,
+            createInvoiceUrl: `${appUrl}/invoices/new?contractId=${session.contractId}${contractRow?.client_id ? `&clientId=${contractRow.client_id}` : ''}`,
             toFreelancer: true,
           }),
         })

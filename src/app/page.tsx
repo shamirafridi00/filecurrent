@@ -27,7 +27,14 @@ export const metadata: Metadata = {
     description: 'Cheaper than HoneyBook. Simpler than Bonsai. $9/month.',
   },
   alternates: { canonical: 'https://filecurrent.com' },
-  icons: { icon: '/favicon.svg', shortcut: '/favicon.svg', apple: '/favicon.svg' },
+  icons: {
+    icon: [
+      { url: '/favicon.svg?v=3', type: 'image/svg+xml' },
+      { url: '/favicon.ico?v=3', sizes: '16x16 32x32 48x48' },
+    ],
+    shortcut: '/favicon.ico?v=3',
+    apple: '/apple-touch-icon.png?v=3',
+  },
 }
 
 export default function LandingPage() {

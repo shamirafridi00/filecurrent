@@ -67,7 +67,7 @@ export function ContractTemplateForm({ mode, initialData = {}, templateId }: Con
       <div className="max-w-4xl space-y-5">
         {/* Template Info */}
         <Card>
-          <h2 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <h2 className="font-semibold text-foreground mb-4 flex items-center gap-2">
             ℹ Template Information
           </h2>
           <div className="space-y-4">
@@ -94,9 +94,9 @@ export function ContractTemplateForm({ mode, initialData = {}, templateId }: Con
                 }
                 className="w-4 h-4 rounded accent-indigo-600"
               />
-              <span className="text-sm text-slate-700">
+              <span className="text-sm text-foreground">
                 Set as default template{' '}
-                <span className="text-slate-400">(will be pre-selected when creating contracts)</span>
+                <span className="text-muted-foreground">(will be pre-selected when creating contracts)</span>
               </span>
             </label>
           </div>
@@ -104,29 +104,29 @@ export function ContractTemplateForm({ mode, initialData = {}, templateId }: Con
 
         {/* Template Content */}
         <Card>
-          <h2 className="font-semibold text-slate-800 mb-1 flex items-center gap-2">
+          <h2 className="font-semibold text-foreground mb-1 flex items-center gap-2">
             📋 Template Content <span className="text-red-500">*</span>
           </h2>
-          <p className="text-sm text-slate-500 mb-3">Contract Text</p>
+          <p className="text-sm text-muted-foreground mb-3">Contract Text</p>
           <textarea
             ref={contentRef}
             rows={20}
             placeholder="Enter your contract template text here. Use placeholders like {{client_name}} to automatically fill in details."
             value={formData.content}
             onChange={(e) => setFormData((prev) => ({ ...prev, content: e.target.value }))}
-            className="w-full border border-slate-300 rounded-lg text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 px-3 py-2 font-mono resize-y"
+            className="w-full border border-input rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring px-3 py-2 font-mono resize-y"
           />
-          <p className="text-xs text-slate-400 mt-1">HTML email body. Can contain placeholders.</p>
+          <p className="text-xs text-muted-foreground mt-1">HTML email body. Can contain placeholders.</p>
         </Card>
 
         {/* Placeholders + Styling Guide */}
         <div className="grid grid-cols-2 gap-5">
           {/* Placeholders */}
           <Card>
-            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               🏷 Available Placeholders
             </h3>
-            <p className="text-xs text-slate-500 mb-3">Click to insert at cursor position</p>
+            <p className="text-xs text-muted-foreground mb-3">Click to insert at cursor position</p>
             <div className="space-y-2">
               {CONTRACT_PLACEHOLDERS.map((p) => (
                 <button
@@ -138,7 +138,7 @@ export function ContractTemplateForm({ mode, initialData = {}, templateId }: Con
                   <code className="text-xs text-indigo-600 font-mono group-hover:text-indigo-800">
                     {p.key}
                   </code>
-                  <span className="text-xs text-slate-500 ml-2">- {p.label}</span>
+                  <span className="text-xs text-muted-foreground ml-2">- {p.label}</span>
                 </button>
               ))}
             </div>
@@ -146,14 +146,14 @@ export function ContractTemplateForm({ mode, initialData = {}, templateId }: Con
 
           {/* Styling guide */}
           <Card>
-            <h3 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-foreground mb-3 flex items-center gap-2">
               🎨 Contract Styling Guide
             </h3>
             <div className="space-y-2">
               {CONTRACT_STYLING_GUIDE.map((entry) => (
                 <div key={entry.label}>
-                  <p className="text-xs text-slate-500">{entry.label}:</p>
-                  <code className="text-xs font-mono text-slate-700 whitespace-pre">{entry.syntax}</code>
+                  <p className="text-xs text-muted-foreground">{entry.label}:</p>
+                  <code className="text-xs font-mono text-foreground whitespace-pre">{entry.syntax}</code>
                 </div>
               ))}
             </div>

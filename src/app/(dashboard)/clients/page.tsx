@@ -48,6 +48,7 @@ export default async function ClientsPage() {
                   </Link>
                 </Button>
               }
+              tip="Tip: a name and email is enough — you can fill in company details later."
             />
           </CardContent>
         </Card>

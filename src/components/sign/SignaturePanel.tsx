@@ -83,24 +83,35 @@ export function SignaturePanel({ token, signerEmail }: Props) {
             </Label>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
-            <div className="flex-1 space-y-1.5">
-              <Label htmlFor="signer-name">Full legal name</Label>
-              <Input
-                id="signer-name"
-                placeholder="Type your full legal name"
-                value={signerName}
-                onChange={(e) => setSignerName(e.target.value)}
-                disabled={!agreed || signing}
-              />
+          <div className="rounded-lg border-2 border-dashed border-primary/40 bg-primary/5 p-4">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wide text-primary">
+              ✎ Sign here
+            </p>
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-end">
+              <div className="flex-1 space-y-1.5">
+                <Label htmlFor="signer-name">Full legal name</Label>
+                <Input
+                  id="signer-name"
+                  placeholder="Type your full legal name"
+                  value={signerName}
+                  onChange={(e) => setSignerName(e.target.value)}
+                  disabled={!agreed || signing}
+                  className="bg-white"
+                />
+              </div>
+              <Button
+                onClick={handleSign}
+                disabled={!agreed || !signerName.trim() || signing}
+                className="w-full sm:w-auto sm:shrink-0"
+              >
+                {signing ? 'Signing…' : 'Sign Document'}
+              </Button>
             </div>
-            <Button
-              onClick={handleSign}
-              disabled={!agreed || !signerName.trim() || signing}
-              className="w-full sm:w-auto sm:shrink-0"
-            >
-              {signing ? 'Signing…' : 'Sign Document'}
-            </Button>
+            {!agreed && (
+              <p className="mt-2 text-xs text-muted-foreground">
+                Check the consent box above to enable signing.
+              </p>
+            )}
           </div>
 
           <p className="text-xs text-muted-foreground">

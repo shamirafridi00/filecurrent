@@ -5,6 +5,7 @@ interface Feature {
   icon: React.ReactNode
   title: string
   desc: string
+  stat?: string
 }
 
 function AnimatedCard({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
@@ -23,6 +24,7 @@ function AnimatedCard({ children, delay = 0 }: { children: React.ReactNode; dela
   return (
     <div
       ref={ref}
+      className="h-full"
       style={{
         transitionDelay: `${delay}ms`,
         opacity: visible ? 1 : 0,
@@ -37,15 +39,20 @@ function AnimatedCard({ children, delay = 0 }: { children: React.ReactNode; dela
 
 export function AnimatedFeatureCards({ features }: { features: Feature[] }) {
   return (
-    <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
       {features.map((feature, i) => (
         <AnimatedCard key={i} delay={i * 120}>
-          <div className="text-center">
-            <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-white/10 mb-4">
+          <div className="flex h-full flex-col rounded-xl border border-[#1A3A5C] bg-[#0A2540] p-6 transition-colors hover:border-[#635BFF]/50">
+            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#635BFF]/10">
               {feature.icon}
             </div>
-            <h3 className="font-semibold text-lg mb-2 text-white">{feature.title}</h3>
-            <p className="text-gray-400 text-sm leading-relaxed">{feature.desc}</p>
+            <h3 className="mb-2 text-lg font-semibold text-white">{feature.title}</h3>
+            <p className="flex-1 text-sm leading-relaxed text-gray-400">{feature.desc}</p>
+            {feature.stat && (
+              <p className="mt-4 inline-flex items-center rounded-full border border-[#635BFF]/30 bg-[#635BFF]/10 px-3 py-1 text-xs font-medium text-[#A5B4FC]">
+                {feature.stat}
+              </p>
+            )}
           </div>
         </AnimatedCard>
       ))}

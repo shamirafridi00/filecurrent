@@ -6,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
 import { PageHeader, EmptyState } from '@/components/ui'
+import { HelpHint } from '@/components/ui/HelpHint'
 import { formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getIntakeForms } from '@/lib/db/supabase'
@@ -22,8 +23,18 @@ export default async function IntakeFormsPage() {
     <div>
       <PageHeader
         title="Intake Forms"
-        subtitle="Collect client information before starting a project"
+        subtitle="Collect client info before starting a project"
         icon={<ClipboardText size={24} weight="duotone" className="text-primary" />}
+        help={
+          <HelpHint
+            title="Intake Forms"
+            example="A 'New Project Questionnaire' asking for project goals, timeline, and budget — submissions create the client record automatically."
+          >
+            Intake forms let you collect project details from new clients
+            before starting work — preferred communication, project
+            requirements, budget range.
+          </HelpHint>
+        }
         action={
           <Button asChild>
             <Link href="/intake-forms/new">
@@ -47,6 +58,7 @@ export default async function IntakeFormsPage() {
                   </Link>
                 </Button>
               }
+              tip="Tip: submissions automatically create a client record — no copy-pasting from email."
             />
           </CardContent>
         </Card>

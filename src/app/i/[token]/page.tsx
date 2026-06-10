@@ -8,6 +8,7 @@ import { invoiceOpenedEmail } from '@/lib/email/templates/invoice-opened'
 import { formatCurrency } from '@/lib/utils'
 import { APP_NAME } from '@/lib/constants'
 import { InvoiceDocument } from '@/components/invoices/InvoiceDocument'
+import { PaymentSentButton } from '@/components/invoices/PaymentSentButton'
 
 export default async function PublicInvoicePage({ params }: { params: { token: string } }) {
   const invoice = await getInvoiceByShareToken(params.token)
@@ -132,6 +133,11 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
             theme={{ theme, primaryColor }}
           />
         </div>
+
+        {/* Client confirmation — shown only while unpaid */}
+        {invoice.status !== 'paid' && (
+          <PaymentSentButton freelancerName={brandName ?? invoice.freelancerName} />
+        )}
 
         {/* Viral footer for free tier */}
         {invoice.hasBrandingFooter && (
