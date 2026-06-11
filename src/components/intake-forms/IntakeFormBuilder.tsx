@@ -11,6 +11,7 @@ import {
   Copy,
   Check,
   ArrowSquareOut,
+  Eye,
 } from '@phosphor-icons/react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -18,7 +19,9 @@ import { Switch } from '@/components/ui/switch'
 import { Label } from '@/components/ui/label'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { ConfirmDialog, PageHeader } from '@/components/ui'
+import { ClientFormPreview } from '@/components/intake-forms/ClientFormPreview'
 import { toast } from 'sonner'
 import { APP_URL } from '@/lib/constants'
 import type { IntakeField, IntakeFieldType, IntakeForm } from '@/types'
@@ -55,6 +58,7 @@ export function IntakeFormBuilder({ existingForm }: IntakeFormBuilderProps) {
   const [saving, setSaving] = useState(false)
   const [copied, setCopied] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null)
+  const [previewOpen, setPreviewOpen] = useState(false)
   const [shareUrl] = useState<string | null>(
     existingForm ? `${APP_URL}/intake/${existingForm.shareToken}` : null
   )
@@ -270,8 +274,17 @@ export function IntakeFormBuilder({ existingForm }: IntakeFormBuilderProps) {
 
           {/* Live preview */}
           <Card>
-            <CardHeader className="pb-3">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm text-muted-foreground font-medium uppercase tracking-wide">Preview</CardTitle>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7"
+                onClick={() => setPreviewOpen(true)}
+                disabled={fields.length === 0 && !title}
+              >
+                <Eye className="mr-1.5 h-3.5 w-3.5" /> Preview as client
+              </Button>
             </CardHeader>
             <CardContent className="pt-0">
               {title && <h2 className="text-base font-bold text-foreground mb-1">{title}</h2>}
@@ -290,6 +303,17 @@ export function IntakeFormBuilder({ existingForm }: IntakeFormBuilderProps) {
           </Card>
         </div>
       </div>
+
+      <Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+        <DialogContent className="max-w-2xl p-0 overflow-hidden">
+          <DialogHeader className="px-5 pt-5">
+            <DialogTitle>Client view</DialogTitle>
+          </DialogHeader>
+          <div className="px-5 pb-5">
+            <ClientFormPreview title={title} description={description} fields={fields} />
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <ConfirmDialog
         open={deleteTarget !== null}

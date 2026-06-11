@@ -1,7 +1,7 @@
 export const runtime = 'nodejs'
 
 import { NextRequest, NextResponse } from 'next/server'
-import { createPaymentClaim, logClientActivity } from '@/lib/db/supabase'
+import { createPaymentClaim, logClientActivity, getNotificationRecipient } from '@/lib/db/supabase'
 import { uploadToR2 } from '@/lib/r2'
 import { sendEmail, buildSenderName } from '@/lib/email'
 import { paymentClaimEmail } from '@/lib/email/templates/payment-claim'
@@ -74,13 +74,15 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     amount,
   })
 
-  // Notify the freelancer so they can confirm (non-blocking)
-  if (result.freelancerEmail) {
+  // Notify the freelancer so they can confirm — gated on their notification
+  // toggle (payment_received). Non-blocking.
+  const recipient = await getNotificationRecipient(result.userId, 'payment_received')
+  if (recipient) {
     sendEmail({
-      to: result.freelancerEmail,
+      to: recipient.email,
       subject: `${result.clientName} marked invoice ${result.invoiceNumber} as paid`,
       html: paymentClaimEmail({
-        freelancerName: result.freelancerName,
+        freelancerName: recipient.fullName,
         clientName: result.clientName,
         invoiceNumber: result.invoiceNumber,
         amount: fmt(amount),
@@ -89,7 +91,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         hasReceipt: Boolean(receiptUrl),
         invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/invoices/${result.invoiceId}`,
       }),
-      fromName: buildSenderName(result.freelancerBusiness, result.freelancerName),
+      fromName: buildSenderName(recipient.businessName, recipient.fullName),
     }).catch(() => {})
   }
 

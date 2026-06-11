@@ -96,6 +96,38 @@ export async function updateProfile(userId: string, data: ProfileUpdateData): Pr
   if (error) throw new Error(error.message)
 }
 
+/**
+ * Server-side check of whether a freelancer wants a given email notification.
+ * Returns the freelancer's email + name only when the toggle is on (default on
+ * if unset), so callers can gate sends in one round-trip. Used by all
+ * client-triggered notification flows (intake submit, proposal accept/decline,
+ * payment claim).
+ */
+export async function getNotificationRecipient(
+  userId: string,
+  key: string
+): Promise<{ email: string; fullName: string; businessName: string | null } | null> {
+  const { data } = await adminClient
+    .from('profiles')
+    .select('email, full_name, business_name, notification_prefs')
+    .eq('id', userId)
+    .single()
+  if (!data?.email) return null
+
+  const prefs = (typeof data.notification_prefs === 'object' && data.notification_prefs !== null
+    ? data.notification_prefs
+    : {}) as Record<string, boolean>
+
+  // Default to enabled when the toggle has never been set.
+  if (prefs[key] === false) return null
+
+  return {
+    email: data.email,
+    fullName: data.full_name ?? 'there',
+    businessName: data.business_name ?? null,
+  }
+}
+
 export async function getFullProfile(userId: string) {
   const { data } = await adminClient
     .from('profiles')
@@ -2376,8 +2408,9 @@ export async function submitIntakeResponse(data: {
   respondentEmail: string
   answers: Record<string, string | boolean | string[]>
   createClient: boolean
-}): Promise<{ responseId: string; clientId: string | null }> {
+}): Promise<{ responseId: string; clientId: string | null; formTitle: string; createdClient: boolean }> {
   let clientId: string | null = null
+  let createdClient = false
 
   if (data.createClient && data.respondentName) {
     const existing = data.respondentEmail
@@ -2399,7 +2432,7 @@ export async function submitIntakeResponse(data: {
           email: data.respondentEmail || null,
         })
         .select('id').single()
-      if (newClient) clientId = newClient.id
+      if (newClient) { clientId = newClient.id; createdClient = true }
     }
   }
 
@@ -2424,6 +2457,8 @@ export async function submitIntakeResponse(data: {
     .eq('id', data.formId)
     .single()
 
+  const formTitle = formRow?.title ?? 'Intake form'
+
   void logClientActivity({
     userId: data.userId,
     clientId,
@@ -2431,8 +2466,8 @@ export async function submitIntakeResponse(data: {
     eventType: 'intake_submitted',
     entityType: 'note',
     entityId: row.id,
-    entityLabel: formRow?.title ?? 'Intake form',
+    entityLabel: formTitle,
   })
 
-  return { responseId: row.id, clientId }
+  return { responseId: row.id, clientId, formTitle, createdClient }
 }

@@ -47,9 +47,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       None of the email notifications in Settings > Notifications are working: contract opened, contract signed, invoice opened, invoice overdue, daily summary. Audit all notification event hooks and test each trigger individually.
       `URL: filecurrent.com/settings/notifications`
 
-- [ ] **[Notifications / Email] Missing email notification events**
+- [x] **[Notifications / Email] Missing email notification events**
       The following notification events are missing from Settings entirely: proposal accepted, proposal declined, client submitted intake form, payment marked as received. Add the missing toggles and implement their email triggers.
       `URL: filecurrent.com/settings/notifications`
+
+      **Fixed 2026-06-11:** Added all four toggles to Settings → Notifications (`payment_received`, `proposal_accepted`, `proposal_declined`, `intake_submitted` — stored in `profiles.notification_prefs`, default on). Added a shared `getNotificationRecipient(userId, key)` DB helper that returns the freelancer's email/name only when the toggle is enabled, so every trigger gates in one round-trip. Wired the triggers: **proposal accepted** (existing email now gated + uses buildSenderName), **proposal declined** (was sending no email at all — new `proposal-declined` template + trigger in the decline route), **intake submitted** (new `intake-submitted` template + send in the submit route, links to the responses viewer, notes if a client was auto-created), **payment received** (the payment-claim notification is now gated on `payment_received`). All sends are non-blocking and wrapped so delivery failure never breaks the client-facing action.
 
 ---
 
@@ -87,9 +89,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       After a client accepts a proposal, neither the client's activity tab nor the freelancer's dashboard reflects the event. Fix the event propagation for proposal acceptance/dismissal.
       `URL: filecurrent.com/dashboard + /clients/{id}`
 
-- [ ] **[Intake Forms] No way to send intake form to client**
+- [x] **[Intake Forms] No way to send intake form to client**
       After creating an intake form there is no send button or sharing mechanism. Add a "Send to Client" button on intake forms. Also add a form preview/sample inside the form builder so users understand what the client will see.
       `URL: filecurrent.com/forms`
+
+      **Fixed 2026-06-11:** Added a **Send** button to each form on the list page → opens a dialog to pick a saved client (pulls their email server-side) or enter an email manually, then POSTs to new `/api/intake-forms/[id]/send` which emails the public form link via a new `intake-form` template (reply-to set to the freelancer). Added a **Preview as client** button in the builder's Preview card → opens a modal rendering the form exactly as the client sees it at `/intake/[token]` (new `ClientFormPreview` mirrors `IntakeSubmitForm` styling, read-only). The builder already had a small live sidebar preview; this adds the true full-fidelity client view.
 
 - [ ] **[Proposals] Proposal send button gives error but proposal link works**
       Clicking "Send to Client" on a proposal returns "Failed to send proposal" but the proposal itself works fine when the link is opened in incognito. The issue is in email delivery, not the proposal generation. Debug the send endpoint and email service.

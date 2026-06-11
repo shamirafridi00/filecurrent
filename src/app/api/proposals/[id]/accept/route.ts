@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { acceptProposal, getProposalByShareToken } from '@/lib/db/supabase'
-import { adminClient } from '@/lib/supabase/admin'
-import { sendEmail } from '@/lib/email'
+import { acceptProposal, getProposalByShareToken, getNotificationRecipient } from '@/lib/db/supabase'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { proposalAcceptedEmail } from '@/lib/email/templates/proposal-accepted'
 import { APP_URL } from '@/lib/constants'
 
@@ -13,24 +12,20 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   const proposal = await getProposalByShareToken(token)
   if (!proposal) return NextResponse.json({ error: 'Not found' }, { status: 404 })
 
-  // Notify freelancer by email — link to proposals dashboard so they can create the contract
-  const { data: profile } = await adminClient
-    .from('profiles')
-    .select('email, full_name')
-    .eq('id', proposal.userId)
-    .single()
-
-  if (profile?.email) {
+  // Notify freelancer by email — gated on their notification toggle.
+  const recipient = await getNotificationRecipient(proposal.userId, 'proposal_accepted')
+  if (recipient) {
     sendEmail({
-      to: profile.email,
+      to: recipient.email,
       subject: `${proposal.clientName} accepted your proposal: ${proposal.title}`,
       html: proposalAcceptedEmail({
-        freelancerName: profile.full_name,
+        freelancerName: recipient.fullName,
         clientName: proposal.clientName,
         proposalTitle: proposal.title,
         dashboardUrl: `${APP_URL}/proposals`,
         contractCreated: false,
       }),
+      fromName: buildSenderName(recipient.businessName, recipient.fullName),
     }).catch(() => {})
   }
 

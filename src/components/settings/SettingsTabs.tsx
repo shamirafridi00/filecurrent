@@ -39,6 +39,10 @@ const NOTIFICATION_OPTIONS = [
   { key: 'contract_signed', label: 'When a client signs my contract' },
   { key: 'invoice_opened', label: 'When a client opens my invoice' },
   { key: 'invoice_overdue', label: 'When an invoice becomes overdue' },
+  { key: 'payment_received', label: 'When a client reports a payment' },
+  { key: 'proposal_accepted', label: 'When a client accepts my proposal' },
+  { key: 'proposal_declined', label: 'When a client declines my proposal' },
+  { key: 'intake_submitted', label: 'When a client submits an intake form' },
   { key: 'daily_summary', label: 'Daily summary (overdue invoices + pending reminders)' },
 ]
 

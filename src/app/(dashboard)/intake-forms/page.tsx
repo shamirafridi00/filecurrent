@@ -9,15 +9,20 @@ import { PageHeader, EmptyState } from '@/components/ui'
 import { HelpHint } from '@/components/ui/HelpHint'
 import { formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getIntakeForms } from '@/lib/db/supabase'
+import { getIntakeForms, getClients } from '@/lib/db/supabase'
 import { IntakeFormActions } from '@/components/intake-forms/IntakeFormActions'
+import { SendIntakeFormButton } from '@/components/intake-forms/SendIntakeFormButton'
 
 export default async function IntakeFormsPage() {
   const supabase = createClient()
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const forms = await getIntakeForms(user.id)
+  const [forms, clients] = await Promise.all([
+    getIntakeForms(user.id),
+    getClients(user.id),
+  ])
+  const clientOptions = clients.map((c) => ({ id: c.id, name: c.name, email: c.email ?? null }))
 
   return (
     <div>
@@ -83,6 +88,7 @@ export default async function IntakeFormsPage() {
                     <Badge variant="secondary" className={form.isActive ? 'bg-green-50 text-green-700 border-green-200' : 'bg-muted text-muted-foreground border-border'}>
                       {form.isActive ? 'Active' : 'Paused'}
                     </Badge>
+                    <SendIntakeFormButton formId={form.id} clients={clientOptions} />
                     <Button asChild variant="outline" size="sm">
                       <Link href={`/intake-forms/${form.id}/responses`}>
                         Responses ({form.responseCount ?? 0})

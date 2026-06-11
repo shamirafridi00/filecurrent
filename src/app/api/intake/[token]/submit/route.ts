@@ -1,5 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getIntakeFormByToken, submitIntakeResponse } from '@/lib/db/supabase'
+import { getIntakeFormByToken, submitIntakeResponse, getNotificationRecipient } from '@/lib/db/supabase'
+import { sendEmail, buildSenderName } from '@/lib/email'
+import { intakeSubmittedEmail } from '@/lib/email/templates/intake-submitted'
+import { APP_URL } from '@/lib/constants'
 
 // Public endpoint — no auth by design. Token lookup gates all work; inputs
 // are trimmed and bounded so a hostile client can't store unbounded data.
@@ -62,5 +65,27 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     answers: sanitizeAnswers(body.answers),
     createClient: body.createClient !== false,
   })
+
+  // Notify the freelancer (respecting their notification toggle) — non-blocking.
+  try {
+    const recipient = await getNotificationRecipient(form.userId, 'intake_submitted')
+    if (recipient) {
+      await sendEmail({
+        to: recipient.email,
+        subject: `${respondentName} submitted your intake form`,
+        html: intakeSubmittedEmail({
+          freelancerName: recipient.fullName,
+          clientName: respondentName,
+          formTitle: result.formTitle,
+          responsesUrl: `${APP_URL}/intake-forms/${form.id}/responses`,
+          createdClient: result.createdClient,
+        }),
+        fromName: buildSenderName(recipient.businessName, recipient.fullName),
+      })
+    }
+  } catch {
+    // delivery failure must not break the client's submission
+  }
+
   return NextResponse.json({ responseId: result.responseId }, { status: 201 })
 }
