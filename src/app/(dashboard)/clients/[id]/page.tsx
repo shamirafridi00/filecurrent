@@ -2,14 +2,14 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { Users, Plus, FileText, Receipt, PencilSimple, Envelope, Buildings, Phone, MapPin, ChartLine } from '@/components/icons'
+import { Users, Plus, FileText, Receipt, PencilSimple, Envelope, Buildings, Phone, MapPin, ChartLine, ClipboardText } from '@/components/icons'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/components/ui'
 import { HelpHint } from '@/components/ui/HelpHint'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken, getIntakeForms } from '@/lib/db/supabase'
+import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken, getIntakeForms, getClientIntakeResponses } from '@/lib/db/supabase'
 import { DeleteClientButton } from '@/components/clients/DeleteClientButton'
 import { ClientReminderToggle } from '@/components/clients/ClientReminderToggle'
 import { ClientPortalLink } from '@/components/clients/ClientPortalLink'
@@ -33,7 +33,7 @@ export default async function ClientDetailPage({
 
   const activeTab: Tab = searchParams.tab === 'activity' ? 'activity' : 'overview'
 
-  const [client, allContracts, allInvoices, activityEvents, stats, portalToken, intakeForms] = await Promise.all([
+  const [client, allContracts, allInvoices, activityEvents, stats, portalToken, intakeForms, intakeResponses] = await Promise.all([
     getClientById(params.id, user.id),
     getContracts(user.id),
     getInvoices(user.id),
@@ -41,6 +41,7 @@ export default async function ClientDetailPage({
     getClientStats(user.id, params.id),
     getClientPortalToken(params.id, user.id),
     getIntakeForms(user.id),
+    getClientIntakeResponses(params.id, user.id),
   ])
   if (!client) notFound()
 
@@ -279,6 +280,33 @@ export default async function ClientDetailPage({
                 )}
               </CardContent>
             </Card>
+
+            {intakeResponses.length > 0 && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <ClipboardText size={16} /> Submitted Forms
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-2">
+                    {intakeResponses.map((r) => (
+                      <Link
+                        key={r.id}
+                        href={`/intake-forms/${r.formId}/responses`}
+                        className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors"
+                      >
+                        <div>
+                          <p className="font-medium text-sm text-foreground">{r.formTitle || 'Intake form'}</p>
+                          <p className="text-xs text-muted-foreground">Submitted {formatDate(r.submittedAt)}</p>
+                        </div>
+                        <span className="text-sm font-medium text-primary">View →</span>
+                      </Link>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       )}

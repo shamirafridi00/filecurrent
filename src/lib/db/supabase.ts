@@ -2347,6 +2347,28 @@ export async function getIntakeResponses(formId: string, userId: string): Promis
   }))
 }
 
+/** Intake responses submitted by a specific client (for the client detail page). */
+export async function getClientIntakeResponses(clientId: string, userId: string): Promise<IntakeResponse[]> {
+  const { data, error } = await adminClient
+    .from('intake_responses')
+    .select('*, intake_forms(title)')
+    .eq('client_id', clientId)
+    .eq('user_id', userId)
+    .order('submitted_at', { ascending: false })
+  if (error) throw new Error(error.message)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    formId: r.form_id,
+    formTitle: (r.intake_forms as unknown as { title: string } | null)?.title ?? '',
+    clientId: r.client_id ?? null,
+    clientName: null,
+    respondentName: r.respondent_name ?? null,
+    respondentEmail: r.respondent_email ?? null,
+    answers: r.answers as Record<string, string | boolean | string[]>,
+    submittedAt: r.submitted_at,
+  }))
+}
+
 export async function submitIntakeResponse(data: {
   formId: string
   userId: string
@@ -2393,5 +2415,24 @@ export async function submitIntakeResponse(data: {
     })
     .select('id').single()
   if (error || !row) throw new Error(error?.message ?? 'Failed to submit')
+
+  // Surface the submission in the freelancer's activity feed + the client's
+  // activity tab. Without this the response was stored but invisible in-app.
+  const { data: formRow } = await adminClient
+    .from('intake_forms')
+    .select('title')
+    .eq('id', data.formId)
+    .single()
+
+  void logClientActivity({
+    userId: data.userId,
+    clientId,
+    clientName: data.respondentName,
+    eventType: 'intake_submitted',
+    entityType: 'note',
+    entityId: row.id,
+    entityLabel: formRow?.title ?? 'Intake form',
+  })
+
   return { responseId: row.id, clientId }
 }

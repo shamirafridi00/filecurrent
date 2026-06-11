@@ -14,6 +14,7 @@ export {
   FileText,
   FilePlus,
   Receipt,
+  ClipboardText,
   // people
   Users,
   UserCircle,
