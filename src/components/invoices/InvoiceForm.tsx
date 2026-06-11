@@ -217,9 +217,13 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
       })
       if (res.status === 402) { setShowUpgrade(true); return }
       if (!res.ok) throw new Error()
-      const { id } = await res.json()
+      const { id, emailFailed } = await res.json()
       clearDraft()
-      toast.success(markAsSent ? 'Invoice created and marked as sent' : 'Draft invoice created')
+      if (markAsSent && emailFailed) {
+        toast.warning('Invoice created, but email delivery failed. Share the invoice link manually from the invoice page.')
+      } else {
+        toast.success(markAsSent ? 'Invoice created and sent to client' : 'Draft invoice created')
+      }
       router.push(`/invoices/${id}`)
       router.refresh()
     } catch {

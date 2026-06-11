@@ -9,7 +9,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
-  const { signerEmail } = await req.json()
+  const { signerEmail, sendEmail: shouldSendEmail = true } = await req.json()
   if (!signerEmail) return NextResponse.json({ error: 'signerEmail required' }, { status: 400 })
 
   const [token, contract, profile] = await Promise.all([
@@ -29,26 +29,34 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
       entityLabel: contract.title,
     })
 
-    const signingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${token}`
-    const amount = new Intl.NumberFormat('en-US', {
-      style: 'currency', currency: contract.currency,
-    }).format(contract.amount)
+    if (shouldSendEmail) {
+      const signingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${token}`
+      const amount = new Intl.NumberFormat('en-US', {
+        style: 'currency', currency: contract.currency,
+      }).format(contract.amount)
 
-    await sendEmail({
-      to: signerEmail,
-      subject: `${profile.businessName || profile.fullName} sent you a contract to sign`,
-      html: contractSignatureRequestEmail({
-        freelancerName: profile.fullName,
-        businessName: profile.businessName,
-        clientName: contract.clientName,
-        contractTitle: contract.title,
-        projectAmount: amount,
-        signingUrl,
-      }),
-      replyTo: profile.email ?? undefined,
-      fromName: buildSenderName(profile.businessName, profile.fullName),
-    }).catch((err) => console.error('Contract send email failed:', err))
+      try {
+        await sendEmail({
+          to: signerEmail,
+          subject: `${profile.businessName || profile.fullName} sent you a contract to sign`,
+          html: contractSignatureRequestEmail({
+            freelancerName: profile.fullName,
+            businessName: profile.businessName,
+            clientName: contract.clientName,
+            contractTitle: contract.title,
+            projectAmount: amount,
+            signingUrl,
+          }),
+          replyTo: profile.email ?? undefined,
+          fromName: buildSenderName(profile.businessName, profile.fullName),
+        })
+        return NextResponse.json({ token, emailFailed: false })
+      } catch (err) {
+        console.error('[contract/send] Email delivery failed:', err)
+        return NextResponse.json({ token, emailFailed: true })
+      }
+    }
   }
 
-  return NextResponse.json({ token })
+  return NextResponse.json({ token, emailFailed: false })
 }

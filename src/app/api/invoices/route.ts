@@ -72,33 +72,39 @@ export async function POST(req: NextRequest) {
         ? new Date(createdInvoice.dueDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
         : null
 
-      sendEmail({
-        to: createdInvoice.clientEmail,
-        subject: `Invoice ${createdInvoice.invoiceNumber} from ${profile.businessName || profile.fullName} — ${fmt(createdInvoice.total)}${dueDateLabel ? ` due ${dueDateLabel}` : ''}`,
-        html: invoiceSentEmail({
-          clientName: createdInvoice.clientName,
-          freelancerName: profile.fullName,
-          businessName: profile.businessName,
-          invoiceNumber: createdInvoice.invoiceNumber,
-          total: fmt(createdInvoice.total),
-          dueDate: dueDateLabel,
-          items: createdInvoice.items.map((item) => ({
-            description: item.description,
-            quantity: item.quantity,
-            unitPrice: fmt(item.unitPrice),
-            amount: fmt(item.amount),
-          })),
-          notes: createdInvoice.notes,
-          paymentTerms: createdInvoice.paymentTerms,
-          paymentInstructions: createdInvoice.paymentInstructions,
-          invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${createdInvoice.shareToken}`,
-          hasBrandingFooter: profile.plan === 'free',
-        }),
-        replyTo: profile.email ?? undefined,
-        fromName: buildSenderName(profile.businessName, profile.fullName),
-      }).catch((err) => console.error('Invoice sent email failed:', err))
+      try {
+        await sendEmail({
+          to: createdInvoice.clientEmail,
+          subject: `Invoice ${createdInvoice.invoiceNumber} from ${profile.businessName || profile.fullName} — ${fmt(createdInvoice.total)}${dueDateLabel ? ` due ${dueDateLabel}` : ''}`,
+          html: invoiceSentEmail({
+            clientName: createdInvoice.clientName,
+            freelancerName: profile.fullName,
+            businessName: profile.businessName,
+            invoiceNumber: createdInvoice.invoiceNumber,
+            total: fmt(createdInvoice.total),
+            dueDate: dueDateLabel,
+            items: createdInvoice.items.map((item) => ({
+              description: item.description,
+              quantity: item.quantity,
+              unitPrice: fmt(item.unitPrice),
+              amount: fmt(item.amount),
+            })),
+            notes: createdInvoice.notes,
+            paymentTerms: createdInvoice.paymentTerms,
+            paymentInstructions: createdInvoice.paymentInstructions,
+            invoiceUrl: `${process.env.NEXT_PUBLIC_APP_URL}/i/${createdInvoice.shareToken}`,
+            hasBrandingFooter: profile.plan === 'free',
+          }),
+          replyTo: profile.email ?? undefined,
+          fromName: buildSenderName(profile.businessName, profile.fullName),
+        })
+        return NextResponse.json({ id, emailFailed: false })
+      } catch (err) {
+        console.error('[invoice/send] Email delivery failed:', err)
+        return NextResponse.json({ id, emailFailed: true })
+      }
     }
   }
 
-  return NextResponse.json({ id })
+  return NextResponse.json({ id, emailFailed: false })
 }
