@@ -50,8 +50,18 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/portal/') ||
     pathname.startsWith('/intake/') ||
     pathname.startsWith('/p/') ||
+    pathname.startsWith('/proposals/') ||
+    pathname.startsWith('/privacy') ||
+    pathname.startsWith('/terms') ||
+    pathname.startsWith('/refund') ||
+    pathname.startsWith('/about') ||
+    pathname.startsWith('/contact') ||
+    pathname.startsWith('/help') ||
+    pathname.startsWith('/blog') ||
+    pathname.startsWith('/trial-expired') ||
     pathname.startsWith('/api/sign/') ||
     pathname.startsWith('/api/intake/') ||
+    pathname.startsWith('/api/contact') ||
     /^\/api\/proposals\/[^/]+\/(accept|decline)$/.test(pathname) ||
     pathname.startsWith('/api/webhooks/') ||
     pathname.startsWith('/api/cron/') ||
