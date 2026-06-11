@@ -58,6 +58,7 @@ function getEventIcon(eventType: string) {
     case 'contract_viewed':      return <Eye size={16} className="text-emerald-400" />
     case 'contract_signed':      return <CheckCircle size={16} className="text-emerald-600" />
     case 'payment_recorded':     return <CreditCard size={16} className="text-teal-500" />
+    case 'payment_claimed':      return <CreditCard size={16} className="text-amber-500" />
     case 'reminder_sent':        return <Bell size={16} className="text-amber-500" />
     default:                     return <Receipt size={16} className="text-muted-foreground" />
   }
@@ -67,6 +68,7 @@ function getEventIconBg(eventType: string): string {
   if (eventType.startsWith('invoice'))  return 'bg-indigo-50 border-indigo-100'
   if (eventType.startsWith('contract')) return 'bg-emerald-50 border-emerald-100'
   if (eventType === 'payment_recorded') return 'bg-teal-50 border-teal-100'
+  if (eventType === 'payment_claimed')  return 'bg-amber-50 border-amber-100'
   if (eventType === 'reminder_sent')    return 'bg-amber-50 border-amber-100'
   return 'bg-muted border-border'
 }
@@ -88,6 +90,7 @@ function getEventDescription(event: ClientActivityLogRow): string {
     case 'contract_viewed':      return `${client} viewed contract '${label}'`
     case 'contract_signed':      return `${client} signed contract '${label}'`
     case 'payment_recorded':     return `Payment recorded for ${client}${amt ? ` — ${amt}` : ''}`
+    case 'payment_claimed':      return `${client} marked invoice ${label} as paid${amt ? ` — ${amt}` : ''} (awaiting confirmation)`
     case 'reminder_sent':        return `Payment reminder sent to ${client} for ${label}`
     default:                     return `Activity for ${client}`
   }

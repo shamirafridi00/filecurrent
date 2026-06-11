@@ -123,10 +123,14 @@ export default async function ClientPortalPage({ params }: { params: { token: st
                     {inv.shareToken && (
                       <Link
                         href={`/i/${inv.shareToken}`}
-                        className="text-xs font-medium text-indigo-600 hover:underline whitespace-nowrap"
+                        className={`text-xs font-medium whitespace-nowrap rounded-md px-2.5 py-1 ${
+                          inv.status !== 'paid' && inv.status !== 'draft'
+                            ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            : 'text-indigo-600 hover:underline'
+                        }`}
                         target="_blank"
                       >
-                        View →
+                        {inv.status !== 'paid' && inv.status !== 'draft' ? 'View & Pay →' : 'View →'}
                       </Link>
                     )}
                   </div>

@@ -1061,26 +1061,204 @@ export async function recordPayment(
     .single()
   if (error) throw new Error(error.message)
 
-  const { data: inv } = await adminClient
-    .from('invoices')
-    .select('total, paid_amount')
-    .eq('id', invoiceId)
-    .single()
-
-  if (inv) {
-    const newPaid = (inv.paid_amount ?? 0) + data.amount
-    const newStatus = newPaid >= inv.total ? 'paid' : 'partial'
-    await adminClient
-      .from('invoices')
-      .update({ paid_amount: newPaid, status: newStatus, updated_at: new Date().toISOString() })
-      .eq('id', invoiceId)
-  }
+  await recalcInvoicePaidTotal(invoiceId)
 
   return row.id
 }
 
+// Recomputes paid_amount + status from the sum of confirmed payments on an
+// invoice. Used by recordPayment and by confirmPaymentClaim. Summing (rather
+// than incrementing) keeps the invoice consistent even if a payment is removed.
+async function recalcInvoicePaidTotal(invoiceId: string): Promise<void> {
+  const { data: inv } = await adminClient
+    .from('invoices')
+    .select('total, status')
+    .eq('id', invoiceId)
+    .single()
+  if (!inv) return
+
+  const { data: pays } = await adminClient
+    .from('payments')
+    .select('amount')
+    .eq('invoice_id', invoiceId)
+
+  const newPaid = (pays ?? []).reduce((sum, p) => sum + Number(p.amount), 0)
+  // Preserve a non-payment status (draft) only when nothing is paid yet.
+  const newStatus = newPaid >= Number(inv.total)
+    ? 'paid'
+    : newPaid > 0
+      ? 'partial'
+      : (inv.status === 'paid' || inv.status === 'partial') ? 'sent' : inv.status
+
+  await adminClient
+    .from('invoices')
+    .update({ paid_amount: newPaid, status: newStatus, updated_at: new Date().toISOString() })
+    .eq('id', invoiceId)
+}
+
+// ── Payment claims (client self-reported payments) ─────────────
+//
+// A payment claim is the client's statement, made from the public invoice page
+// or client portal, that they have paid. It is unverified until the freelancer
+// confirms it — at which point a real `payments` row is created and the invoice
+// totals are recomputed. This mirrors how FreshBooks / Wave handle "client says
+// they paid" when there is no integrated payment processor.
+
+export interface PaymentClaimRow {
+  id: string
+  invoiceId: string
+  amount: number
+  method: string
+  paymentDate: string | null
+  note: string | null
+  receiptUrl: string | null
+  status: 'pending' | 'confirmed' | 'rejected'
+  createdAt: string
+  reviewedAt: string | null
+}
+
+function mapClaim(r: Record<string, unknown>): PaymentClaimRow {
+  return {
+    id: r.id as string,
+    invoiceId: r.invoice_id as string,
+    amount: Number(r.amount),
+    method: r.method as string,
+    paymentDate: (r.payment_date as string) ?? null,
+    note: (r.note as string) ?? null,
+    receiptUrl: (r.receipt_url as string) ?? null,
+    status: r.status as 'pending' | 'confirmed' | 'rejected',
+    createdAt: r.created_at as string,
+    reviewedAt: (r.reviewed_at as string) ?? null,
+  }
+}
+
+/** Public: client submits a payment claim from the share-token invoice page. */
+export async function createPaymentClaim(
+  shareToken: string,
+  data: { amount: number; method: string; paymentDate?: string; note?: string; receiptUrl?: string }
+): Promise<{ claimId: string; userId: string; invoiceId: string; invoiceNumber: string; clientName: string; currency: string; freelancerEmail: string | null; freelancerName: string; freelancerBusiness: string | null } | null> {
+  const { data: inv } = await adminClient
+    .from('invoices')
+    .select('id, user_id, invoice_number, currency, clients!inner(name)')
+    .eq('share_token', shareToken)
+    .single()
+  if (!inv) return null
+
+  const { data: row, error } = await adminClient
+    .from('payment_claims')
+    .insert({
+      invoice_id: inv.id,
+      user_id: inv.user_id,
+      amount: data.amount,
+      method: data.method,
+      payment_date: data.paymentDate ?? new Date().toISOString().split('T')[0],
+      note: data.note ?? null,
+      receipt_url: data.receiptUrl ?? null,
+      status: 'pending',
+    })
+    .select('id')
+    .single()
+  if (error) throw new Error(error.message)
+
+  const { data: profile } = await adminClient
+    .from('profiles')
+    .select('email, full_name, business_name')
+    .eq('id', inv.user_id)
+    .single()
+
+  const client = inv.clients as unknown as { name: string }
+
+  return {
+    claimId: row.id,
+    userId: inv.user_id,
+    invoiceId: inv.id,
+    invoiceNumber: inv.invoice_number,
+    clientName: client?.name ?? 'A client',
+    currency: inv.currency,
+    freelancerEmail: profile?.email ?? null,
+    freelancerName: profile?.full_name ?? 'there',
+    freelancerBusiness: profile?.business_name ?? null,
+  }
+}
+
+/** Claims for one invoice (freelancer view, and public confirmed history). */
+export async function getPaymentClaims(invoiceId: string): Promise<PaymentClaimRow[]> {
+  const { data } = await adminClient
+    .from('payment_claims')
+    .select('*')
+    .eq('invoice_id', invoiceId)
+    .order('created_at', { ascending: false })
+  return (data ?? []).map(mapClaim)
+}
+
+/** Count of pending claims across all of a freelancer's invoices (badge). */
+export async function getPendingClaimCount(userId: string): Promise<number> {
+  const { count } = await adminClient
+    .from('payment_claims')
+    .select('id', { count: 'exact', head: true })
+    .eq('user_id', userId)
+    .eq('status', 'pending')
+  return count ?? 0
+}
+
+/**
+ * Freelancer confirms a pending claim → creates a real payment row and
+ * recomputes the invoice. Returns the resulting invoice totals.
+ */
+export async function confirmPaymentClaim(
+  claimId: string,
+  userId: string
+): Promise<{ invoiceId: string; paymentId: string } | null> {
+  const { data: claim } = await adminClient
+    .from('payment_claims')
+    .select('*')
+    .eq('id', claimId)
+    .eq('user_id', userId)
+    .single()
+  if (!claim || claim.status !== 'pending') return null
+
+  const noteParts = ['Confirmed from client claim']
+  if (claim.note) noteParts.push(claim.note)
+  if (claim.receipt_url) noteParts.push(`Receipt: ${claim.receipt_url}`)
+
+  const { data: pay, error: payErr } = await adminClient
+    .from('payments')
+    .insert({
+      invoice_id: claim.invoice_id,
+      amount: claim.amount,
+      payment_date: claim.payment_date ?? new Date().toISOString().split('T')[0],
+      method: claim.method,
+      notes: noteParts.join(' · '),
+    })
+    .select('id')
+    .single()
+  if (payErr) throw new Error(payErr.message)
+
+  await adminClient
+    .from('payment_claims')
+    .update({ status: 'confirmed', payment_id: pay.id, reviewed_at: new Date().toISOString() })
+    .eq('id', claimId)
+
+  await recalcInvoicePaidTotal(claim.invoice_id)
+
+  return { invoiceId: claim.invoice_id, paymentId: pay.id }
+}
+
+/** Freelancer rejects a pending claim (e.g. payment never arrived). */
+export async function rejectPaymentClaim(claimId: string, userId: string): Promise<boolean> {
+  const { data, error } = await adminClient
+    .from('payment_claims')
+    .update({ status: 'rejected', reviewed_at: new Date().toISOString() })
+    .eq('id', claimId)
+    .eq('user_id', userId)
+    .eq('status', 'pending')
+    .select('id')
+  if (error) throw new Error(error.message)
+  return (data?.length ?? 0) > 0
+}
+
 export interface InvoicePublicRow {
-  id: string; invoiceNumber: string; invoiceDate: string; dueDate: string | null
+  id: string; userId: string; invoiceNumber: string; invoiceDate: string; dueDate: string | null
   currency: string; items: InvoiceItem[]; subtotal: number; taxRate: number
   taxAmount: number; discountAmount: number; depositAmount: number; paidAmount: number; total: number
   notes: string | null; paymentTerms: string | null; paymentInstructions: string | null
@@ -1116,7 +1294,7 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
   const template = data.invoice_template_id ? await getInvoiceTemplate(data.invoice_template_id) : null
 
   return {
-    id: data.id, invoiceNumber: data.invoice_number, invoiceDate: data.invoice_date,
+    id: data.id, userId: data.user_id, invoiceNumber: data.invoice_number, invoiceDate: data.invoice_date,
     dueDate: data.due_date, currency: data.currency,
     items: (typeof data.items === 'string' ? JSON.parse(data.items) : data.items) as InvoiceItem[],
     subtotal: data.subtotal, taxRate: data.tax_rate, taxAmount: data.tax_amount,

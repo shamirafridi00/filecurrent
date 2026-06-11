@@ -61,6 +61,7 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith('/trial-expired') ||
     pathname.startsWith('/api/sign/') ||
     pathname.startsWith('/api/intake/') ||
+    /^\/api\/i\/[^/]+\/payment-claim$/.test(pathname) ||
     pathname.startsWith('/api/contact') ||
     /^\/api\/proposals\/[^/]+\/(accept|decline)$/.test(pathname) ||
     pathname.startsWith('/api/webhooks/') ||

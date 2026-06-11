@@ -1,14 +1,15 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { getInvoiceByShareToken, logClientActivity } from '@/lib/db/supabase'
+import { getInvoiceByShareToken, getPaymentClaims, logClientActivity } from '@/lib/db/supabase'
 import { adminClient } from '@/lib/supabase/admin'
 import { sendEmail } from '@/lib/email'
 import { invoiceOpenedEmail } from '@/lib/email/templates/invoice-opened'
-import { formatCurrency } from '@/lib/utils'
+import { formatCurrency, formatDate } from '@/lib/utils'
+import { PAYMENT_METHODS } from '@/types'
 import { APP_NAME } from '@/lib/constants'
 import { InvoiceDocument } from '@/components/invoices/InvoiceDocument'
-import { PaymentSentButton } from '@/components/invoices/PaymentSentButton'
+import { ClientPaymentPanel } from '@/components/invoices/ClientPaymentPanel'
 
 export default async function PublicInvoicePage({ params }: { params: { token: string } }) {
   const invoice = await getInvoiceByShareToken(params.token)
@@ -16,6 +17,11 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
     console.error('Invoice not found for share token:', params.token)
     notFound()
   }
+
+  // Payment history shown to the client: confirmed payments + their own pending claims.
+  const claims = await getPaymentClaims(invoice.id)
+  const visibleClaims = claims.filter((c) => c.status === 'confirmed' || c.status === 'pending')
+  const methodLabel = (v: string) => PAYMENT_METHODS.find((m) => m.value === v)?.label ?? v
 
   // Notify freelancer that invoice was opened (rate-limited: once per hour per invoice)
   try {
@@ -134,9 +140,46 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
           />
         </div>
 
-        {/* Client confirmation — shown only while unpaid */}
+        {/* Client payment flow — shown only while a balance remains */}
         {invoice.status !== 'paid' && (
-          <PaymentSentButton freelancerName={brandName ?? invoice.freelancerName} />
+          <ClientPaymentPanel
+            shareToken={params.token}
+            freelancerName={brandName ?? invoice.freelancerName}
+            currency={invoice.currency}
+            balance={Math.max(0, invoice.total - invoice.paidAmount)}
+            paymentInstructions={invoice.paymentInstructions}
+          />
+        )}
+
+        {/* Payment history — confirmed payments and pending self-reports */}
+        {visibleClaims.length > 0 && (
+          <div className="mt-4 rounded-xl border bg-white shadow-sm overflow-hidden">
+            <div className="border-b px-5 py-3">
+              <h3 className="text-sm font-semibold text-gray-900">Payment history</h3>
+            </div>
+            <div className="divide-y">
+              {visibleClaims.map((c) => (
+                <div key={c.id} className="flex items-center justify-between px-5 py-3 text-sm">
+                  <div>
+                    <p className="font-medium text-gray-900">{formatCurrency(c.amount, invoice.currency)}</p>
+                    <p className="text-xs text-gray-500">
+                      {methodLabel(c.method)}
+                      {c.paymentDate ? ` · ${formatDate(c.paymentDate)}` : ''}
+                    </p>
+                  </div>
+                  {c.status === 'confirmed' ? (
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-700">
+                      Confirmed
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-700">
+                      Awaiting confirmation
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
         {/* Viral footer for free tier */}

@@ -11,11 +11,13 @@ import {
   getCurrentProfile,
   getInvoice,
   getInvoicePayments,
+  getPaymentClaims,
   getInvoiceReminderLogs,
   markOverdueInvoices,
 } from '@/lib/db/supabase'
 import { InvoiceDocument } from '@/components/invoices/InvoiceDocument'
 import { RecordPaymentModal } from '@/components/invoices/RecordPaymentModal'
+import { PendingClaimsReview } from '@/components/invoices/PendingClaimsReview'
 import { RecurringSettings } from '@/components/invoices/RecurringSettings'
 import { InvoiceShareLink } from '@/components/invoices/InvoiceShareLink'
 import { InvoicePdfButton } from '@/components/invoices/InvoicePdfButton'
@@ -38,14 +40,17 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) { notFound(); return null }
 
-  const [, profile, invoice, payments, reminderLogs] = await Promise.all([
+  const [, profile, invoice, payments, claims, reminderLogs] = await Promise.all([
     markOverdueInvoices(user.id),
     getCurrentProfile(user.id),
     getInvoice(params.id, user.id),
     getInvoicePayments(params.id),
+    getPaymentClaims(params.id),
     getInvoiceReminderLogs(params.id),
   ])
   if (!invoice) notFound()
+
+  const pendingClaims = claims.filter((c) => c.status === 'pending')
 
   const template = invoice.template
   const primaryColor = template?.primaryColor ?? '#635BFF'
@@ -115,6 +120,25 @@ export default async function InvoiceDetailPage({ params }: { params: { id: stri
 
         {/* Sidebar */}
         <div className="space-y-4">
+          {pendingClaims.length > 0 && (
+            <Card className="border-amber-200">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                <CardTitle className="text-base">
+                  Client Reported Payment
+                  <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                    {pendingClaims.length}
+                  </span>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="mb-3 text-xs text-muted-foreground">
+                  {invoice.clientName} marked this invoice as paid. Confirm to record the payment.
+                </p>
+                <PendingClaimsReview invoiceId={invoice.id} currency={invoice.currency} claims={pendingClaims} />
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3"><CardTitle className="text-base">Record Payment</CardTitle></CardHeader>
             <CardContent>
