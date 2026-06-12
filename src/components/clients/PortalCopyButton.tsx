@@ -20,11 +20,12 @@ export function PortalCopyButton({ portalToken, clientName }: { portalToken: str
     <button
       onClick={handleCopy}
       title="Copy client portal link"
-      className="flex h-8 w-8 items-center justify-center rounded-md border border-border text-muted-foreground hover:bg-muted/40 hover:text-primary transition-colors duration-150"
+      className="flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted/40 hover:text-primary transition-colors duration-150"
     >
       {copied
         ? <Check size={14} className="text-green-600" />
         : <LinkIcon size={14} />}
+      Client Portal
     </button>
   )
 }

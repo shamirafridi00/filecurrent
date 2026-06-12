@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { FloppyDisk, Plus, X, Bell, Lightning } from '@phosphor-icons/react'
+import { FloppyDisk, Plus, X, Bell } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Switch } from '@/components/ui/switch'
@@ -85,17 +85,6 @@ export function ReminderSettingsForm({ initial }: Props) {
       />
 
       <div className="max-w-2xl space-y-5">
-        {/* No-cap banner */}
-        <Card className="border-l-4 border-l-primary">
-          <CardContent className="flex items-start gap-3 p-4">
-            <Lightning className="mt-0.5 h-5 w-5 shrink-0 text-primary" />
-            <p className="text-sm text-foreground">
-              FileCurrent sends reminders automatically with <strong>no daily limits</strong>.
-              You&apos;ll never miss a late payment because of an artificial cap.
-            </p>
-          </CardContent>
-        </Card>
-
         {/* Master enable */}
         <Card>
           <CardContent className="flex items-center justify-between p-5">

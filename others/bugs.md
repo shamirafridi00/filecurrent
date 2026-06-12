@@ -171,17 +171,23 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** The final step now includes a "Finish your setup anytime in Settings" card listing what's left (default tax rate, payment instructions, invoice branding) with a direct link that completes onboarding and navigates to /settings.
 
-- [ ] **[Forms — General] Browser autofill appearing in all form fields**
+- [x] **[Forms — General] Browser autofill appearing in all form fields**
       Clicking any form field across the app shows browser autofill/history suggestions. Add `autocomplete="off"` or `autocomplete="new-password"` to all relevant input fields app-wide.
       `URL: App-wide`
 
-- [ ] **[Clients] Client portal button has no text label**
+      **Fixed 2026-06-12:** Fixed once at the source — the shared `Input` and `Textarea` primitives now default to `autoComplete="off"` (every form in the app uses them). Login/signup keep proper autofill because they explicitly pass `autoComplete="email"` / `"current-password"` / `"new-password"`, which overrides the default.
+
+- [x] **[Clients] Client portal button has no text label**
       In the clients list, the portal button shows only a chain icon with no label. "+Contract" and "+Invoice" have labels but the portal button does not. Add "Client Portal" text label next to the icon. Also review button colors — all-white buttons are hard to distinguish.
       `URL: filecurrent.com/clients`
 
-- [ ] **[Clients] Client portal email lacks detail and lost-link instructions**
+      **Fixed 2026-06-12:** PortalCopyButton now shows a "Client Portal" label next to the link icon (matches the +Contract/+Invoice button style).
+
+- [x] **[Clients] Client portal email lacks detail and lost-link instructions**
       The email sent to clients with their portal link is too brief. Expand it to explain each portal section (invoices, contracts, balance) and add: "If you lose this link, you can request a new one from your service provider."
       `URL: Client portal email`
+
+      **Fixed 2026-06-12:** Portal email now explains each section in detail — Invoices (amounts, due dates, status, payment instructions, mark-as-paid), Contracts (incl. signed copies), Proposals (one-click accept/decline), and Balance — plus the lost-link line: "If you lose this link, you can request a new one from your service provider at any time." 
 
 - [ ] **[Clients] Client portal URL uses UUID instead of client name**
       Portal URLs (/portal/{uuid}) are not user-friendly. Generate human-readable slugs: /portal/jhon-ibrahim/v1. For duplicate names: /portal/jhon-ibrahim-c2/v1. For re-generated links increment version: /v2, /v3, etc.
@@ -191,17 +197,23 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       The client detail URL (/clients/{uuid}?tab=activity) is ugly. Use a name-based slug instead: /clients/jhon-ibrahim or /clients/jhon-ibrahim-juva-inc.
       `URL: filecurrent.com/clients/{uuid}`
 
-- [ ] **[Clients] Client view missing quick-action buttons for all linked features**
+- [x] **[Clients] Client view missing quick-action buttons for all linked features**
       The client detail page only shows "+New Contract" and "+New Invoice". Add quick-action buttons for all client-linked features: Proposal, Intake Form, Time Log, Expense.
       `URL: filecurrent.com/clients/{id}`
 
-- [ ] **[Clients] Client detail page uses stacked layout — needs tabs**
+      **Fixed 2026-06-12:** Header now has + Proposal (client pre-selected), + Time Log, and + Expense quick actions alongside Edit / New Contract / New Invoice. Intake forms remain as the copy-link card in the sidebar (forms are sent, not created per-client).
+
+- [x] **[Clients] Client detail page uses stacked layout — needs tabs**
       Contracts and Invoices are stacked vertically making the page messy. Restructure with tabs: Overview, Contracts, Invoices, Proposals, Forms, Time Tracking, Activity.
       `URL: filecurrent.com/clients/{id}`
 
-- [ ] **[Client Portal] Portal uses stacked layout — needs tabs**
+      **Fixed 2026-06-12:** Client detail page now has six tabs: Overview (contact sidebar + summary of everything), Contracts, Invoices, Proposals (new card with status + New button), Forms (submitted intake responses), and Activity. Each focused tab shows just that section full-width.
+
+- [x] **[Client Portal] Portal uses stacked layout — needs tabs**
       The client-facing portal stacks all content vertically. Add tabs: Invoices, Contracts, Proposals, Balance.
       `URL: filecurrent.com/portal/{id}`
+
+      **Fixed 2026-06-12:** Portal now has Invoices | Contracts | Proposals tabs (with counts); the balance summary cards stay pinned above the tabs since they're the first thing a client looks for.
 
 - [ ] **[Proposals] Project summary field needs to be a rich text editor**
       The project summary field is a plain Slate text input. Replace it with a rich text editor (TipTap or Quill) supporting H1/H2, bold, italic, underline, bullet lists, and paragraph breaks.
@@ -259,17 +271,23 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** Fixed globally in the shared shadcn `Input` primitive — any `type="number"` input now blurs on wheel, so every number field app-wide (invoices, expenses, time tracking, settings) is protected, not just the invoice amount.
 
-- [ ] **[Exports] Export page UI needs redesign**
+- [x] **[Exports] Export page UI needs redesign**
       The /exports page has poorly designed cards. Redesign with a clean layout, clear labels, icons, and action buttons.
       `URL: filecurrent.com/exports`
 
-- [ ] **[Imports] Import page UI needs redesign**
+      **Fixed 2026-06-12:** Redesigned as a 2-col grid of cards, each with a tinted icon container (Users/FileText/Receipt/CurrencyDollar), title, content description, hover state, and an Export CSV action button; plus a footer note on file compatibility.
+
+- [x] **[Imports] Import page UI needs redesign**
       The /imports page has poorly designed cards. Redesign with a clean, professional layout.
       `URL: filecurrent.com/imports`
 
-- [ ] **[Feedback] Feedback page UI needs redesign**
+      **Fixed 2026-06-12:** Restructured to a two-column layout — drop-zone card (with import summary feedback) beside a dedicated "Import instructions" card listing each column, required fields, and skip behavior. (Functional CSV import + sample template were wired in the June-10 pass.)
+
+- [x] **[Feedback] Feedback page UI needs redesign**
       The /feedback page form has poor UI. Redesign with proper input styling, spacing, and a professional layout.
       `URL: filecurrent.com/feedback`
+
+      **Fixed 2026-06-12:** Redesigned with a two-column layout (form + "your feedback helps" info card), live character counter (10–2000 chars), and disabled-until-valid submit. **Bigger find: the submit was a fake stub** — it showed a success toast after a 600ms timeout and never saved anything. Built the real `POST /api/feedback` (validates type + length, rate-limits 3/day per the product copy, inserts into the existing `feedback` table) and wired the form to it.
 
 - [ ] **[UX / Help] No contextual help, tooltips, or walkthrough GIFs**
       Features like intake forms, proposals, and time tracking have no contextual help. Add small walkthrough GIFs or tooltip panels (via a "?" icon) for each major feature with examples. Consider an in-app help sidebar.
@@ -319,9 +337,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Verified 2026-06-12:** The invoice detail header already renders `DuplicateInvoiceButton` with a labeled "Duplicate" button (copy icon + text, outline variant on paid invoices). Present since the June-10 action-hierarchy pass.
 
-- [ ] **[Payment Reminders] Marketing copy inside product UI**
+- [x] **[Payment Reminders] Marketing copy inside product UI**
       The reminders section contains: "FileCurrent sends reminders automatically with no daily limits. You'll never miss a late payment because of an artificial cap." Remove this — it belongs on the landing page, not in the product.
       `URL: filecurrent.com/reminders`
+
+      **Fixed 2026-06-12:** Removed the marketing banner card from the reminder settings page.
 
 - [x] **[Navigation] No back button on invoices page**
       The /invoices page has no back button or breadcrumb. Add navigation.

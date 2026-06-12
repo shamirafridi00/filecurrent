@@ -1,7 +1,7 @@
 'use client'
 
-import { DownloadSimple } from '@/components/icons'
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
+import { DownloadSimple, Users, FileText, Receipt, CurrencyDollar } from '@/components/icons'
+import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { PageHeader } from '@/components/ui'
 import { toast } from 'sonner'
@@ -92,10 +92,10 @@ async function exportExpenses() {
 }
 
 const EXPORT_ITEMS = [
-  { label: 'Clients', desc: 'Names, emails, phone numbers, companies, addresses, and notes', fn: exportClients },
-  { label: 'Contracts', desc: 'Titles, clients, statuses, amounts, and start/end dates', fn: exportContracts },
-  { label: 'Invoices', desc: 'Invoice numbers, totals, paid amounts, balances, and due dates', fn: exportInvoices },
-  { label: 'Expenses', desc: 'Dates, descriptions, categories, and amounts — ready for your tax preparer', fn: exportExpenses },
+  { label: 'Clients', desc: 'Names, emails, phone numbers, companies, addresses, and notes', fn: exportClients, icon: Users },
+  { label: 'Contracts', desc: 'Titles, clients, statuses, amounts, and start/end dates', fn: exportContracts, icon: FileText },
+  { label: 'Invoices', desc: 'Invoice numbers, totals, paid amounts, balances, and due dates', fn: exportInvoices, icon: Receipt },
+  { label: 'Expenses', desc: 'Dates, descriptions, categories, and amounts — ready for your tax preparer', fn: exportExpenses, icon: CurrencyDollar },
 ]
 
 export default function ExportsPage() {
@@ -116,27 +116,36 @@ export default function ExportsPage() {
         icon={<DownloadSimple size={24} />}
       />
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 max-w-3xl">
-        {EXPORT_ITEMS.map((item) => (
-          <Card key={item.label}>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-base">{item.label}</CardTitle>
-              <CardDescription>{item.desc}</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button
-                variant="outline"
-                size="sm"
-                className="w-full"
-                onClick={() => handleExport(item)}
-              >
-                <DownloadSimple className="mr-1 h-3.5 w-3.5" />
-                Export CSV
-              </Button>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 max-w-3xl">
+        {EXPORT_ITEMS.map((item) => {
+          const Icon = item.icon
+          return (
+            <Card key={item.label} className="transition-all hover:border-primary/50 hover:shadow-sm">
+              <CardContent className="flex h-full flex-col p-5">
+                <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-accent">
+                  <Icon size={20} className="text-primary" />
+                </div>
+                <p className="text-base font-semibold text-foreground">{item.label}</p>
+                <p className="mt-1 flex-1 text-sm text-muted-foreground">{item.desc}</p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="mt-4 w-full"
+                  onClick={() => handleExport(item)}
+                >
+                  <DownloadSimple className="mr-1.5 h-3.5 w-3.5" />
+                  Export CSV
+                </Button>
+              </CardContent>
+            </Card>
+          )
+        })}
       </div>
+
+      <p className="mt-4 max-w-3xl text-xs text-muted-foreground">
+        Exports include all records in your account at the time of download. CSV files open
+        in Excel, Google Sheets, Numbers, and any accounting tool.
+      </p>
     </div>
   )
 }

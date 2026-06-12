@@ -9,7 +9,7 @@ import { PageHeader, ContractBadge, InvoiceBadge, EmptyState } from '@/component
 import { HelpHint } from '@/components/ui/HelpHint'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getClientById, getContracts, getInvoices, getClientActivityLog, getClientStats, getClientPortalToken, getIntakeForms, getClientIntakeResponses } from '@/lib/db/supabase'
+import { getClientById, getContracts, getInvoices, getProposals, getClientActivityLog, getClientStats, getClientPortalToken, getIntakeForms, getClientIntakeResponses } from '@/lib/db/supabase'
 import { DeleteClientButton } from '@/components/clients/DeleteClientButton'
 import { ClientReminderToggle } from '@/components/clients/ClientReminderToggle'
 import { ClientPortalLink } from '@/components/clients/ClientPortalLink'
@@ -18,7 +18,16 @@ import { CopyIntakeLink } from '@/components/intake-forms/CopyIntakeLink'
 import { APP_URL } from '@/lib/constants'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
-type Tab = 'overview' | 'activity'
+type Tab = 'overview' | 'contracts' | 'invoices' | 'proposals' | 'forms' | 'activity'
+
+const TABS: Array<{ key: Tab; label: string }> = [
+  { key: 'overview', label: 'Overview' },
+  { key: 'contracts', label: 'Contracts' },
+  { key: 'invoices', label: 'Invoices' },
+  { key: 'proposals', label: 'Proposals' },
+  { key: 'forms', label: 'Forms' },
+  { key: 'activity', label: 'Activity' },
+]
 
 export default async function ClientDetailPage({
   params,
@@ -31,12 +40,13 @@ export default async function ClientDetailPage({
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) { notFound(); return null }
 
-  const activeTab: Tab = searchParams.tab === 'activity' ? 'activity' : 'overview'
+  const activeTab: Tab = (TABS.find((t) => t.key === searchParams.tab)?.key as Tab) ?? 'overview'
 
-  const [client, allContracts, allInvoices, activityEvents, stats, portalToken, intakeForms, intakeResponses] = await Promise.all([
+  const [client, allContracts, allInvoices, allProposals, activityEvents, stats, portalToken, intakeForms, intakeResponses] = await Promise.all([
     getClientById(params.id, user.id),
     getContracts(user.id),
     getInvoices(user.id),
+    getProposals(user.id),
     getClientActivityLog(user.id, params.id, 50),
     getClientStats(user.id, params.id),
     getClientPortalToken(params.id, user.id),
@@ -47,7 +57,9 @@ export default async function ClientDetailPage({
 
   const contracts = allContracts.filter((c) => c.clientId === params.id)
   const invoices = allInvoices.filter((i) => i.clientId === params.id)
+  const proposals = allProposals.filter((p) => p.clientId === params.id)
   const activeForms = intakeForms.filter((f) => f.isActive)
+  const showOverviewLayout = activeTab !== 'activity'
 
   // Client since: earliest invoice or contract date
   const dates = [
@@ -80,37 +92,46 @@ export default async function ClientDetailPage({
                 <Plus className="mr-1 h-3.5 w-3.5" /> New Invoice
               </Link>
             </Button>
+            <Button asChild size="sm" variant="outline">
+              <Link href={`/proposals/new?clientId=${params.id}`}>
+                <Plus className="mr-1 h-3.5 w-3.5" /> Proposal
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link href="/time-tracking">
+                <Plus className="mr-1 h-3.5 w-3.5" /> Time Log
+              </Link>
+            </Button>
+            <Button asChild size="sm" variant="ghost">
+              <Link href="/expenses">
+                <Plus className="mr-1 h-3.5 w-3.5" /> Expense
+              </Link>
+            </Button>
           </div>
         }
       />
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-5 border-b">
-        <Link
-          href={`/clients/${params.id}`}
-          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-            activeTab === 'overview'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          Overview
-        </Link>
-        <Link
-          href={`/clients/${params.id}?tab=activity`}
-          className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
-            activeTab === 'activity'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground hover:text-foreground'
-          }`}
-        >
-          Activity
-        </Link>
+      <div className="flex gap-1 mb-5 border-b overflow-x-auto">
+        {TABS.map((t) => (
+          <Link
+            key={t.key}
+            href={t.key === 'overview' ? `/clients/${params.id}` : `/clients/${params.id}?tab=${t.key}`}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px whitespace-nowrap transition-colors ${
+              activeTab === t.key
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground hover:text-foreground'
+            }`}
+          >
+            {t.label}
+          </Link>
+        ))}
       </div>
 
-      {activeTab === 'overview' && (
-        <div className="grid grid-cols-1 gap-5 xl:grid-cols-[260px_1fr]">
-          {/* Sidebar info */}
+      {showOverviewLayout && (
+        <div className={activeTab === 'overview' ? 'grid grid-cols-1 gap-5 xl:grid-cols-[260px_1fr]' : ''}>
+          {/* Sidebar info — overview only */}
+          {activeTab === 'overview' && (
           <div className="space-y-4">
             <Card>
               <CardHeader><CardTitle className="text-base">Contact</CardTitle></CardHeader>
@@ -208,9 +229,11 @@ export default async function ClientDetailPage({
 
             <DeleteClientButton clientId={params.id} clientName={client.name} />
           </div>
+          )}
 
           {/* Main content */}
           <div className="space-y-5">
+            {(activeTab === 'overview' || activeTab === 'contracts') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -245,7 +268,9 @@ export default async function ClientDetailPage({
                 )}
               </CardContent>
             </Card>
+            )}
 
+            {(activeTab === 'overview' || activeTab === 'invoices') && (
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
@@ -280,8 +305,48 @@ export default async function ClientDetailPage({
                 )}
               </CardContent>
             </Card>
+            )}
 
-            {intakeResponses.length > 0 && (
+            {(activeTab === 'overview' || activeTab === 'proposals') && (proposals.length > 0 || activeTab === 'proposals') && (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
+                  <CardTitle className="flex items-center gap-2 text-base">
+                    <FileText size={16} /> Proposals
+                  </CardTitle>
+                  <Button asChild size="sm" variant="outline">
+                    <Link href={`/proposals/new?clientId=${params.id}`}>
+                      <Plus className="mr-1 h-3.5 w-3.5" /> New
+                    </Link>
+                  </Button>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  {proposals.length === 0 ? (
+                    <EmptyState title="No proposals" description="Send this client a proposal to scope the next project." />
+                  ) : (
+                    <div className="space-y-2">
+                      {proposals.map((p) => (
+                        <div key={p.id} className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors">
+                          <div>
+                            <Link href={`/proposals/${p.id}`} className="font-medium text-sm text-foreground hover:text-primary transition-colors">
+                              {p.title}
+                            </Link>
+                            <p className="text-xs text-muted-foreground">{formatDate(p.createdAt)}</p>
+                          </div>
+                          <div className="flex items-center gap-3">
+                            <span className="text-sm">{formatCurrency(p.total, p.currency)}</span>
+                            <span className="text-xs px-2 py-0.5 rounded-full font-medium border bg-muted text-muted-foreground border-border capitalize">
+                              {p.status}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </CardContent>
+              </Card>
+            )}
+
+            {(activeTab === 'overview' || activeTab === 'forms') && (intakeResponses.length > 0 || activeTab === 'forms') && (
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
                   <CardTitle className="flex items-center gap-2 text-base">
@@ -289,21 +354,25 @@ export default async function ClientDetailPage({
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-0">
-                  <div className="space-y-2">
-                    {intakeResponses.map((r) => (
-                      <Link
-                        key={r.id}
-                        href={`/intake-forms/${r.formId}/responses`}
-                        className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors"
-                      >
-                        <div>
-                          <p className="font-medium text-sm text-foreground">{r.formTitle || 'Intake form'}</p>
-                          <p className="text-xs text-muted-foreground">Submitted {formatDate(r.submittedAt)}</p>
-                        </div>
-                        <span className="text-sm font-medium text-primary">View →</span>
-                      </Link>
-                    ))}
-                  </div>
+                  {intakeResponses.length === 0 ? (
+                    <EmptyState title="No form submissions" description="Send this client an intake form from the Intake Forms page." />
+                  ) : (
+                    <div className="space-y-2">
+                      {intakeResponses.map((r) => (
+                        <Link
+                          key={r.id}
+                          href={`/intake-forms/${r.formId}/responses`}
+                          className="flex items-center justify-between rounded-lg border border-border p-3 hover:bg-muted/30 transition-colors"
+                        >
+                          <div>
+                            <p className="font-medium text-sm text-foreground">{r.formTitle || 'Intake form'}</p>
+                            <p className="text-xs text-muted-foreground">Submitted {formatDate(r.submittedAt)}</p>
+                          </div>
+                          <span className="text-sm font-medium text-primary">View →</span>
+                        </Link>
+                      ))}
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             )}

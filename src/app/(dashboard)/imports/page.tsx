@@ -146,48 +146,56 @@ export default function ImportsPage() {
         }
       />
 
-      <Card className="max-w-lg">
-        <CardHeader>
-          <CardTitle className="text-base">CSV Import</CardTitle>
-          <CardDescription>
-            Upload a CSV with columns: Name, Email, Phone, Company, Address, Notes
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <DropZone
-            onFile={handleFile}
-            accept=".csv"
-            helperText={importing ? 'Importing…' : 'CSV format only — max 10 MB'}
-          />
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-[minmax(0,28rem)_minmax(0,20rem)] items-start">
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-base">CSV Import</CardTitle>
+            <CardDescription>
+              Upload a CSV with columns: Name, Email, Phone, Company, Address, Notes
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <DropZone
+              onFile={handleFile}
+              accept=".csv"
+              helperText={importing ? 'Importing…' : 'CSV format only — max 10 MB'}
+            />
 
-          {result && (
-            <div className={`flex items-start gap-2 rounded-lg border p-3 text-sm ${
-              result.failed === 0
-                ? 'border-green-200 bg-green-50 text-green-800'
-                : 'border-amber-200 bg-amber-50 text-amber-800'
-            }`}>
-              {result.failed === 0
-                ? <CheckCircle size={16} className="mt-0.5 shrink-0" />
-                : <Warning size={16} className="mt-0.5 shrink-0" />}
-              <p>
-                Imported {result.imported} client{result.imported !== 1 ? 's' : ''}
-                {result.failed > 0 && ` — ${result.failed} row${result.failed !== 1 ? 's' : ''} failed`}.{' '}
-                <Link href="/clients" className="font-medium underline">View clients →</Link>
-              </p>
-            </div>
-          )}
+            {result && (
+              <div className={`flex items-start gap-2 rounded-lg border p-3 text-sm ${
+                result.failed === 0
+                  ? 'border-green-200 bg-green-50 text-green-800'
+                  : 'border-amber-200 bg-amber-50 text-amber-800'
+              }`}>
+                {result.failed === 0
+                  ? <CheckCircle size={16} className="mt-0.5 shrink-0" />
+                  : <Warning size={16} className="mt-0.5 shrink-0" />}
+                <p>
+                  Imported {result.imported} client{result.imported !== 1 ? 's' : ''}
+                  {result.failed > 0 && ` — ${result.failed} row${result.failed !== 1 ? 's' : ''} failed`}.{' '}
+                  <Link href="/clients" className="font-medium underline">View clients →</Link>
+                </p>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
-          <div className="rounded-lg bg-muted/40 border p-3 text-xs text-muted-foreground space-y-1">
-            <p className="font-medium">Columns:</p>
-            <p><code>Name</code> — Client full name (required)</p>
-            <p><code>Email</code> — Contact email</p>
-            <p><code>Phone</code> — Phone number</p>
-            <p><code>Company</code> — Company name</p>
-            <p><code>Address</code> — Street address</p>
-            <p><code>Notes</code> — Anything else worth keeping</p>
-          </div>
-        </CardContent>
-      </Card>
+        <Card className="bg-muted/30">
+          <CardContent className="p-5 space-y-2 text-xs text-muted-foreground">
+            <p className="text-sm font-semibold text-foreground mb-2">Import instructions</p>
+            <p><code className="text-foreground">Name</code> — Client full name (required)</p>
+            <p><code className="text-foreground">Email</code> — Contact email</p>
+            <p><code className="text-foreground">Phone</code> — Phone number</p>
+            <p><code className="text-foreground">Company</code> — Company name</p>
+            <p><code className="text-foreground">Address</code> — Street address</p>
+            <p><code className="text-foreground">Notes</code> — Anything else worth keeping</p>
+            <p className="pt-2 border-t mt-3">
+              First row must be the column headers. Rows without a Name are skipped
+              and reported in the import summary.
+            </p>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   )
 }
