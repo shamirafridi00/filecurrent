@@ -116,9 +116,25 @@ Invoices not paid within seven (7) days of the due date will incur a late fee of
 
 My total liability to you under this Agreement, for any claim of any kind, shall not exceed the total fees you have actually paid to me under this Agreement. I am not liable for any lost profits, lost business opportunities, consequential damages, incidental damages, or special damages, even if I have been advised of the possibility of such damages.
 
-## 15. GOVERNING LAW
+## 15. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I am domiciled. Any disputes arising out of or related to this Agreement shall be resolved in the courts of my state of domicile, and you consent to personal jurisdiction in that venue.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 16. CLIENT MATERIALS AND MUTUAL INDEMNIFICATION
+
+You warrant that all materials you provide to me for this project — including text, images, logos, trademarks, audio, video, data, and instructions — are owned by you or properly licensed for my intended use, and that my authorized use of them will not infringe any third party's rights. You agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials or instructions you supplied. I likewise agree to indemnify you against third-party claims arising solely from my proven breach of this Agreement or my willful misconduct. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 17. FORCE MAJEURE
+
+Neither party is liable for a failure or delay in performance caused by events beyond that party's reasonable control, including natural disasters, fire, flood, severe weather, war, terrorism, civil unrest, labor disputes, epidemics or pandemics, government orders, or failures of power, internet, or telecommunications infrastructure. The affected party must notify the other promptly and resume performance as soon as reasonably practical. If a force majeure event prevents performance for more than thirty (30) days, either party may terminate this Agreement on written notice, and you will pay me for all work completed up to the date of termination.
+
+## 18. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 19. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 
@@ -196,9 +212,25 @@ Both parties agree not to make false, misleading, or defamatory statements about
 
 You and your representatives may not handle my camera equipment, lighting, or accessories at any time. I am not responsible for damage to my equipment caused by venue conditions, adverse weather, third-party interference, or client-directed activities. If a venue or shoot location poses a risk to my equipment that I deem unreasonable, I reserve the right to decline to use equipment in that location without penalty.
 
-## 14. GOVERNING LAW
+## 14. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I operate my business. Any dispute arising under this Agreement shall be resolved in the courts of my state of operation, and you consent to jurisdiction in that venue.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 15. CLIENT MATERIALS AND MUTUAL INDEMNIFICATION
+
+You warrant that all materials you provide to me for this project — including text, images, logos, trademarks, audio, video, data, and instructions — are owned by you or properly licensed for my intended use, and that my authorized use of them will not infringe any third party's rights. You agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials or instructions you supplied. I likewise agree to indemnify you against third-party claims arising solely from my proven breach of this Agreement or my willful misconduct. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 16. FORCE MAJEURE
+
+Neither party is liable for a failure or delay in performance caused by events beyond that party's reasonable control, including natural disasters, fire, flood, severe weather, war, terrorism, civil unrest, labor disputes, epidemics or pandemics, government orders, or failures of power, internet, or telecommunications infrastructure. The affected party must notify the other promptly and resume performance as soon as reasonably practical. If a force majeure event prevents performance for more than thirty (30) days, either party may terminate this Agreement on written notice, and you will pay me for all work completed up to the date of termination.
+
+## 17. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 18. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 
@@ -287,9 +319,21 @@ You are responsible for ensuring I have full, unrestricted access to all ceremon
 
 I may publish your wedding images on my website, social media accounts, blog, and in my marketing and promotional materials. If you would like a temporary social media embargo — meaning you want to share the images yourself first — I will honor up to a forty-eight (48)-hour embargo from your wedding date if you request it in writing before the wedding. If you wish to opt out of portfolio use entirely, you must request this in writing before the wedding date, and we will discuss whether a portfolio opt-out fee applies.
 
-## 17. GOVERNING LAW
+## 17. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I am domiciled. Any disputes shall be resolved in the courts of my state of domicile.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 18. CLIENT MATERIALS AND MUTUAL INDEMNIFICATION
+
+You warrant that all materials you provide to me for this project — including text, images, logos, trademarks, audio, video, data, and instructions — are owned by you or properly licensed for my intended use, and that my authorized use of them will not infringe any third party's rights. You agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials or instructions you supplied. I likewise agree to indemnify you against third-party claims arising solely from my proven breach of this Agreement or my willful misconduct. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 19. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 20. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 
@@ -374,9 +418,25 @@ Either party may terminate this Agreement with written notice. If you terminate 
 
 Balances not paid by the invoice due date will accrue interest at one and one-half percent (1.5%) per month on the outstanding amount. I reserve the right to withhold final file delivery until the account is paid in full and to pursue legal action for collection of overdue amounts, including attorney's fees.
 
-## 16. GOVERNING LAW
+## 16. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I am domiciled. Disputes shall be resolved in the courts of my state of domicile.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 17. MUTUAL INDEMNIFICATION
+
+In addition to the client-provided content warranty above, you agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials or instructions you supplied. I likewise agree to indemnify you against third-party claims arising solely from my proven breach of this Agreement or my willful misconduct. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 18. FORCE MAJEURE
+
+Neither party is liable for a failure or delay in performance caused by events beyond that party's reasonable control, including natural disasters, fire, flood, severe weather, war, terrorism, civil unrest, labor disputes, epidemics or pandemics, government orders, or failures of power, internet, or telecommunications infrastructure. The affected party must notify the other promptly and resume performance as soon as reasonably practical. If a force majeure event prevents performance for more than thirty (30) days, either party may terminate this Agreement on written notice, and you will pay me for all work completed up to the date of termination.
+
+## 19. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 20. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 
@@ -449,9 +509,25 @@ If you cancel this project after I have begun writing — meaning I have investe
 
 Invoices not paid within the payment terms stated above will accrue a late fee of one and one-half percent (1.5%) per month on the outstanding balance. I reserve the right to suspend all work on your project until overdue invoices are paid in full. You agree to reimburse me for reasonable collection costs, including attorney's fees, if legal action is required.
 
-## 13. GOVERNING LAW
+## 13. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I reside. Any disputes arising under this Agreement shall be resolved in the courts of my state of residence.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 14. CLIENT MATERIALS AND CLIENT INDEMNIFICATION
+
+In addition to my originality warranty and indemnification above, you warrant that all source materials, brand assets, product claims, and instructions you provide are accurate, owned by you or properly licensed, and lawful to publish. You agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials, claims, or instructions you supplied, or from your publication of the work after your approval. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 15. FORCE MAJEURE
+
+Neither party is liable for a failure or delay in performance caused by events beyond that party's reasonable control, including natural disasters, fire, flood, severe weather, war, terrorism, civil unrest, labor disputes, epidemics or pandemics, government orders, or failures of power, internet, or telecommunications infrastructure. The affected party must notify the other promptly and resume performance as soon as reasonably practical. If a force majeure event prevents performance for more than thirty (30) days, either party may terminate this Agreement on written notice, and you will pay me for all work completed up to the date of termination.
+
+## 16. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 17. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 
@@ -536,9 +612,21 @@ All video content, edits, color grades, and post-production work produced by me 
 
 Invoices not paid by their due date will accrue a late fee of one and one-half percent (1.5%) per month on the outstanding balance. I reserve the right to withhold delivery of final files until the account is paid in full and to pursue legal remedies for overdue balances.
 
-## 16. GOVERNING LAW
+## 16. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I operate my business. Disputes shall be resolved in the courts of my state of operation.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 17. CLIENT MATERIALS AND MUTUAL INDEMNIFICATION
+
+You warrant that all materials you provide to me for this project — including text, images, logos, trademarks, audio, video, data, and instructions — are owned by you or properly licensed for my intended use, and that my authorized use of them will not infringe any third party's rights. You agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials or instructions you supplied. I likewise agree to indemnify you against third-party claims arising solely from my proven breach of this Agreement or my willful misconduct. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 18. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 19. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 
@@ -623,9 +711,25 @@ Either party may terminate this Agreement by providing thirty (30) days written 
 
 The monthly retainer of {{currency}} {{rate}} is due on the first (1st) of each month for services to be performed during that month. If payment is not received within five (5) business days of the due date, I reserve the right to pause all services — including content scheduling, calendar preparation, and reporting — until the outstanding balance is paid. Paused months are not discounted; you owe the full retainer regardless of the service pause caused by non-payment. Overdue balances accrue a late fee of five percent (5%) of the monthly retainer for each week — or part thereof — that payment remains outstanding.
 
-## 16. GOVERNING LAW
+## 16. INDEPENDENT CONTRACTOR STATUS
 
-This Agreement is governed by the laws of the United States and the state in which I reside and operate. Any disputes arising under this Agreement shall be resolved in the courts of my state of operation.
+I am an independent contractor, not your employee, partner, agent, or joint venturer. I control the manner, means, schedule, and location of my work. I am solely responsible for my own income taxes, self-employment taxes, business insurance, equipment, and expenses, and I am not entitled to any employee benefits from you. Nothing in this Agreement creates an employment relationship, and neither party has authority to bind the other to any obligation without prior written consent. I may perform services for other clients during the term of this Agreement, provided doing so does not breach my confidentiality obligations to you.
+
+## 17. CLIENT MATERIALS AND MUTUAL INDEMNIFICATION
+
+You warrant that all materials you provide to me for this project — including text, images, logos, trademarks, audio, video, data, and instructions — are owned by you or properly licensed for my intended use, and that my authorized use of them will not infringe any third party's rights. You agree to indemnify, defend, and hold me harmless from any third-party claim, loss, or expense (including reasonable attorneys' fees) arising out of materials or instructions you supplied. I likewise agree to indemnify you against third-party claims arising solely from my proven breach of this Agreement or my willful misconduct. Each party's indemnification obligation is subject to the Limitation of Liability section of this Agreement.
+
+## 18. FORCE MAJEURE
+
+Neither party is liable for a failure or delay in performance caused by events beyond that party's reasonable control, including natural disasters, fire, flood, severe weather, war, terrorism, civil unrest, labor disputes, epidemics or pandemics, government orders, or failures of power, internet, or telecommunications infrastructure. The affected party must notify the other promptly and resume performance as soon as reasonably practical. If a force majeure event prevents performance for more than thirty (30) days, either party may terminate this Agreement on written notice, and you will pay me for all work completed up to the date of termination.
+
+## 19. GOVERNING LAW AND DISPUTE RESOLUTION
+
+This Agreement is governed by the laws of the state in which I am domiciled, without regard to its conflict-of-law rules. Before either party files any legal action, we agree to first attempt to resolve the dispute through good-faith negotiation for fifteen (15) days, and if that fails, through non-binding mediation with a mutually agreed mediator, with the mediator's fees shared equally. Either party may bring a qualifying claim in small claims court without first mediating. If litigation becomes necessary, it shall be brought in the state or federal courts of my state of domicile, both parties consent to personal jurisdiction in that venue, and the prevailing party is entitled to recover its reasonable attorneys' fees and costs.
+
+## 20. GENERAL PROVISIONS
+
+This Agreement is the entire agreement between us regarding this project and supersedes all prior discussions and understandings. It may be amended only in a writing signed by both parties. If any provision is held unenforceable, the remaining provisions stay in full effect. A party's failure to enforce any provision is not a waiver of it. Neither party may assign this Agreement without the other's written consent. Notices may be given by email to the addresses each party has provided. This Agreement may be executed electronically, and electronic signatures (including signatures collected through an e-signature platform) are valid and binding under the U.S. ESIGN Act and UETA. Sections concerning payment, intellectual property, confidentiality, indemnification, and limitation of liability survive completion or termination of this Agreement.
 
 ---
 

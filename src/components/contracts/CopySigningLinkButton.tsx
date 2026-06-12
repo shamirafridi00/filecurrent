@@ -18,8 +18,8 @@ export function CopySigningLinkButton({ contractId, clientEmail }: Props) {
         body: JSON.stringify({ signerEmail: clientEmail }),
       })
       if (!res.ok) throw new Error()
-      const { token } = await res.json()
-      const link = `${window.location.origin}/sign/${token}`
+      const { token, signPath } = await res.json()
+      const link = `${window.location.origin}/sign/${signPath ?? token}`
       await navigator.clipboard.writeText(link)
       toast.success('Signing link copied to clipboard')
     } catch {

@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation'
 import { CheckCircle } from '@/components/icons'
 import { getContractForSigning, recordContractOpen } from '@/lib/db/supabase'
 import { formatCurrency, formatDate, stripMarkdown } from '@/lib/utils'
+import { extractToken } from '@/lib/slug'
 import { sendEmail, buildSenderName } from '@/lib/email'
 import { contractOpenedEmail } from '@/lib/email/templates/contract-opened'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
@@ -39,9 +40,11 @@ function renderInline(text: string, key: string | number) {
 }
 
 export default async function SignPage({ params }: { params: { token: string } }) {
-  const session = await getContractForSigning(params.token)
+  // URLs may carry a readable slug prefix (title--token) — strip it for lookups
+  const token = extractToken(params.token)
+  const session = await getContractForSigning(token)
   if (!session) {
-    console.error('Signing session not found for token:', params.token)
+    console.error('Signing session not found for token:', token)
     notFound()
   }
 
@@ -49,12 +52,12 @@ export default async function SignPage({ params }: { params: { token: string } }
   // download link instead of the old "Already Signed" dead-end card.
   const isSigned = session.status === 'signed'
   // Public, token-scoped download (the /api/contracts PDF route requires freelancer auth)
-  const signedPdfUrl = `/api/sign/${params.token}/pdf`
+  const signedPdfUrl = `/api/sign/${token}/pdf`
 
   // Track the open + notify the freelancer (gated on pref, rate-limited). Fire
   // and forget so it never blocks rendering the contract for the client.
   if (!isSigned) try {
-    const open = await recordContractOpen(params.token)
+    const open = await recordContractOpen(token)
     if (open) {
       const openedAt = new Date().toLocaleString('en-US', {
         month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
@@ -217,7 +220,7 @@ export default async function SignPage({ params }: { params: { token: string } }
         </p>
       </main>
 
-      {!isSigned && <SignaturePanel token={params.token} signerEmail={session.signerEmail} />}
+      {!isSigned && <SignaturePanel token={token} signerEmail={session.signerEmail} />}
     </div>
   )
 }

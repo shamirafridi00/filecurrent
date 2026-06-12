@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
 import { submitContractSignature, getContractForSigning, logClientActivity, getNotificationRecipient } from '@/lib/db/supabase'
+import { extractToken } from '@/lib/slug'
 import { stripMarkdown } from '@/lib/utils'
 import { adminClient } from '@/lib/supabase/admin'
 import { sendEmail, buildSenderName } from '@/lib/email'
@@ -12,6 +13,8 @@ import { uploadToR2 } from '@/lib/r2'
 import { createHash } from 'crypto'
 
 export async function POST(req: NextRequest, { params }: { params: { token: string } }) {
+  // URLs may carry a readable slug prefix (title--token) — strip it for lookups
+  const token = extractToken(params.token)
   const { signerName } = await req.json()
   if (!signerName?.trim()) {
     return NextResponse.json({ error: 'signerName is required' }, { status: 400 })
@@ -22,17 +25,17 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     req.headers.get('x-real-ip') ||
     'unknown'
 
-  console.log('[sign] 1 — fetching signing session for token:', params.token)
+  console.log('[sign] 1 — fetching signing session for token:', token)
   let session = null
   try {
-    session = await getContractForSigning(params.token)
+    session = await getContractForSigning(token)
     console.log('[sign] 2 — session fetched:', session ? `contractId=${session.contractId}` : 'NULL — token not found')
   } catch (err) {
     console.error('[sign] 2 — getContractForSigning CRASHED:', String(err))
   }
 
   try {
-    await submitContractSignature(params.token, signerName.trim(), ip)
+    await submitContractSignature(token, signerName.trim(), ip)
     console.log('[sign] 3 — signature submitted')
   } catch (err) {
     console.error('[sign] 3 — submitContractSignature failed:', String(err))
@@ -45,7 +48,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
   // Fallback: if pre-fetch failed or returned null, try again now that signing succeeded
   if (!session) {
     try {
-      session = await getContractForSigning(params.token)
+      session = await getContractForSigning(token)
       console.log('[sign] 3b — fallback session fetch:', session ? `contractId=${session.contractId}` : 'still null')
     } catch (err) {
       console.error('[sign] 3b — fallback getContractForSigning CRASHED:', String(err))
@@ -90,7 +93,7 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
     console.log('[sign] 5 — freelancerEmail:', freelancerEmail ?? 'none')
 
     // Client confirmation email
-    const clientSignUrl = `${appUrl}/sign/${params.token}`
+    const clientSignUrl = `${appUrl}/sign/${token}`
     console.log('[sign] 6 — sending client email to:', session.signerEmail)
     try {
       const result = await sendEmail({

@@ -16,6 +16,7 @@ import { ClientPortalLink } from '@/components/clients/ClientPortalLink'
 import { ActivityFeed } from '@/components/clients/ActivityFeed'
 import { CopyIntakeLink } from '@/components/intake-forms/CopyIntakeLink'
 import { APP_URL } from '@/lib/constants'
+import { extractToken } from '@/lib/slug'
 import type { ContractStatus, InvoiceStatus } from '@/types'
 
 type Tab = 'overview' | 'contracts' | 'invoices' | 'proposals' | 'forms' | 'activity'
@@ -42,22 +43,25 @@ export default async function ClientDetailPage({
 
   const activeTab: Tab = (TABS.find((t) => t.key === searchParams.tab)?.key as Tab) ?? 'overview'
 
+  // URLs may carry a readable slug prefix (name--uuid) — strip it for lookups
+  const clientId = extractToken(params.id)
+
   const [client, allContracts, allInvoices, allProposals, activityEvents, stats, portalToken, intakeForms, intakeResponses] = await Promise.all([
-    getClientById(params.id, user.id),
+    getClientById(clientId, user.id),
     getContracts(user.id),
     getInvoices(user.id),
     getProposals(user.id),
-    getClientActivityLog(user.id, params.id, 50),
-    getClientStats(user.id, params.id),
-    getClientPortalToken(params.id, user.id),
+    getClientActivityLog(user.id, clientId, 50),
+    getClientStats(user.id, clientId),
+    getClientPortalToken(clientId, user.id),
     getIntakeForms(user.id),
-    getClientIntakeResponses(params.id, user.id),
+    getClientIntakeResponses(clientId, user.id),
   ])
   if (!client) notFound()
 
-  const contracts = allContracts.filter((c) => c.clientId === params.id)
-  const invoices = allInvoices.filter((i) => i.clientId === params.id)
-  const proposals = allProposals.filter((p) => p.clientId === params.id)
+  const contracts = allContracts.filter((c) => c.clientId === clientId)
+  const invoices = allInvoices.filter((i) => i.clientId === clientId)
+  const proposals = allProposals.filter((p) => p.clientId === clientId)
   const activeForms = intakeForms.filter((f) => f.isActive)
   const showOverviewLayout = activeTab !== 'activity'
 
@@ -83,17 +87,17 @@ export default async function ClientDetailPage({
               </Link>
             </Button>
             <Button asChild size="sm">
-              <Link href={`/contracts/new?clientId=${params.id}&returnTo=/clients/${params.id}`}>
+              <Link href={`/contracts/new?clientId=${clientId}&returnTo=/clients/${params.id}`}>
                 <Plus className="mr-1 h-3.5 w-3.5" /> New Contract
               </Link>
             </Button>
             <Button asChild size="sm" variant="outline">
-              <Link href={`/invoices/new?clientId=${params.id}&returnTo=/clients/${params.id}`}>
+              <Link href={`/invoices/new?clientId=${clientId}&returnTo=/clients/${params.id}`}>
                 <Plus className="mr-1 h-3.5 w-3.5" /> New Invoice
               </Link>
             </Button>
             <Button asChild size="sm" variant="outline">
-              <Link href={`/proposals/new?clientId=${params.id}`}>
+              <Link href={`/proposals/new?clientId=${clientId}`}>
                 <Plus className="mr-1 h-3.5 w-3.5" /> Proposal
               </Link>
             </Button>
@@ -184,7 +188,7 @@ export default async function ClientDetailPage({
                   Reminders
                 </p>
                 <ClientReminderToggle
-                  clientId={params.id}
+                  clientId={clientId}
                   remindersPaused={client.remindersPaused}
                 />
               </CardContent>
@@ -204,7 +208,7 @@ export default async function ClientDetailPage({
                       can bookmark it.
                     </HelpHint>
                   </p>
-                  <ClientPortalLink clientId={params.id} portalToken={portalToken} clientEmail={client.email ?? null} />
+                  <ClientPortalLink clientId={clientId} portalToken={portalToken} clientEmail={client.email ?? null} clientName={client.name} />
                 </CardContent>
               </Card>
             )}
@@ -227,7 +231,7 @@ export default async function ClientDetailPage({
               </Card>
             )}
 
-            <DeleteClientButton clientId={params.id} clientName={client.name} />
+            <DeleteClientButton clientId={clientId} clientName={client.name} />
           </div>
           )}
 
@@ -240,7 +244,7 @@ export default async function ClientDetailPage({
                   <FileText size={16} /> Contracts
                 </CardTitle>
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/contracts/new?clientId=${params.id}&returnTo=/clients/${params.id}`}>
+                  <Link href={`/contracts/new?clientId=${clientId}&returnTo=/clients/${params.id}`}>
                     <Plus className="mr-1 h-3.5 w-3.5" /> New
                   </Link>
                 </Button>
@@ -277,7 +281,7 @@ export default async function ClientDetailPage({
                   <Receipt size={16} /> Invoices
                 </CardTitle>
                 <Button asChild size="sm" variant="outline">
-                  <Link href={`/invoices/new?clientId=${params.id}&returnTo=/clients/${params.id}`}>
+                  <Link href={`/invoices/new?clientId=${clientId}&returnTo=/clients/${params.id}`}>
                     <Plus className="mr-1 h-3.5 w-3.5" /> New
                   </Link>
                 </Button>
@@ -314,7 +318,7 @@ export default async function ClientDetailPage({
                     <FileText size={16} /> Proposals
                   </CardTitle>
                   <Button asChild size="sm" variant="outline">
-                    <Link href={`/proposals/new?clientId=${params.id}`}>
+                    <Link href={`/proposals/new?clientId=${clientId}`}>
                       <Plus className="mr-1 h-3.5 w-3.5" /> New
                     </Link>
                   </Button>

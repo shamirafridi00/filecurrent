@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { Receipt, FileText, Files } from '@phosphor-icons/react/dist/ssr'
 import { getClientPortalData } from '@/lib/db/supabase'
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { extractToken, withSlug } from '@/lib/slug'
 import { APP_NAME } from '@/lib/constants'
 
 function StatusPill({ status }: { status: string }) {
@@ -36,7 +37,7 @@ export default async function ClientPortalPage({
   params: { token: string }
   searchParams: { tab?: string }
 }) {
-  const data = await getClientPortalData(params.token)
+  const data = await getClientPortalData(extractToken(params.token))
   if (!data) notFound()
 
   const activeTab: Tab =
@@ -210,7 +211,7 @@ export default async function ClientPortalPage({
                     <p className="text-sm font-semibold text-gray-900">{formatCurrency(c.amount, c.currency)}</p>
                     {c.signToken && (
                       <Link
-                        href={`/sign/${c.signToken}`}
+                        href={`/sign/${withSlug(c.title, c.signToken)}`}
                         className={`text-xs font-medium whitespace-nowrap rounded-md px-2.5 py-1 ${
                           c.status !== 'signed'
                             ? 'bg-indigo-600 text-white hover:bg-indigo-700'

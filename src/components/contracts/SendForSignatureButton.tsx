@@ -41,7 +41,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
       if (!res.ok) { toast.error('Failed to generate signing session'); return }
 
       const data = await res.json()
-      const link = `${window.location.origin}/sign/${data.token}`
+      const link = `${window.location.origin}/sign/${data.signPath ?? data.token}`
       setSignLink(link)
       router.refresh()
 
@@ -71,7 +71,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
       })
       if (!res.ok) { toast.error('Failed to generate signing link'); return }
       const data = await res.json()
-      const link = `${window.location.origin}/sign/${data.token}`
+      const link = `${window.location.origin}/sign/${data.signPath ?? data.token}`
       setSignLink(link)
       setEmailFailed(false)
       router.refresh()

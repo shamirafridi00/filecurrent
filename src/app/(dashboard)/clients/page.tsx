@@ -8,7 +8,9 @@ import { Button } from '@/components/ui/button'
 import { PageHeader, EmptyState } from '@/components/ui'
 import { createClient } from '@/lib/supabase/server'
 import { getClients } from '@/lib/db/supabase'
+import { withSlug } from '@/lib/slug'
 import { PortalCopyButton } from '@/components/clients/PortalCopyButton'
+import { FeatureTour } from '@/components/ui/FeatureTour'
 
 export default async function ClientsPage() {
   const supabase = createClient()
@@ -24,12 +26,23 @@ export default async function ClientsPage() {
         subtitle="Manage your client relationships"
         icon={<Users size={24} />}
         action={
-          <Button asChild>
-            <Link href="/clients/new">
-              <Plus className="mr-1 h-4 w-4" />
-              Add Client
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <FeatureTour
+              tourId="clients"
+              autoStartOnFirstVisit={false}
+              steps={[
+                { title: 'Everything starts with a client', description: 'Contracts, invoices, proposals, and time logs all attach to a client record.' },
+                { element: 'a[href="/clients/new"]', title: 'Add a client', description: 'A name and email is enough — or import your whole list from CSV on the Imports page.' },
+                { element: '[data-tour="portal-copy"]', title: 'Client Portal', description: 'Every client gets a private portal link showing their invoices, contracts, and proposals — copy it here or email it from the client page.' },
+              ]}
+            />
+            <Button asChild>
+              <Link href="/clients/new">
+                <Plus className="mr-1 h-4 w-4" />
+                Add Client
+              </Link>
+            </Button>
+          </div>
         }
       />
 
@@ -62,7 +75,7 @@ export default async function ClientsPage() {
               {clients.map((c) => (
                 <div key={c.id} className="flex items-center justify-between px-5 py-4 hover:bg-muted/40 transition-colors">
                   <div className="min-w-0">
-                    <Link href={`/clients/${c.id}`} className="font-medium text-foreground hover:text-primary transition-colors">
+                    <Link href={`/clients/${withSlug(c.name, c.id)}`} className="font-medium text-foreground hover:text-primary transition-colors">
                       {c.name}
                     </Link>
                     <div className="flex items-center gap-3 mt-0.5">
@@ -89,7 +102,7 @@ export default async function ClientsPage() {
                       <PortalCopyButton portalToken={c.portalToken} clientName={c.name} />
                     )}
                     <Button asChild variant="ghost" size="sm">
-                      <Link href={`/clients/${c.id}`}>View →</Link>
+                      <Link href={`/clients/${withSlug(c.name, c.id)}`}>View →</Link>
                     </Button>
                   </div>
                 </div>

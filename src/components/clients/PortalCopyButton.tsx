@@ -4,12 +4,13 @@ import { useState } from 'react'
 import { Link as LinkIcon, Check } from '@phosphor-icons/react'
 import { toast } from 'sonner'
 import { APP_URL } from '@/lib/constants'
+import { withSlug } from '@/lib/slug'
 
 export function PortalCopyButton({ portalToken, clientName }: { portalToken: string; clientName: string }) {
   const [copied, setCopied] = useState(false)
 
   async function handleCopy() {
-    const url = `${APP_URL}/portal/${portalToken}`
+    const url = `${APP_URL}/portal/${withSlug(clientName, portalToken)}`
     await navigator.clipboard.writeText(url)
     setCopied(true)
     toast.success(`Portal link copied for ${clientName}`)
@@ -20,6 +21,7 @@ export function PortalCopyButton({ portalToken, clientName }: { portalToken: str
     <button
       onClick={handleCopy}
       title="Copy client portal link"
+      data-tour="portal-copy"
       className="flex h-8 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-medium text-muted-foreground hover:bg-muted/40 hover:text-primary transition-colors duration-150"
     >
       {copied

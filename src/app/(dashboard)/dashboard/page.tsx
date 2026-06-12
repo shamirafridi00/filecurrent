@@ -23,6 +23,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getCurrentProfile, getDashboardStats, getExpenseSummary, getTimeTrackingSummary, getRecentProposalEvents } from '@/lib/db/supabase'
 import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
 import { GettingStartedCard } from '@/components/onboarding/GettingStartedCard'
+import { FeatureTour } from '@/components/ui/FeatureTour'
 import type { InvoiceStatus, ContractStatus } from '@/types'
 
 export default async function DashboardPage() {
@@ -54,11 +55,24 @@ export default async function DashboardPage() {
     <div className="flex flex-col xl:flex-row gap-6">
       <UpgradeSuccessToast />
       <div className="min-w-0 flex-1 space-y-5">
-        <div className="mb-5">
-          <h1 className="text-2xl font-bold tracking-tight text-foreground">{greeting}, {displayName}</h1>
-          <p className="mt-0.5 text-sm text-muted-foreground">
-            Your business at a glance
-          </p>
+        <div className="mb-5 flex items-start justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight text-foreground">{greeting}, {displayName}</h1>
+            <p className="mt-0.5 text-sm text-muted-foreground">
+              Your business at a glance
+            </p>
+          </div>
+          <FeatureTour
+            tourId="dashboard"
+            steps={[
+              { title: 'Welcome to FileCurrent 👋', description: 'A 30-second tour of where everything lives. You can re-run it anytime with the Tour button.' },
+              { element: '[data-tour="dashboard-stats"]', title: 'Your money at a glance', description: 'Total invoiced, what’s been paid, what’s outstanding, and your expenses — updated live as you work.' },
+              { element: 'a[href="/invoices"]', title: 'Invoices', description: 'Create branded invoices, share a payment link, and let automatic reminders chase late payments for you.' },
+              { element: 'a[href="/contracts"]', title: 'Contracts', description: 'Send contracts for e-signature — clients sign from any device, no account needed.' },
+              { element: 'a[href="/clients"]', title: 'Clients', description: 'Every client gets a private portal with all their invoices, contracts, and proposals in one link.' },
+              { element: 'a[href="/settings"]', title: 'Make it yours', description: 'Add your logo, default tax rate, and payment methods in Settings — they flow onto every document.' },
+            ]}
+          />
         </div>
 
         {stats.recentInvoices.length === 0 && stats.recentContracts.length === 0 && (
@@ -111,7 +125,7 @@ export default async function DashboardPage() {
           </div>
         )}
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4" data-tour="dashboard-stats">
           <StatCard
             label="Total Invoiced"
             value={formatCurrency(stats.totalInvoiced)}

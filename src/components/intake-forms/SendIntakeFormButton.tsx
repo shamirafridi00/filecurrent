@@ -81,7 +81,7 @@ export function SendIntakeFormButton({ formId, clients }: Props) {
 
   return (
     <>
-      <Button variant="outline" size="sm" onClick={() => setOpen(true)}>
+      <Button variant="outline" size="sm" onClick={() => setOpen(true)} data-tour="send-intake">
         <PaperPlaneTilt className="mr-1.5 h-3.5 w-3.5" /> Send
       </Button>
 

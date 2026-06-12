@@ -4,6 +4,7 @@ import { adminClient } from '@/lib/supabase/admin'
 import { sendEmail, buildSenderName } from '@/lib/email'
 import { clientPortalEmail } from '@/lib/email/templates/client-portal'
 import { APP_URL } from '@/lib/constants'
+import { withSlug, extractToken } from '@/lib/slug'
 
 export async function POST(_req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -13,7 +14,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   const { data: client, error: clientErr } = await adminClient
     .from('clients')
     .select('id, name, email, portal_token')
-    .eq('id', params.id)
+    .eq('id', extractToken(params.id))
     .eq('user_id', user.id)
     .single()
 
@@ -29,7 +30,7 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
 
   const freelancerName = profile?.full_name ?? 'Your service provider'
   const freelancerBusiness = profile?.business_name ?? null
-  const portalUrl = `${APP_URL}/portal/${client.portal_token}`
+  const portalUrl = `${APP_URL}/portal/${withSlug(client.name, client.portal_token)}`
 
   await sendEmail({
     to: client.email,

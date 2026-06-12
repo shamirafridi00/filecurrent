@@ -11,6 +11,7 @@ import { HelpHint } from '@/components/ui/HelpHint'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getProposals } from '@/lib/db/supabase'
+import { FeatureTour } from '@/components/ui/FeatureTour'
 
 const STATUS_COLORS: Record<string, string> = {
   draft:    'bg-muted text-muted-foreground border-border',
@@ -46,11 +47,22 @@ export default async function ProposalsPage() {
           </HelpHint>
         }
         action={
-          <Button asChild>
-            <Link href="/proposals/new">
-              <Plus className="mr-1.5 h-4 w-4" /> New Proposal
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <FeatureTour
+              tourId="proposals"
+              autoStartOnFirstVisit={false}
+              steps={[
+                { title: 'Proposals → Contracts → Invoices', description: 'Proposals are the start of the workflow: quote the project, and when the client accepts, FileCurrent drafts the contract for you.' },
+                { element: 'a[href="/proposals/new"]', title: 'Create a proposal', description: 'Add a project summary (with formatting), line items, and an offer-expiry date. Send it by email or share the link.' },
+                { title: 'One-click client response', description: 'Clients accept or decline right on the proposal page — you get an email and a dashboard banner the moment they do.' },
+              ]}
+            />
+            <Button asChild>
+              <Link href="/proposals/new">
+                <Plus className="mr-1.5 h-4 w-4" /> New Proposal
+              </Link>
+            </Button>
+          </div>
         }
       />
 

@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { Timer, Plus, PencilSimple, Trash, Clock } from '@phosphor-icons/react'
 import { StatCard, PageHeader, EmptyState, ConfirmDialog } from '@/components/ui'
 import { HelpHint } from '@/components/ui/HelpHint'
+import { FeatureTour } from '@/components/ui/FeatureTour'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -433,16 +434,28 @@ export function TimeTrackingClient({ entries: initialEntries, summary: initialSu
         }
         icon={<Timer size={24} weight="duotone" className="text-primary" />}
         action={
-          !showForm ? (
-            <Button onClick={() => { setShowForm(true); setEditingEntry(null) }}>
-              <Plus className="mr-1.5 h-4 w-4" />
-              Log Time
-            </Button>
-          ) : undefined
+          <div className="flex items-center gap-2">
+            <FeatureTour
+              tourId="time-tracking"
+              autoStartOnFirstVisit={false}
+              steps={[
+                { title: 'Track hours, bill them later', description: 'Log time as you work — every billable entry is ready to drop onto an invoice with one click.' },
+                { element: '[data-tour="time-stats"]', title: 'Your hours at a glance', description: 'Total, billable, and unbilled hours plus the value of work you haven’t invoiced yet.' },
+                { element: '[data-tour="log-time"]', title: 'Log an entry', description: 'Pick the client, describe the work, set the duration and your hourly rate — the amount is calculated live.' },
+                { title: 'Pull entries into invoices', description: 'When you create an invoice, "Add from Time Log" converts unbilled entries into line items automatically.' },
+              ]}
+            />
+            {!showForm && (
+              <Button onClick={() => { setShowForm(true); setEditingEntry(null) }} data-tour="log-time">
+                <Plus className="mr-1.5 h-4 w-4" />
+                Log Time
+              </Button>
+            )}
+          </div>
         }
       />
 
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6" data-tour="time-stats">
         <StatCard
           label="Total Hours"
           value={formatHours(summary.totalHours)}

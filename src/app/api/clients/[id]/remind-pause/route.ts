@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
 import { toggleClientRemindersPaused } from '@/lib/db/supabase'
+import { extractToken } from '@/lib/slug'
 
 export async function POST(
   req: NextRequest,
@@ -11,6 +12,6 @@ export async function POST(
   if (!user) return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
 
   const { paused } = await req.json() as { paused: boolean }
-  await toggleClientRemindersPaused(params.id, user.id, paused)
+  await toggleClientRemindersPaused(extractToken(params.id), user.id, paused)
   return NextResponse.json({ ok: true })
 }

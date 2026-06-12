@@ -233,3 +233,55 @@ html:has(.signing-page)::-webkit-scrollbar-thumb:hover {
   background-color: #1A3A5C;
   border-radius: 2px;
 }
+
+/* ── Feature tour (driver.js) — brand styling ─────────────── */
+.fc-tour.driver-popover {
+  border-radius: 12px;
+  box-shadow: 0 12px 40px rgba(10, 37, 64, 0.18);
+  border: 1px solid #e6ebf1;
+  padding: 18px;
+  max-width: 320px;
+}
+.fc-tour .driver-popover-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #0a2540;
+}
+.fc-tour .driver-popover-description {
+  font-size: 0.83rem;
+  line-height: 1.55;
+  color: #5b6b7b;
+  margin-top: 4px;
+}
+.fc-tour .driver-popover-progress-text {
+  font-size: 0.7rem;
+  color: #8898aa;
+}
+.fc-tour button.driver-popover-next-btn,
+.fc-tour button.driver-popover-done-btn {
+  background: #635bff;
+  color: #fff;
+  border: none;
+  border-radius: 7px;
+  padding: 6px 12px;
+  font-weight: 600;
+  text-shadow: none;
+  font-size: 0.78rem;
+}
+.fc-tour button.driver-popover-next-btn:hover,
+.fc-tour button.driver-popover-done-btn:hover {
+  background: #5145e5;
+}
+.fc-tour button.driver-popover-prev-btn {
+  background: transparent;
+  border: 1px solid #e6ebf1;
+  border-radius: 7px;
+  padding: 6px 12px;
+  color: #5b6b7b;
+  text-shadow: none;
+  font-size: 0.78rem;
+}
+.fc-tour .driver-popover-arrow-side-left.driver-popover-arrow { border-left-color: #fff; }
+.fc-tour .driver-popover-arrow-side-right.driver-popover-arrow { border-right-color: #fff; }
+.fc-tour .driver-popover-arrow-side-top.driver-popover-arrow { border-top-color: #fff; }
+.fc-tour .driver-popover-arrow-side-bottom.driver-popover-arrow { border-bottom-color: #fff; }

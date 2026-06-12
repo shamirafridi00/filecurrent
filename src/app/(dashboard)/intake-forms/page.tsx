@@ -12,6 +12,7 @@ import { createClient } from '@/lib/supabase/server'
 import { getIntakeForms, getClients } from '@/lib/db/supabase'
 import { IntakeFormActions } from '@/components/intake-forms/IntakeFormActions'
 import { SendIntakeFormButton } from '@/components/intake-forms/SendIntakeFormButton'
+import { FeatureTour } from '@/components/ui/FeatureTour'
 
 export default async function IntakeFormsPage() {
   const supabase = createClient()
@@ -41,11 +42,23 @@ export default async function IntakeFormsPage() {
           </HelpHint>
         }
         action={
-          <Button asChild>
-            <Link href="/intake-forms/new">
-              <Plus className="mr-1.5 h-4 w-4" /> New Form
-            </Link>
-          </Button>
+          <div className="flex items-center gap-2">
+            <FeatureTour
+              tourId="intake-forms"
+              autoStartOnFirstVisit={false}
+              steps={[
+                { title: 'Collect project details automatically', description: 'Intake forms gather everything you need from a new client before the work starts — no email back-and-forth.' },
+                { element: 'a[href="/intake-forms/new"]', title: 'Build a form in minutes', description: 'Drag in 9 field types (text, dropdowns, dates…) with a live preview, plus a "Preview as client" mode.' },
+                { element: '[data-tour="send-intake"]', title: 'Send it to a client', description: 'Email the form straight to a client, or copy the public link into any conversation.' },
+                { title: 'Submissions become clients', description: 'Every submission auto-creates the client record, appears in their activity feed, and emails you a notification.' },
+              ]}
+            />
+            <Button asChild>
+              <Link href="/intake-forms/new">
+                <Plus className="mr-1.5 h-4 w-4" /> New Form
+              </Link>
+            </Button>
+          </div>
         }
       />
 

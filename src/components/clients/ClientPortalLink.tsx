@@ -6,21 +6,23 @@ import { Button } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ui'
 import { toast } from 'sonner'
 import { APP_URL } from '@/lib/constants'
+import { withSlug } from '@/lib/slug'
 
 interface ClientPortalLinkProps {
   clientId: string
   portalToken: string
   clientEmail: string | null
+  clientName?: string
 }
 
-export function ClientPortalLink({ clientId, portalToken, clientEmail }: ClientPortalLinkProps) {
+export function ClientPortalLink({ clientId, portalToken, clientEmail, clientName }: ClientPortalLinkProps) {
   const [token, setToken] = useState(portalToken)
   const [copied, setCopied] = useState(false)
   const [regenerating, setRegenerating] = useState(false)
   const [sending, setSending] = useState(false)
   const [confirmRegen, setConfirmRegen] = useState(false)
 
-  const portalUrl = `${APP_URL}/portal/${token}`
+  const portalUrl = `${APP_URL}/portal/${withSlug(clientName, token)}`
 
   async function handleCopy() {
     await navigator.clipboard.writeText(portalUrl)

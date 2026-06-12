@@ -3,6 +3,7 @@ export const runtime = 'nodejs'
 import { NextRequest, NextResponse } from 'next/server'
 import { adminClient } from '@/lib/supabase/admin'
 import { slugifyTitle } from '@/lib/utils'
+import { extractToken } from '@/lib/slug'
 
 /**
  * Public download of the signed contract PDF, scoped by the unguessable
@@ -13,7 +14,7 @@ export async function GET(_req: NextRequest, { params }: { params: { token: stri
   const { data: session } = await adminClient
     .from('signing_sessions')
     .select('contract_id, status, contracts(title, signed_pdf_url, status)')
-    .eq('unique_token', params.token)
+    .eq('unique_token', extractToken(params.token))
     .single()
 
   if (!session) return NextResponse.json({ error: 'Not found' }, { status: 404 })

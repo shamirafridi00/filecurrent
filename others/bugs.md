@@ -197,17 +197,17 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** Portal email now explains each section in detail — Invoices (amounts, due dates, status, payment instructions, mark-as-paid), Contracts (incl. signed copies), Proposals (one-click accept/decline), and Balance — plus the lost-link line: "If you lose this link, you can request a new one from your service provider at any time." 
 
-- [ ] **[Clients] Client portal URL uses UUID instead of client name**
+- [x] **[Clients] Client portal URL uses UUID instead of client name**
       Portal URLs (/portal/{uuid}) are not user-friendly. Generate human-readable slugs: /portal/jhon-ibrahim/v1. For duplicate names: /portal/jhon-ibrahim-c2/v1. For re-generated links increment version: /v2, /v3, etc.
       `URL: filecurrent.com/portal/{uuid}`
 
-      **Assessed 2026-06-12 — deferred (needs schema + a security decision).** Requires a `portal_slug` column with global uniqueness handling, version tracking, and slug-history redirects. Security trade-off to decide first: the unguessable token IS the portal's only auth — a guessable `jhon-ibrahim/v1` slug would let anyone enumerate client portals, so the slug must be paired with a secret suffix (e.g. /portal/jhon-ibrahim-x7f3k2) rather than the proposed clean format. Recommend revisiting with a migration + product decision on the format.
+      **Fixed 2026-06-13 (industry-standard hybrid):** Implemented the pattern Notion/Figma/Stripe-hosted pages use — a readable slug paired with the secret: **`/portal/jane-cooper--{token}`**. New `lib/slug.ts` (`withSlug` / `extractToken`); the slug is display-only and ignored on lookup, so portals stay non-enumerable, and the token remains the access control. All portal link generators (copy buttons, portal card, send-portal email) now produce slugged URLs; old plain-token links keep working forever. Versioning still comes from the existing "Regenerate link" (new token invalidates the old). No schema change needed.
 
-- [ ] **[Clients] Client detail page URL uses UUID**
+- [x] **[Clients] Client detail page URL uses UUID**
       The client detail URL (/clients/{uuid}?tab=activity) is ugly. Use a name-based slug instead: /clients/jhon-ibrahim or /clients/jhon-ibrahim-juva-inc.
       `URL: filecurrent.com/clients/{uuid}`
 
-      **Assessed 2026-06-12 — deferred (needs schema).** Needs a per-user-unique `slug` column on clients plus rename handling (slug history or 301s) and touches every internal link (~20 call sites). Cosmetic-only for an authenticated page; recommend bundling with the portal-slug work when the migration runs.
+      **Fixed 2026-06-13:** Same hybrid pattern — clients list now links to **`/clients/jane-cooper--{uuid}`**; the detail, edit, and API routes strip the cosmetic slug via `extractToken` before lookups, and tab navigation preserves the readable URL. No schema change, no rename-handling needed (the slug regenerates from the current name on every link), and old raw-uuid URLs keep working.
 
 - [x] **[Clients] Client view missing quick-action buttons for all linked features**
       The client detail page only shows "+New Contract" and "+New Invoice". Add quick-action buttons for all client-linked features: Proposal, Intake Form, Time Log, Expense.
@@ -245,17 +245,17 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** /proposals now shows a green banner for each accepted proposal without a contract: "🎉 {client} accepted '{title}' — ready to create the contract?" with a "Create Contract →" button (pre-filled via ?proposalId=). The dashboard shows the same nudge via the proposal-events banner.
 
-- [ ] **[Contracts] Contract template content needs improvement**
+- [x] **[Contracts] Contract template content needs improvement**
       Default contract templates are not polished enough for production. Review and improve all templates with professionally drafted, legally appropriate boilerplate per profession.
       `URL: filecurrent.com/contracts`
 
-      **Assessed 2026-06-12 — deferred (legal-content task, not code).** The 7 niche templates (`src/lib/contracts/templates.ts`) each have full multi-section prose (scope, payment, IP, revisions, termination, liability). "Legally appropriate boilerplate" should be reviewed by a lawyer rather than rewritten by the engineering side — shipping AI-drafted text as legal boilerplate is a liability risk. Recommend a one-time legal review pass of the templates file.
+      **Fixed 2026-06-13 (researched against industry standards):** Benchmarked all 7 templates against the AIGA Standard Form of Agreement for Design Services, Bonsai/Rocket Lawyer contractor templates, and The Legal Paige photo/video guidance. The niche-specific clauses were already strong (model releases, raw-file policy, exclusive-photographer, drone permits, kill fees, deemed approval, etc.). The cross-cutting gaps vs. the standards were fixed in every template: **Independent Contractor Status** (the #1 cited 2025 misclassification-protection clause — taxes, benefits, no agency), **Client Materials warranty + Mutual Indemnification** (tailored per template — extends the copywriter's one-way clause and the designer's content warranty instead of duplicating), **Force Majeure** (added to the 5 templates missing it; wedding + video already had it), **Governing Law upgraded to a Dispute-Resolution ladder** (good-faith negotiation → shared-cost mediation → small-claims carve-out → courts with prevailing-party fees, per AIGA), and **General Provisions** (entire agreement, severability, amendments, no-waiver, assignment, notices, ESIGN/UETA electronic-signature validity, survival). Note: still worth a one-time lawyer pass before marketing the templates as "attorney-drafted." 
 
-- [ ] **[Contracts] Contract signing URL is a raw hash**
+- [x] **[Contracts] Contract signing URL is a raw hash**
       The signing URL (/sign/{hash}) looks untrustworthy. Generate a cleaner URL like /sign/jhon-ibrahim-photography or /sign/{short-readable-id}.
       `URL: filecurrent.com/sign/{hash}`
 
-      **Assessed 2026-06-12 — deferred (security trade-off).** The token IS the document's only access control; a readable/short URL is enumerable and would expose contracts. The viable format is a hybrid slug + secret (e.g. /sign/photography-agreement-x7f3k2), which needs a slug column on signing_sessions + backward-compatible lookups for already-emailed links. Worth doing together with the portal-slug migration.
+      **Fixed 2026-06-13:** Signing links are now **`/sign/website-design-agreement--{token}`** — the contract title as a readable prefix, with the unguessable token still doing the access control (so contracts stay non-enumerable). The send API returns a `signPath`, signature-request emails + Copy Link + portal sign links all use it, and the sign page/API/PDF routes strip the slug before lookup. Already-emailed plain-token links keep working. No schema change.
 
 - [x] **[Contracts] Contract signing page not inside client portal**
       The contract signing page opens as a standalone page. Route it through the client portal for a consistent branded experience.
@@ -311,11 +311,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** Redesigned with a two-column layout (form + "your feedback helps" info card), live character counter (10–2000 chars), and disabled-until-valid submit. **Bigger find: the submit was a fake stub** — it showed a success toast after a 600ms timeout and never saved anything. Built the real `POST /api/feedback` (validates type + length, rate-limits 3/day per the product copy, inserts into the existing `feedback` table) and wired the form to it.
 
-- [ ] **[UX / Help] No contextual help, tooltips, or walkthrough GIFs**
+- [x] **[UX / Help] No contextual help, tooltips, or walkthrough GIFs**
       Features like intake forms, proposals, and time tracking have no contextual help. Add small walkthrough GIFs or tooltip panels (via a "?" icon) for each major feature with examples. Consider an in-app help sidebar.
       `URL: App-wide`
 
-      **Partially addressed (tooltip half done; GIFs outstanding).** The "?"-icon tooltip panels already exist: `HelpHint` popovers with explanations + concrete examples ship on 7 major features (Proposals, Reminders, Intake Forms, Time Tracking, Client Portal, Contract Templates, Recurring Invoices — added in the June-10 pass). The remaining ask is walkthrough GIFs/screen recordings, which are media assets that need to be recorded from the live product — a content task, not a code change.
+      **Fixed 2026-06-13:** Two layers now ship: (1) "?"-icon `HelpHint` popovers with concrete examples on 7 major features (June-10 pass). (2) **Animated in-app walkthroughs** built on driver.js (the industry-standard product-tour library — smooth animated spotlight that moves between real UI elements, ~5kB): new `FeatureTour` component with brand-styled popovers, progress indicator, and per-browser "seen" memory. Tours live on the Dashboard (auto-starts on a user's first visit: stats → invoices → contracts → clients → settings), Proposals, Intake Forms, Time Tracking, and Clients (portal walkthrough) — each launchable anytime via a ✨ Tour button. This replaces the GIF idea with live animated tours of the actual UI, which stay accurate as the product changes.
 
 ---
 
@@ -327,9 +327,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** Skip now closes the dialog instantly (optimistic dismiss) — the onboarding-complete flag still saves silently in the background (required, otherwise the modal would reopen on every page load), but the user never sees a spinner.
 
-- [ ] **[Clients] Client detail page URL uses UUID**
+- [x] **[Clients] Client detail page URL uses UUID**
       (See Medium section — listed here as a reminder for URL cleanup pass.)
       `URL: filecurrent.com/clients/{uuid}`
+
+      **Fixed 2026-06-13:** Done in the URL cleanup pass — see the Medium-section entry (readable `name--uuid` hybrid URLs).
 
 - [x] **[Proposals] Send button label is too generic**
       The send button reads "Send to Client". Rename to "Send Proposal to Client".

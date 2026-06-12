@@ -3,6 +3,7 @@ import { createClient } from '@/lib/supabase/server'
 import { createSigningSession, getContract, getCurrentProfile, logClientActivity } from '@/lib/db/supabase'
 import { sendEmail, buildSenderName } from '@/lib/email'
 import { contractSignatureRequestEmail } from '@/lib/email/templates/contract-signature-request'
+import { withSlug } from '@/lib/slug'
 
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const supabase = createClient()
@@ -18,6 +19,9 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     getCurrentProfile(user.id),
   ])
 
+  // Readable signing path: contract-title--token (token alone still works)
+  const signPath = withSlug(contract?.title, token)
+
   if (contract) {
     void logClientActivity({
       userId: user.id,
@@ -30,7 +34,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     })
 
     if (shouldSendEmail) {
-      const signingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${token}`
+      const signingUrl = `${process.env.NEXT_PUBLIC_APP_URL}/sign/${signPath}`
       const amount = new Intl.NumberFormat('en-US', {
         style: 'currency', currency: contract.currency,
       }).format(contract.amount)
@@ -50,13 +54,13 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
           replyTo: profile.email ?? undefined,
           fromName: buildSenderName(profile.businessName, profile.fullName),
         })
-        return NextResponse.json({ token, emailFailed: false })
+        return NextResponse.json({ token, signPath, emailFailed: false })
       } catch (err) {
         console.error('[contract/send] Email delivery failed:', err)
-        return NextResponse.json({ token, emailFailed: true })
+        return NextResponse.json({ token, signPath, emailFailed: true })
       }
     }
   }
 
-  return NextResponse.json({ token, emailFailed: false })
+  return NextResponse.json({ token, signPath, emailFailed: false })
 }
