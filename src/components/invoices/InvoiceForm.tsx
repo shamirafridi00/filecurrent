@@ -5,6 +5,9 @@ import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { Plus, Trash, FileText, FloppyDisk, X, CaretDown, Check, Minus } from '@phosphor-icons/react'
 import { TimeLogImportButton } from '@/components/invoices/TimeLogImportButton'
+import { ExpenseImportButton } from '@/components/invoices/ExpenseImportButton'
+import { PaymentMethodsEditor } from '@/components/invoices/PaymentMethodsEditor'
+import { MilestoneScheduleBuilder } from '@/components/invoices/MilestoneScheduleBuilder'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -350,6 +353,10 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                 currency={currency}
                 onImport={handleImportFromTimeLog}
               />
+              <ExpenseImportButton
+                currency={currency}
+                onImport={handleImportFromTimeLog}
+              />
             </div>
           </CardHeader>
           <CardContent>
@@ -617,14 +624,23 @@ export function InvoiceForm({ clients, templates, lineItemPresets, nextSequence,
                 <Textarea rows={3} placeholder="Payment due within 30 days" value={paymentTerms} onChange={(e) => setPaymentTerms(e.target.value)} />
               </div>
             </div>
+
+            <MilestoneScheduleBuilder
+              total={total}
+              currency={currency}
+              onApply={(text, firstDeposit) => {
+                setPaymentTerms(text)
+                if (firstDeposit != null && firstDeposit > 0) {
+                  const rounded = parseFloat(firstDeposit.toFixed(2))
+                  setDepositAmount(rounded)
+                  setDepositDisplay(rounded.toFixed(2))
+                }
+                toast.success('Milestone schedule applied to payment terms')
+              }}
+            />
             <div className="space-y-1.5">
-              <Label>Payment Instructions</Label>
-              <Textarea
-                rows={3}
-                placeholder="e.g. Pay via Zelle to email@example.com, PayPal @handle, or bank transfer. Include invoice number as reference."
-                value={paymentInstructions}
-                onChange={(e) => setPaymentInstructions(e.target.value)}
-              />
+              <Label>Payment Methods</Label>
+              <PaymentMethodsEditor value={paymentInstructions} onChange={setPaymentInstructions} />
               <p className="text-xs text-muted-foreground">Shown on the invoice so clients always know how to pay.</p>
             </div>
           </CardContent>

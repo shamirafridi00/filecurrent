@@ -206,7 +206,22 @@ export default async function ClientPortalPage({
                       {c.signedAt ? ` · Signed ${formatDate(c.signedAt)}` : ''}
                     </p>
                   </div>
-                  <p className="text-sm font-semibold text-gray-900">{formatCurrency(c.amount, c.currency)}</p>
+                  <div className="flex items-center gap-3">
+                    <p className="text-sm font-semibold text-gray-900">{formatCurrency(c.amount, c.currency)}</p>
+                    {c.signToken && (
+                      <Link
+                        href={`/sign/${c.signToken}`}
+                        className={`text-xs font-medium whitespace-nowrap rounded-md px-2.5 py-1 ${
+                          c.status !== 'signed'
+                            ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                            : 'text-indigo-600 hover:underline'
+                        }`}
+                        target="_blank"
+                      >
+                        {c.status !== 'signed' ? 'Review & Sign →' : 'View Signed →'}
+                      </Link>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>

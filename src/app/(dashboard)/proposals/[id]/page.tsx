@@ -11,6 +11,7 @@ import { formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
 import { getProposal } from '@/lib/db/supabase'
 import { ProposalDetailActions } from '@/components/proposals/ProposalDetailActions'
+import { RichTextContent } from '@/components/ui/RichText'
 
 const STATUS_COLORS: Record<string, string> = {
   draft:    'bg-muted text-muted-foreground border-border',
@@ -111,7 +112,7 @@ export default async function ProposalDetailPage({ params }: { params: { id: str
                 <CardTitle className="text-base">Project Summary</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-sm text-muted-foreground whitespace-pre-wrap">{proposal.summary}</p>
+                <RichTextContent text={proposal.summary} className="text-muted-foreground" />
               </CardContent>
             </Card>
           )}

@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/select'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { PageHeader } from '@/components/ui'
+import { RichTextEditor } from '@/components/ui/RichText'
 import { toast } from 'sonner'
 import { formatCurrency } from '@/lib/utils'
 import { CURRENCIES } from '@/types'
@@ -164,12 +165,12 @@ export function ProposalForm({ clients, defaultClientId, defaultCurrency = 'USD'
 
             <div className="space-y-1.5">
               <Label htmlFor="proposal-summary">Project Summary</Label>
-              <Textarea
+              <RichTextEditor
                 id="proposal-summary"
-                placeholder="Brief overview of the project scope and objectives…"
+                placeholder="Overview of the project scope and objectives — use the toolbar for headings, bold, and lists…"
                 value={summary}
-                onChange={(e) => setSummary(e.target.value)}
-                rows={3}
+                onChange={setSummary}
+                rows={6}
               />
             </div>
 

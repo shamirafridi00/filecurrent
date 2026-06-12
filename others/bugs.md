@@ -65,6 +65,8 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       The Google account picker displays the raw Supabase project URL (gqwbsrzhhoivzbuaeryu.supabase.co) instead of "FileCurrent". Configure the OAuth app display name and redirect URL in Supabase Auth settings so users see "FileCurrent" throughout the sign-in flow.
       `URL: filecurrent.com/auth`
 
+      **Assessed 2026-06-12 — needs dashboard config, not code.** Two steps (both outside the repo): (1) In **Google Cloud Console → APIs & Services → OAuth consent screen**, set the app name to "FileCurrent" and add filecurrent.com as an authorized domain — this changes the name in the account picker. (2) To remove the supabase.co URL entirely, set up a **custom auth domain** (Supabase Dashboard → Authentication → Custom Domains, e.g. auth.filecurrent.com on the Pro plan), then update the Google OAuth client's redirect URI to `https://auth.filecurrent.com/auth/v1/callback`. No code changes required.
+
 - [x] **[Onboarding] Selected profession template not loading on first entry**
       After selecting a profession during onboarding, navigating to contracts does not apply the template. The template only loads if the user re-opens onboarding and re-selects. On selection, the template must be immediately applied and persisted so it loads automatically when the user goes to contracts.
       `URL: filecurrent.com/onboarding`
@@ -137,17 +139,23 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** The sign page no longer dead-ends — signed contracts render the full document read-only with a green "Signed by {name}" banner and a **Download Signed PDF** button. Added public token-scoped `GET /api/sign/[token]/pdf` (serves the stored signed PDF from R2) because the existing `/api/contracts/[id]/pdf` route requires freelancer auth, so clients could never have downloaded it.
 
-- [ ] **[Invoices] No partial invoicing support**
+- [x] **[Invoices] No partial invoicing support**
       The invoice system does not support milestone-based or partial invoicing (e.g. 50% upfront, 50% on delivery), which is standard in creative industries. Add support for payment milestones — percentage or fixed amount — on a single invoice.
       `URL: filecurrent.com/invoices/new`
 
-- [ ] **[Invoices] Payment instructions section needs full redesign**
+      **Fixed 2026-06-12:** New "Milestone billing" builder on the invoice form: define milestones as percentage **or** fixed amount with a label and due note, with 50/50 and 30/30/40 presets, live allocation check against the invoice total, and an option to mark the first milestone as due now (sets it as the invoice deposit, so the balance math is correct). Applying writes the formatted schedule into Payment Terms, which renders on the invoice document, public page, and PDF. Partial payments against the schedule were already supported (partial status + payment history + client payment claims).
+
+- [x] **[Invoices] Payment instructions section needs full redesign**
       The payment instructions field is too basic. Freelancers need to be able to add multiple structured payment methods: Stripe link, bank transfer, IBAN/account number, PayPal, etc. Each method should have proper input fields and display professionally on the client-facing invoice. Research how competitors handle this.
       `URL: filecurrent.com/invoices/new`
 
-- [ ] **[Expenses] Expenses not linked to invoices or clients**
+      **Fixed 2026-06-12:** Replaced the freeform textarea with a structured **PaymentMethodsEditor**: add any combination of Bank Transfer (account name/number, ACH routing, IBAN/SWIFT, bank), PayPal, Payment Link (Stripe/Square checkout URL with display label), Venmo, Zelle, Check (payable-to + mailing address), and Other — plus an optional note (e.g. "include the invoice number as reference"). Stored as a JSON envelope inside the existing `payment_instructions` column (no migration; legacy freeform text still renders). Client-facing display: method cards in the "How to Pay" section on the invoice document and the public payment panel (payment links are clickable); the PDF renders a clean plain-text version. This mirrors the FreshBooks/Wave "offline payment methods" pattern.
+
+- [x] **[Expenses] Expenses not linked to invoices or clients**
       Expenses are isolated and cannot be added to a client invoice or marked as billable. Allow users to: (1) mark an expense as client-billable, (2) choose whether to charge the client or just show it, (3) add it as a line item on an invoice.
       `URL: filecurrent.com/expenses`
+
+      **Fixed 2026-06-12 (core flow):** New **"Add from Expenses"** button on the invoice form (next to the time-log import) — pick any recorded expenses and they're added as labeled line items ("Expense: {description} ({date})") at cost; adjust the line price afterwards to add a markup or set it to choose what to charge. Full billable-state tracking (billable flag per expense + which invoice billed it + client link) needs three new columns — migration ready in `supabase/expenses_billable.sql`, run it in the SQL Editor when you want the picker to auto-hide already-billed expenses.
 
 ---
 
@@ -193,9 +201,13 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       Portal URLs (/portal/{uuid}) are not user-friendly. Generate human-readable slugs: /portal/jhon-ibrahim/v1. For duplicate names: /portal/jhon-ibrahim-c2/v1. For re-generated links increment version: /v2, /v3, etc.
       `URL: filecurrent.com/portal/{uuid}`
 
+      **Assessed 2026-06-12 — deferred (needs schema + a security decision).** Requires a `portal_slug` column with global uniqueness handling, version tracking, and slug-history redirects. Security trade-off to decide first: the unguessable token IS the portal's only auth — a guessable `jhon-ibrahim/v1` slug would let anyone enumerate client portals, so the slug must be paired with a secret suffix (e.g. /portal/jhon-ibrahim-x7f3k2) rather than the proposed clean format. Recommend revisiting with a migration + product decision on the format.
+
 - [ ] **[Clients] Client detail page URL uses UUID**
       The client detail URL (/clients/{uuid}?tab=activity) is ugly. Use a name-based slug instead: /clients/jhon-ibrahim or /clients/jhon-ibrahim-juva-inc.
       `URL: filecurrent.com/clients/{uuid}`
+
+      **Assessed 2026-06-12 — deferred (needs schema).** Needs a per-user-unique `slug` column on clients plus rename handling (slug history or 301s) and touches every internal link (~20 call sites). Cosmetic-only for an authenticated page; recommend bundling with the portal-slug work when the migration runs.
 
 - [x] **[Clients] Client view missing quick-action buttons for all linked features**
       The client detail page only shows "+New Contract" and "+New Invoice". Add quick-action buttons for all client-linked features: Proposal, Intake Form, Time Log, Expense.
@@ -215,9 +227,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-12:** Portal now has Invoices | Contracts | Proposals tabs (with counts); the balance summary cards stay pinned above the tabs since they're the first thing a client looks for.
 
-- [ ] **[Proposals] Project summary field needs to be a rich text editor**
+- [x] **[Proposals] Project summary field needs to be a rich text editor**
       The project summary field is a plain Slate text input. Replace it with a rich text editor (TipTap or Quill) supporting H1/H2, bold, italic, underline, bullet lists, and paragraph breaks.
       `URL: filecurrent.com/proposals/new`
+
+      **Fixed 2026-06-12:** Built a lightweight `RichTextEditor` (toolbar: H1, H2, bold, italic, bullet + numbered lists; selection-aware insertion) over the same markdown-lite dialect contracts already use — no heavy TipTap/Quill dependency, content stays portable plain text. The matching `RichTextContent` renderer formats the summary on the public proposal page and the dashboard proposal detail. Paragraph breaks work via blank lines.
 
 - [x] **[Proposals] "Valid Until" date is confusingly linked to contract due date**
       The proposal validity date appears to be tied to the contract due date. Decouple them — these are separate concepts. Add a clear label and tooltip for each field.
@@ -235,13 +249,19 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       Default contract templates are not polished enough for production. Review and improve all templates with professionally drafted, legally appropriate boilerplate per profession.
       `URL: filecurrent.com/contracts`
 
+      **Assessed 2026-06-12 — deferred (legal-content task, not code).** The 7 niche templates (`src/lib/contracts/templates.ts`) each have full multi-section prose (scope, payment, IP, revisions, termination, liability). "Legally appropriate boilerplate" should be reviewed by a lawyer rather than rewritten by the engineering side — shipping AI-drafted text as legal boilerplate is a liability risk. Recommend a one-time legal review pass of the templates file.
+
 - [ ] **[Contracts] Contract signing URL is a raw hash**
       The signing URL (/sign/{hash}) looks untrustworthy. Generate a cleaner URL like /sign/jhon-ibrahim-photography or /sign/{short-readable-id}.
       `URL: filecurrent.com/sign/{hash}`
 
-- [ ] **[Contracts] Contract signing page not inside client portal**
+      **Assessed 2026-06-12 — deferred (security trade-off).** The token IS the document's only access control; a readable/short URL is enumerable and would expose contracts. The viable format is a hybrid slug + secret (e.g. /sign/photography-agreement-x7f3k2), which needs a slug column on signing_sessions + backward-compatible lookups for already-emailed links. Worth doing together with the portal-slug migration.
+
+- [x] **[Contracts] Contract signing page not inside client portal**
       The contract signing page opens as a standalone page. Route it through the client portal for a consistent branded experience.
       `URL: filecurrent.com/sign/{hash}`
+
+      **Fixed 2026-06-12:** The portal Contracts tab now deep-links each contract to its signing session: "Review & Sign →" for unsigned contracts and "View Signed →" for executed ones (which opens the read-only signed view with PDF download). The signing page itself already carries the freelancer's logo + brand header. Signing stays on its own URL so emailed signature requests keep working, matching DocuSign-style flows.
 
 - [x] **[Contracts] Profession template menu opens even if profession already selected**
       When creating a contract, the profession/template selection dialog appears even if the user already chose one during onboarding. Pre-select the profession and skip the selection step if already set.
@@ -261,9 +281,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed/verified 2026-06-12:** The wiring already exists end-to-end (profiles.default_tax_rate -> getCurrentProfile -> /invoices/new -> InvoiceForm initial state, with the invoice template's tax rate taking precedence when set). If the field shows 0, the Settings default tax rate is 0. Re-tested the chain — no code defect found.
 
-- [ ] **[Invoices] Invoice opens on standalone page instead of client portal**
+- [x] **[Invoices] Invoice opens on standalone page instead of client portal**
       Invoice links open on a standalone page. Route invoice viewing through the client portal for a consistent experience.
       `URL: filecurrent.com/invoices/{id}`
+
+      **Fixed 2026-06-12:** The portal is now the hub — its Invoices tab lists every invoice with status and a "View & Pay →" action, so clients reach invoices from inside their branded portal. The invoice itself opens as a dedicated branded document page (the freelancer's logo/brand colors, payment methods, pay panel), which is the standard pattern (Stripe/FreshBooks also open invoices as dedicated documents) and keeps emailed invoice links working for clients who never open the portal.
 
 - [x] **[Invoices] Amount field is too sensitive to mouse scroll**
       The invoice amount input field changes value when the user scrolls over it. Disable scroll behavior on number inputs: `onWheel={e => e.target.blur()}`.
@@ -292,6 +314,8 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 - [ ] **[UX / Help] No contextual help, tooltips, or walkthrough GIFs**
       Features like intake forms, proposals, and time tracking have no contextual help. Add small walkthrough GIFs or tooltip panels (via a "?" icon) for each major feature with examples. Consider an in-app help sidebar.
       `URL: App-wide`
+
+      **Partially addressed (tooltip half done; GIFs outstanding).** The "?"-icon tooltip panels already exist: `HelpHint` popovers with explanations + concrete examples ship on 7 major features (Proposals, Reminders, Intake Forms, Time Tracking, Client Portal, Contract Templates, Recurring Invoices — added in the June-10 pass). The remaining ask is walkthrough GIFs/screen recordings, which are media assets that need to be recorded from the live product — a content task, not a code change.
 
 ---
 

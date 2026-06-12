@@ -1,4 +1,55 @@
 import { formatCurrency, formatDate } from '@/lib/utils'
+import { parsePaymentInstructions, methodSummary } from '@/lib/payment-methods'
+
+/** "How to Pay" block — renders structured payment methods as cards, or legacy freeform text. */
+function HowToPay({ raw }: { raw: string }) {
+  const { structured, legacyText } = parsePaymentInstructions(raw)
+
+  if (!structured || structured.methods.length === 0) {
+    const text = structured?.note ?? legacyText
+    if (!text) return null
+    return (
+      <div className="border-l-4 border-green-500 rounded-lg bg-green-50 p-4">
+        <p className="text-xs font-semibold uppercase tracking-wide text-green-700 mb-1">How to Pay</p>
+        <p className="text-sm text-green-900 whitespace-pre-wrap">{text}</p>
+      </div>
+    )
+  }
+
+  return (
+    <div className="border-l-4 border-green-500 rounded-lg bg-green-50 p-4">
+      <p className="text-xs font-semibold uppercase tracking-wide text-green-700 mb-2">How to Pay</p>
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+        {structured.methods.map((m, i) => {
+          const { title, lines } = methodSummary(m)
+          const isLink = m.type === 'payment_link' && m.fields.url
+          return (
+            <div key={i} className="rounded-md border border-green-200 bg-white/70 p-3">
+              <p className="text-xs font-semibold text-green-800 mb-1">{title}</p>
+              {isLink ? (
+                <a
+                  href={m.fields.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-block break-all text-sm font-medium text-green-700 underline underline-offset-2"
+                >
+                  {m.fields.url}
+                </a>
+              ) : (
+                lines.map((line, j) => (
+                  <p key={j} className="text-sm text-green-900 break-words">{line}</p>
+                ))
+              )}
+            </div>
+          )
+        })}
+      </div>
+      {structured.note && (
+        <p className="mt-2 text-sm text-green-900 whitespace-pre-wrap">{structured.note}</p>
+      )}
+    </div>
+  )
+}
 
 export interface InvoiceDocumentData {
   invoiceNumber: string
@@ -263,12 +314,7 @@ export function InvoiceDocument({ data, theme }: Props) {
           </div>
         )}
 
-        {data.paymentInstructions && (
-          <div className="border-l-4 border-green-500 rounded-lg bg-green-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-green-700 mb-1">How to Pay</p>
-            <p className="text-sm text-green-900 whitespace-pre-wrap">{data.paymentInstructions}</p>
-          </div>
-        )}
+        {data.paymentInstructions && <HowToPay raw={data.paymentInstructions} />}
       </div>
     </>
   )

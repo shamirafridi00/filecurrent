@@ -3,6 +3,7 @@ import {
   Document, Page, Text, View, StyleSheet, Image,
 } from '@react-pdf/renderer'
 import { registerFonts } from './fonts'
+import { paymentInstructionsToPlainText } from '@/lib/payment-methods'
 import type { InvoiceDetailRow, InvoiceTemplateRow } from '@/lib/db/supabase'
 
 registerFonts()
@@ -285,7 +286,7 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
               <View style={s.notesRow}>
                 <View style={[s.noteBox, { borderColor: '#BBF7D0', flex: 1 }]}>
                   <Text style={[s.noteLabel, { color: '#15803D' }]}>HOW TO PAY</Text>
-                  <Text style={s.noteText}>{invoice.paymentInstructions}</Text>
+                  <Text style={s.noteText}>{paymentInstructionsToPlainText(invoice.paymentInstructions)}</Text>
                 </View>
               </View>
             )}
@@ -475,7 +476,7 @@ export function InvoicePDF({ invoice, template, freelancerName, isPro }: Invoice
           <View style={s.notesRow}>
             <View style={[s.noteBox, { borderColor: '#BBF7D0', flex: 1 }]}>
               <Text style={[s.noteLabel, { color: '#15803D' }]}>HOW TO PAY</Text>
-              <Text style={s.noteText}>{invoice.paymentInstructions}</Text>
+              <Text style={s.noteText}>{paymentInstructionsToPlainText(invoice.paymentInstructions)}</Text>
             </View>
           </View>
         )}

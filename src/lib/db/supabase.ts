@@ -1918,6 +1918,8 @@ export async function getClientPortalData(portalToken: string): Promise<{
     status: string
     createdAt: string
     signedAt: string | null
+    /** Signing token — lets the portal link straight to /sign/{token} */
+    signToken: string | null
   }>
   proposals: Array<{
     id: string
@@ -1978,6 +1980,23 @@ export async function getClientPortalData(portalToken: string): Promise<{
     shareToken: r.share_token ?? null,
   }))
 
+  // Latest signing session per contract — lets the portal deep-link to the
+  // signing page (and the signed read-only view + PDF download).
+  const contractIds = (contractsRes.data ?? []).map((r) => r.id)
+  const signTokenByContract = new Map<string, string>()
+  if (contractIds.length > 0) {
+    const { data: sessions } = await adminClient
+      .from('signing_sessions')
+      .select('contract_id, unique_token, created_at')
+      .in('contract_id', contractIds)
+      .order('created_at', { ascending: false })
+    for (const s of sessions ?? []) {
+      if (!signTokenByContract.has(s.contract_id)) {
+        signTokenByContract.set(s.contract_id, s.unique_token)
+      }
+    }
+  }
+
   const contracts = (contractsRes.data ?? []).map((r) => ({
     id: r.id,
     title: r.title,
@@ -1986,6 +2005,7 @@ export async function getClientPortalData(portalToken: string): Promise<{
     status: r.status,
     createdAt: r.created_at,
     signedAt: r.signed_at ?? null,
+    signToken: signTokenByContract.get(r.id) ?? null,
   }))
 
   const proposals = (proposalsRes.data ?? []).map((r) => ({

@@ -7,6 +7,7 @@ import { createClient } from '@/lib/supabase/server'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { APP_NAME } from '@/lib/constants'
 import { ProposalActions } from '@/components/proposals/ProposalActions'
+import { RichTextContent } from '@/components/ui/RichText'
 
 export default async function PublicProposalPage({ params }: { params: { id: string } }) {
   const [proposal, supabase] = await Promise.all([
@@ -92,7 +93,7 @@ export default async function PublicProposalPage({ params }: { params: { id: str
         {/* Proposal header card */}
         <div className="rounded-lg border bg-white shadow-sm p-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-1">{proposal.title}</h1>
-          {proposal.summary && <p className="text-gray-600 text-sm mt-2">{proposal.summary}</p>}
+          {proposal.summary && <RichTextContent text={proposal.summary} className="text-gray-600 mt-2" />}
           <div className="flex flex-wrap gap-4 mt-4 pt-4 border-t border-gray-100">
             <div>
               <p className="text-xs text-gray-400 uppercase tracking-wide">Total</p>

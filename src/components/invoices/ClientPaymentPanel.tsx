@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { CheckCircle, UploadSimple, X } from '@phosphor-icons/react'
 import { formatCurrency } from '@/lib/utils'
 import { PAYMENT_METHODS } from '@/types'
+import { parsePaymentInstructions, methodSummary } from '@/lib/payment-methods'
 
 interface Props {
   shareToken: string
@@ -84,13 +85,43 @@ export function ClientPaymentPanel({
 
   return (
     <div className="mt-4 rounded-xl border bg-white shadow-sm">
-      {/* Payment instructions from the freelancer */}
-      {paymentInstructions && (
-        <div className="border-b bg-gray-50 px-5 py-4">
-          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">How to pay</p>
-          <p className="mt-1 whitespace-pre-wrap text-sm text-gray-700">{paymentInstructions}</p>
-        </div>
-      )}
+      {/* Payment instructions from the freelancer — structured methods or legacy text */}
+      {paymentInstructions && (() => {
+        const { structured, legacyText } = parsePaymentInstructions(paymentInstructions)
+        return (
+          <div className="border-b bg-gray-50 px-5 py-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-gray-500">How to pay</p>
+            {structured && structured.methods.length > 0 ? (
+              <div className="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {structured.methods.map((m, i) => {
+                  const { title, lines } = methodSummary(m)
+                  const isLink = m.type === 'payment_link' && m.fields.url
+                  return (
+                    <div key={i} className="rounded-md border border-gray-200 bg-white p-3">
+                      <p className="text-xs font-semibold text-gray-700 mb-0.5">{title}</p>
+                      {isLink ? (
+                        <a
+                          href={m.fields.url} target="_blank" rel="noopener noreferrer"
+                          className="inline-block break-all text-sm font-medium text-[#635BFF] underline underline-offset-2"
+                        >
+                          {m.fields.label || 'Pay online'} →
+                        </a>
+                      ) : (
+                        lines.map((line, j) => (
+                          <p key={j} className="text-sm text-gray-700 break-words">{line}</p>
+                        ))
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            ) : null}
+            {(structured?.note || legacyText) && (
+              <p className="mt-2 whitespace-pre-wrap text-sm text-gray-700">{structured?.note ?? legacyText}</p>
+            )}
+          </div>
+        )
+      })()}
 
       {!open ? (
         <div className="px-5 py-5 text-center">
