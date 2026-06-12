@@ -43,9 +43,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       After successfully creating a client, the route /clients fails to load and shows a blank or error state. Debug the post-creation redirect and ensure the clients list re-fetches after a new client is added.
       `URL: filecurrent.com/clients`
 
-- [ ] **[Notifications / Email] All email notification triggers are broken**
+- [x] **[Notifications / Email] All email notification triggers are broken**
       None of the email notifications in Settings > Notifications are working: contract opened, contract signed, invoice opened, invoice overdue, daily summary. Audit all notification event hooks and test each trigger individually.
       `URL: filecurrent.com/settings/notifications`
+
+      **Fixed 2026-06-12:** Audited each trigger individually — findings + fixes: **contract_opened** had *no trigger at all* (sign page tracked nothing) → new `recordContractOpen()` bumps open_count, promotes sent→opened, writes audit + activity events, and emails via new `contract-opened` template (gated on pref, rate-limited 1/hr). **contract_signed** email was sent unconditionally, ignoring the toggle → now gated via `getNotificationRecipient`. **invoice_opened** had a broken rate-limit (queried `reminder_logs.recipient_email` against the freelancer's *name* — never matched, so the limit never applied) and a wrong dashboard URL (`/invoices/{user_id}` instead of invoice id) → rewritten using the pre-bump `last_opened_at` (new `previousOpenedAt` on `InvoicePublicRow`) for a real 1/hr limit + correct URL + pref gating. **invoice_overdue** had *no trigger* (`markOverdueInvoices` flipped status silently) → it now returns the transitioned invoices + logs `invoice_overdue` activity; the new daily cron emails each transition once (new `invoice-overdue` template). **daily_summary** had *no cron at all* → new `/api/cron/daily-summary` (vercel.json, 8:30am UTC, before reminders) sends a digest of overdue invoices + outstanding total + reminders due today, only when there's something to report (new `daily-summary` template). All five now respect their Settings toggles.
 
 - [x] **[Notifications / Email] Missing email notification events**
       The following notification events are missing from Settings entirely: proposal accepted, proposal declined, client submitted intake form, payment marked as received. Add the missing toggles and implement their email triggers.

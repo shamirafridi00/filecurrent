@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { waitUntil } from '@vercel/functions'
-import { submitContractSignature, getContractForSigning, logClientActivity } from '@/lib/db/supabase'
+import { submitContractSignature, getContractForSigning, logClientActivity, getNotificationRecipient } from '@/lib/db/supabase'
 import { stripMarkdown } from '@/lib/utils'
 import { adminClient } from '@/lib/supabase/admin'
 import { sendEmail, buildSenderName } from '@/lib/email'
@@ -112,13 +112,16 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         '| detail:', JSON.stringify(err, Object.getOwnPropertyNames(err instanceof Error ? err : Object(err))))
     }
 
-    // Freelancer notification email
-    if (freelancerEmail) {
+    // Freelancer notification email — gated on the contract_signed toggle.
+    const signedRecipient = contractRow?.user_id
+      ? await getNotificationRecipient(contractRow.user_id, 'contract_signed')
+      : null
+    if (signedRecipient) {
       const freelancerDashUrl = `${appUrl}/contracts/${session.contractId}`
-      console.log('[sign] 8 — sending freelancer email to:', freelancerEmail)
+      console.log('[sign] 8 — sending freelancer email to:', signedRecipient.email)
       try {
         const result = await sendEmail({
-          to: freelancerEmail,
+          to: signedRecipient.email,
           subject: `✓ ${signerName.trim()} signed "${session.contractTitle}"`,
           html: contractSignedEmail({
             signerName: signerName.trim(),
@@ -132,12 +135,12 @@ export async function POST(req: NextRequest, { params }: { params: { token: stri
         })
         console.log('[sign] 9 — freelancer email sent, messageId:', result?.messageId)
       } catch (err: unknown) {
-        console.error('[sign] 9 — FREELANCER EMAIL FAILED to:', freelancerEmail,
+        console.error('[sign] 9 — FREELANCER EMAIL FAILED to:', signedRecipient.email,
           '| error:', String(err),
           '| detail:', JSON.stringify(err, Object.getOwnPropertyNames(err instanceof Error ? err : Object(err))))
       }
     } else {
-      console.warn('[sign] 8 — no freelancer email found for contract:', session.contractId)
+      console.log('[sign] 8 — freelancer signed-notification skipped (no email or pref off) for contract:', session.contractId)
     }
 
     console.log('[sign] 10 — emails done, queuing PDF generation')

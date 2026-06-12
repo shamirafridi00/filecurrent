@@ -665,6 +665,92 @@ export async function submitContractSignature(
   ])
 }
 
+/**
+ * Records that a client opened a contract for signing: bumps open_count,
+ * promotes status sent→opened, writes an audit + activity event, and returns
+ * the freelancer's contact info IF they want the `contract_opened` email and
+ * this is a fresh open within the rate-limit window (1/hour). Returns null
+ * when no email should be sent. Safe to call on every public view.
+ */
+export async function recordContractOpen(token: string): Promise<{
+  contractId: string
+  contractTitle: string
+  clientName: string
+  freelancerEmail: string
+  freelancerName: string
+  freelancerBusiness: string | null
+  openCount: number
+} | null> {
+  const { data: session } = await adminClient
+    .from('signing_sessions')
+    .select('id, contract_id, status')
+    .eq('unique_token', token)
+    .single()
+  if (!session || session.status === 'signed') return null
+
+  const { data: contract } = await adminClient
+    .from('contracts')
+    .select('id, user_id, title, status, open_count, last_opened_at, clients!inner(name)')
+    .eq('id', session.contract_id)
+    .single()
+  if (!contract) return null
+
+  const now = new Date()
+  const newCount = (contract.open_count ?? 0) + 1
+
+  await adminClient
+    .from('contracts')
+    .update({
+      open_count: newCount,
+      last_opened_at: now.toISOString(),
+      // Only promote sent→opened; never downgrade a signed/later status.
+      ...(contract.status === 'sent' ? { status: 'opened' } : {}),
+    })
+    .eq('id', contract.id)
+
+  const client = contract.clients as unknown as { name: string }
+
+  // Audit trail (best-effort) + activity feed entry on first open only.
+  void adminClient.from('audit_events').insert({
+    contract_id: contract.id,
+    signing_session_id: session.id,
+    event_type: 'viewed',
+    signer_email: null,
+    timestamp: now.toISOString(),
+  })
+
+  if ((contract.open_count ?? 0) === 0) {
+    void logClientActivity({
+      userId: contract.user_id,
+      clientId: null,
+      clientName: client.name,
+      eventType: 'contract_viewed',
+      entityType: 'contract',
+      entityId: contract.id,
+      entityLabel: contract.title,
+    })
+  }
+
+  // Rate-limit the email to once per hour per contract.
+  if (contract.last_opened_at) {
+    const last = new Date(contract.last_opened_at).getTime()
+    if (now.getTime() - last < 60 * 60 * 1000) return null
+  }
+
+  const recipient = await getNotificationRecipient(contract.user_id, 'contract_opened')
+  if (!recipient) return null
+
+  return {
+    contractId: contract.id,
+    contractTitle: contract.title,
+    clientName: client.name,
+    freelancerEmail: recipient.email,
+    freelancerName: recipient.fullName,
+    freelancerBusiness: recipient.businessName,
+    openCount: newCount,
+  }
+}
+
 // ── Invoice templates ──────────────────────────────────────
 
 export interface InvoiceTemplateRow {
@@ -935,16 +1021,62 @@ export async function createInvoice(
   return row.id
 }
 
-export async function markOverdueInvoices(userId: string): Promise<void> {
+export interface OverdueTransition {
+  id: string
+  invoiceNumber: string
+  total: number
+  paidAmount: number
+  currency: string
+  dueDate: string | null
+  clientName: string
+}
+
+/**
+ * Flips sent/partial invoices past their due date to `overdue`. Returns exactly
+ * the invoices that transitioned on this call (via `.select()`), so the caller
+ * can notify each one once. Also logs an `invoice_overdue` activity event per
+ * transition. Email sending lives in the caller/cron to keep the DB layer pure.
+ */
+export async function markOverdueInvoices(userId: string): Promise<OverdueTransition[]> {
   const today = new Date().toISOString().split('T')[0]
-  const { error } = await adminClient
+  const { data: transitioned, error } = await adminClient
     .from('invoices')
     .update({ status: 'overdue', updated_at: new Date().toISOString() })
     .eq('user_id', userId)
     .in('status', ['sent', 'partial'])
     .lt('due_date', today)
     .not('due_date', 'is', null)
-  if (error) console.error('[markOverdueInvoices] failed:', error)
+    .select('id, invoice_number, total, paid_amount, currency, due_date, clients(name)')
+  if (error) { console.error('[markOverdueInvoices] failed:', error); return [] }
+  if (!transitioned?.length) return []
+
+  const result: OverdueTransition[] = transitioned.map((inv) => {
+    const client = inv.clients as unknown as { name: string } | null
+    return {
+      id: inv.id,
+      invoiceNumber: inv.invoice_number,
+      total: Number(inv.total),
+      paidAmount: Number(inv.paid_amount ?? 0),
+      currency: inv.currency,
+      dueDate: inv.due_date ?? null,
+      clientName: client?.name ?? 'Client',
+    }
+  })
+
+  for (const inv of result) {
+    void logClientActivity({
+      userId,
+      clientId: null,
+      clientName: inv.clientName,
+      eventType: 'invoice_overdue',
+      entityType: 'invoice',
+      entityId: inv.id,
+      entityLabel: inv.invoiceNumber,
+      amount: inv.total - inv.paidAmount,
+    })
+  }
+
+  return result
 }
 
 export async function setInvoiceRecurring(
@@ -1298,6 +1430,8 @@ export interface InvoicePublicRow {
   hasBrandingFooter: boolean; clientName: string; clientEmail: string | null
   clientCompany: string | null; freelancerName: string; businessName: string | null
   template: InvoiceTemplateRow | null
+  /** Open timestamp from BEFORE this view bumped it — used to rate-limit the open email. */
+  previousOpenedAt: string | null
 }
 
 export async function getInvoiceByShareToken(token: string): Promise<InvoicePublicRow | null> {
@@ -1340,6 +1474,7 @@ export async function getInvoiceByShareToken(token: string): Promise<InvoicePubl
     clientCompany: client.company,
     freelancerName: profile?.full_name || 'Service Provider',
     businessName: profile?.business_name ?? null, template,
+    previousOpenedAt: data.last_opened_at ?? null,
   }
 }
 

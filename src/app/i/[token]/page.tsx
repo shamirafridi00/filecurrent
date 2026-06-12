@@ -1,9 +1,8 @@
 export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
-import { getInvoiceByShareToken, getPaymentClaims, logClientActivity } from '@/lib/db/supabase'
-import { adminClient } from '@/lib/supabase/admin'
-import { sendEmail } from '@/lib/email'
+import { getInvoiceByShareToken, getPaymentClaims, logClientActivity, getNotificationRecipient } from '@/lib/db/supabase'
+import { sendEmail, buildSenderName } from '@/lib/email'
 import { invoiceOpenedEmail } from '@/lib/email/templates/invoice-opened'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { PAYMENT_METHODS } from '@/types'
@@ -23,48 +22,27 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
   const visibleClaims = claims.filter((c) => c.status === 'confirmed' || c.status === 'pending')
   const methodLabel = (v: string) => PAYMENT_METHODS.find((m) => m.value === v)?.label ?? v
 
-  // Notify freelancer that invoice was opened (rate-limited: once per hour per invoice)
+  // Log every view in the activity feed, then notify the freelancer that their
+  // invoice was opened — gated on the invoice_opened toggle and rate-limited to
+  // once per hour per invoice (using the open timestamp captured before this view).
   try {
-    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000).toISOString()
-    const { data: recentLog } = await adminClient
-      .from('reminder_logs')
-      .select('id')
-      .eq('recipient_email', invoice.freelancerName) // proxy: use invoice id instead
-      .gte('sent_at', oneHourAgo)
-      .limit(1)
+    void logClientActivity({
+      userId: invoice.userId,
+      clientId: null,
+      clientName: invoice.clientName,
+      eventType: 'invoice_viewed',
+      entityType: 'invoice',
+      entityId: invoice.id,
+      entityLabel: invoice.invoiceNumber,
+    })
 
-    // Get freelancer email and check notification prefs
-    const { data: invoiceRow } = await adminClient
-      .from('invoices')
-      .select('id, user_id, open_count')
-      .eq('share_token', params.token)
-      .single()
+    const withinHour = invoice.previousOpenedAt
+      ? Date.now() - new Date(invoice.previousOpenedAt).getTime() < 60 * 60 * 1000
+      : false
 
-    // Log invoice_viewed for every view (rate-limit only applies to notification email below)
-    if (invoiceRow) {
-      void logClientActivity({
-        userId: invoiceRow.user_id,
-        clientId: null,
-        clientName: invoice.clientName,
-        eventType: 'invoice_viewed',
-        entityType: 'invoice',
-        entityId: String(invoiceRow.id),
-        entityLabel: invoice.invoiceNumber,
-      })
-    }
-
-    if (invoiceRow && !recentLog?.length) {
-      const { data: profile } = await adminClient
-        .from('profiles')
-        .select('email, notification_prefs')
-        .eq('id', invoiceRow.user_id)
-        .single()
-
-      const prefs = (typeof profile?.notification_prefs === 'object'
-        ? profile.notification_prefs
-        : {}) as Record<string, boolean>
-
-      if (profile?.email && prefs.invoice_opened !== false) {
+    if (!withinHour) {
+      const recipient = await getNotificationRecipient(invoice.userId, 'invoice_opened')
+      if (recipient) {
         const openedAt = new Date().toLocaleString('en-US', {
           month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
         })
@@ -73,15 +51,16 @@ export default async function PublicInvoicePage({ params }: { params: { token: s
         }).format(n)
 
         sendEmail({
-          to: profile.email,
+          to: recipient.email,
           subject: `${invoice.clientName} opened your invoice ${invoice.invoiceNumber}`,
           html: invoiceOpenedEmail({
             clientName: invoice.clientName,
             invoiceNumber: invoice.invoiceNumber,
             amount: fmt(invoice.total),
             openedAt,
-            dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/invoices/${invoiceRow.user_id}`,
+            dashboardUrl: `${process.env.NEXT_PUBLIC_APP_URL}/invoices/${invoice.id}`,
           }),
+          fromName: buildSenderName(recipient.businessName, recipient.fullName),
         }).catch(() => {}) // non-critical
       }
     }

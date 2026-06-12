@@ -2,10 +2,12 @@ export const dynamic = 'force-dynamic'
 
 import { notFound } from 'next/navigation'
 import { CheckCircle } from '@/components/icons'
-import { getContractForSigning } from '@/lib/db/supabase'
+import { getContractForSigning, recordContractOpen } from '@/lib/db/supabase'
 import { formatCurrency, formatDate, stripMarkdown, slugifyTitle } from '@/lib/utils'
+import { sendEmail, buildSenderName } from '@/lib/email'
+import { contractOpenedEmail } from '@/lib/email/templates/contract-opened'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
-import { APP_NAME } from '@/lib/constants'
+import { APP_NAME, APP_URL } from '@/lib/constants'
 
 function renderInlineParts(text: string) {
   // Strip italic/code markers, render **bold** as <strong>
@@ -53,6 +55,30 @@ export default async function SignPage({ params }: { params: { token: string } }
         </div>
       </div>
     )
+  }
+
+  // Track the open + notify the freelancer (gated on pref, rate-limited). Fire
+  // and forget so it never blocks rendering the contract for the client.
+  try {
+    const open = await recordContractOpen(params.token)
+    if (open) {
+      const openedAt = new Date().toLocaleString('en-US', {
+        month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit',
+      })
+      sendEmail({
+        to: open.freelancerEmail,
+        subject: `${open.clientName} opened your contract "${open.contractTitle}"`,
+        html: contractOpenedEmail({
+          clientName: open.clientName,
+          contractTitle: open.contractTitle,
+          openedAt,
+          dashboardUrl: `${APP_URL}/contracts/${open.contractId}`,
+        }),
+        fromName: buildSenderName(open.freelancerBusiness, open.freelancerName),
+      }).catch(() => {})
+    }
+  } catch {
+    // non-critical — never block the signing page
   }
 
   const values: Record<string, string> = {
