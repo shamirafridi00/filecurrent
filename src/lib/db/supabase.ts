@@ -203,6 +203,7 @@ export interface ClientRow {
 }
 
 export interface ClientDetailRow extends ClientRow {
+  phone: string | null
   address: string | null
   notes: string | null
   createdAt: string
@@ -230,7 +231,7 @@ export async function getClients(userId: string): Promise<ClientRow[]> {
 export async function getClientById(id: string, userId: string): Promise<ClientDetailRow | null> {
   const { data, error } = await adminClient
     .from('clients')
-    .select('id, name, email, company, address, notes, created_at, reminders_paused')
+    .select('id, name, email, phone, company, address, notes, created_at, reminders_paused')
     .eq('id', id)
     .eq('user_id', userId)
     .single()
@@ -245,6 +246,7 @@ export async function getClientById(id: string, userId: string): Promise<ClientD
     id: data.id,
     name: data.name,
     email: data.email,
+    phone: data.phone ?? null,
     company: data.company,
     address: data.address,
     notes: data.notes,
@@ -1917,6 +1919,16 @@ export async function getClientPortalData(portalToken: string): Promise<{
     createdAt: string
     signedAt: string | null
   }>
+  proposals: Array<{
+    id: string
+    title: string
+    total: number
+    currency: string
+    status: string
+    shareToken: string | null
+    validUntil: string | null
+    createdAt: string
+  }>
 } | null> {
   const { data: client, error: clientErr } = await adminClient
     .from('clients')
@@ -1932,7 +1944,7 @@ export async function getClientPortalData(portalToken: string): Promise<{
     .eq('id', client.user_id)
     .single()
 
-  const [invoicesRes, contractsRes] = await Promise.all([
+  const [invoicesRes, contractsRes, proposalsRes] = await Promise.all([
     adminClient
       .from('invoices')
       .select('id, invoice_number, invoice_date, due_date, total, paid_amount, currency, status, share_token')
@@ -1944,6 +1956,13 @@ export async function getClientPortalData(portalToken: string): Promise<{
       .select('id, title, amount, currency, status, created_at, signed_at')
       .eq('client_id', client.id)
       .eq('user_id', client.user_id)
+      .order('created_at', { ascending: false }),
+    adminClient
+      .from('proposals')
+      .select('id, title, total, currency, status, share_token, valid_until, created_at')
+      .eq('client_id', client.id)
+      .eq('user_id', client.user_id)
+      .neq('status', 'draft')
       .order('created_at', { ascending: false }),
   ])
 
@@ -1969,6 +1988,17 @@ export async function getClientPortalData(portalToken: string): Promise<{
     signedAt: r.signed_at ?? null,
   }))
 
+  const proposals = (proposalsRes.data ?? []).map((r) => ({
+    id: r.id,
+    title: r.title,
+    total: Number(r.total),
+    currency: r.currency,
+    status: r.status,
+    shareToken: r.share_token ?? null,
+    validUntil: r.valid_until ?? null,
+    createdAt: r.created_at,
+  }))
+
   return {
     clientName: client.name,
     clientCompany: client.company ?? null,
@@ -1979,6 +2009,7 @@ export async function getClientPortalData(portalToken: string): Promise<{
     freelancerLogo: profile?.business_logo ?? null,
     invoices,
     contracts,
+    proposals,
   }
 }
 
@@ -2216,6 +2247,36 @@ export async function markProposalViewed(id: string): Promise<void> {
     .update({ viewed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
     .eq('id', id)
     .is('viewed_at', null)
+}
+
+/**
+ * Recent proposal accept/decline events (last 7 days) for the dashboard banner.
+ */
+export async function getRecentProposalEvents(userId: string): Promise<Array<{
+  id: string
+  eventType: 'proposal_accepted' | 'proposal_declined'
+  clientName: string
+  proposalTitle: string
+  proposalId: string | null
+  createdAt: string
+}>> {
+  const weekAgo = new Date(Date.now() - 7 * 86400000).toISOString()
+  const { data } = await adminClient
+    .from('client_activity_log')
+    .select('id, event_type, client_name, entity_label, entity_id, created_at')
+    .eq('user_id', userId)
+    .in('event_type', ['proposal_accepted', 'proposal_declined'])
+    .gte('created_at', weekAgo)
+    .order('created_at', { ascending: false })
+    .limit(3)
+  return (data ?? []).map((r) => ({
+    id: r.id,
+    eventType: r.event_type as 'proposal_accepted' | 'proposal_declined',
+    clientName: r.client_name ?? 'A client',
+    proposalTitle: r.entity_label ?? 'your proposal',
+    proposalId: r.entity_id ?? null,
+    createdAt: r.created_at,
+  }))
 }
 
 export async function acceptProposal(shareToken: string): Promise<{ proposalId: string; userId: string; clientId: string } | null> {

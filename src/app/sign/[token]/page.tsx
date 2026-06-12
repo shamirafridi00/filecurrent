@@ -3,24 +3,30 @@ export const dynamic = 'force-dynamic'
 import { notFound } from 'next/navigation'
 import { CheckCircle } from '@/components/icons'
 import { getContractForSigning, recordContractOpen } from '@/lib/db/supabase'
-import { formatCurrency, formatDate, stripMarkdown, slugifyTitle } from '@/lib/utils'
+import { formatCurrency, formatDate, stripMarkdown } from '@/lib/utils'
 import { sendEmail, buildSenderName } from '@/lib/email'
 import { contractOpenedEmail } from '@/lib/email/templates/contract-opened'
 import { SignaturePanel } from '@/components/sign/SignaturePanel'
 import { APP_NAME, APP_URL } from '@/lib/constants'
 
+// Strip single-marker emphasis without touching `**` pairs or `____` signature
+// lines (content must contain at least one non-marker character).
+function cleanInline(text: string): string {
+  return text
+    .replace(/__([^_]+)__/g, '$1')
+    .replace(/_([^_]+)_/g, '$1')
+    .replace(/\*([^*]+)\*/g, '$1')
+    .replace(/`([^`]+)`/g, '$1')
+}
+
 function renderInlineParts(text: string) {
-  // Strip italic/code markers, render **bold** as <strong>
-  const cleaned = text
-    .replace(/\*(.+?)\*/g, '$1')
-    .replace(/__(.+?)__/g, '$1')
-    .replace(/_(.+?)_/g, '$1')
-    .replace(/`(.+?)`/g, '$1')
-  const parts = cleaned.split(/(\*\*[^*]+\*\*)/)
+  // Handle **bold** FIRST — stripping single-`*` italics before this corrupted
+  // "**Client:**" into visible "*Client:*" asterisks.
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
   return parts.map((part, j) =>
     part.startsWith('**') && part.endsWith('**')
-      ? <strong key={j}>{part.slice(2, -2)}</strong>
-      : part
+      ? <strong key={j}>{cleanInline(part.slice(2, -2))}</strong>
+      : cleanInline(part)
   )
 }
 
@@ -39,27 +45,15 @@ export default async function SignPage({ params }: { params: { token: string } }
     notFound()
   }
 
-  if (session.status === 'signed') {
-    const pdfUrl = `/api/contracts/${session.contractId}/pdf/${slugifyTitle(session.contractTitle)}_signed.pdf`
-    return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4">
-        <div className="w-full max-w-md rounded-xl border bg-card p-8 text-center shadow-sm">
-          <CheckCircle className="mx-auto mb-4 h-14 w-14 text-green-500" />
-          <h1 className="text-xl font-bold text-foreground">Document Already Signed</h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            This contract has been signed. Thank you, {session.signerName ?? ''}!
-          </p>
-          <p className="mt-6 text-xs text-muted-foreground/60">
-            Powered by <a href="https://filecurrent.com" target="_blank" rel="noreferrer" className="underline-offset-2 hover:underline">filecurrent.com</a>
-          </p>
-        </div>
-      </div>
-    )
-  }
+  // Signed contracts stay viewable: render the full document read-only with a
+  // download link instead of the old "Already Signed" dead-end card.
+  const isSigned = session.status === 'signed'
+  // Public, token-scoped download (the /api/contracts PDF route requires freelancer auth)
+  const signedPdfUrl = `/api/sign/${params.token}/pdf`
 
   // Track the open + notify the freelancer (gated on pref, rate-limited). Fire
   // and forget so it never blocks rendering the contract for the client.
-  try {
+  if (!isSigned) try {
     const open = await recordContractOpen(params.token)
     if (open) {
       const openedAt = new Date().toLocaleString('en-US', {
@@ -128,6 +122,27 @@ export default async function SignPage({ params }: { params: { token: string } }
       </header>
 
       <main className="mx-auto max-w-2xl px-4 pt-8 pb-12">
+        {/* Signed banner — read-only view with download */}
+        {isSigned && (
+          <div className="mb-4 flex flex-col gap-3 rounded-xl border border-green-200 bg-green-50 p-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-3">
+              <CheckCircle className="h-6 w-6 shrink-0 text-green-600" />
+              <div>
+                <p className="text-sm font-semibold text-green-800">
+                  Signed{session.signerName ? ` by ${session.signerName}` : ''}
+                </p>
+                <p className="text-xs text-green-700">This is a read-only copy of the executed agreement.</p>
+              </div>
+            </div>
+            <a
+              href={signedPdfUrl}
+              className="inline-flex shrink-0 items-center justify-center rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-green-700"
+            >
+              Download Signed PDF
+            </a>
+          </div>
+        )}
+
         {/* Contract content */}
         <div className="rounded-xl border bg-card p-8 shadow-sm">
           <div className="space-y-2 text-sm leading-relaxed text-foreground">
@@ -202,7 +217,7 @@ export default async function SignPage({ params }: { params: { token: string } }
         </p>
       </main>
 
-      <SignaturePanel token={params.token} signerEmail={session.signerEmail} />
+      {!isSigned && <SignaturePanel token={params.token} signerEmail={session.signerEmail} />}
     </div>
   )
 }

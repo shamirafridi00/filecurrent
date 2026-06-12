@@ -34,7 +34,7 @@ export function contractSignedEmail({
       <p style="margin:0 0 6px;color:#6B7280;font-size:12px;text-transform:uppercase;letter-spacing:0.05em;">Signed Document</p>
       <p style="margin:0 0 4px;color:#111827;font-size:16px;font-weight:600;">${contractTitle}</p>
       <p style="margin:0;color:#6B7280;font-size:13px;">Signed by ${signerName} on ${signedAt}</p>
-      ${toFreelancer && signerIp ? `<p style="margin:4px 0 0;color:#6B7280;font-size:13px;">IP address: ${signerIp} (for ESIGN audit trail)</p>` : ''}
+      ${toFreelancer && signerIp ? `<p style="margin:4px 0 0;color:#6B7280;font-size:13px;">IP address: ${signerIp} — captured from the signer's connection at signing time for the ESIGN audit trail (may reflect a VPN/proxy if one was used)</p>` : ''}
     </div>
     ${emailButton(dashboardUrl, toFreelancer ? 'View Contract &rarr;' : 'View Signed Document &rarr;')}
     ${toFreelancer && createInvoiceUrl ? `

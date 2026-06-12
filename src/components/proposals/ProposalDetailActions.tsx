@@ -56,7 +56,7 @@ export function ProposalDetailActions({ proposalId, shareToken, status, clientEm
       {canSend && (
         <Button onClick={handleSend} disabled={sending} size="sm">
           <PaperPlaneTilt className="mr-1.5 h-4 w-4" />
-          {sending ? 'Sending…' : status === 'sent' ? 'Resend to Client' : 'Send to Client'}
+          {sending ? 'Sending…' : status === 'sent' ? 'Resend Proposal' : 'Send Proposal to Client'}
         </Button>
       )}
       {proposalUrl && (

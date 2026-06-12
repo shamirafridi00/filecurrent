@@ -88,11 +88,11 @@ const s1 = StyleSheet.create({
 
 function cleanLine(line: string): string {
   return line
-    .replace(/\*\*(.+?)\*\*/g, '$1')   // bold **
-    .replace(/\*(.+?)\*/g, '$1')        // italic *
-    .replace(/__(.+?)__/g, '$1')        // bold __
-    .replace(/_(.+?)_/g, '$1')          // italic _
-    .replace(/`(.+?)`/g, '$1')          // inline code
+    .replace(/\*\*([^*]+)\*\*/g, '$1')  // bold ** (first, so single-* doesn't corrupt it)
+    .replace(/\*([^*]+)\*/g, '$1')      // italic *
+    .replace(/__([^_]+)__/g, '$1')      // bold __
+    .replace(/_([^_]+)_/g, '$1')        // italic _ (won't touch ____ signature lines)
+    .replace(/`([^`]+)`/g, '$1')        // inline code
 }
 
 function renderContent(content: string) {
@@ -219,6 +219,12 @@ export function ContractPDF({
             </View>
           ))}
         </View>
+
+        <Text style={{ fontSize: 7, color: '#9CA3AF', marginTop: 8, lineHeight: 1.5 }}>
+          IP addresses are captured from the signer&apos;s network connection at the moment of each event
+          (via standard request headers). If the signer used a VPN or proxy, the address shown reflects
+          that service rather than their physical location.
+        </Text>
 
         <View style={{ marginTop: 24, borderWidth: 1, borderColor: '#E5E7EB', borderRadius: 4, padding: 14, backgroundColor: '#F9FAFB' }}>
           <Text style={[s.sectionLabel, { marginBottom: 6 }]}>Legal Statement</Text>

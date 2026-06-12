@@ -13,7 +13,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog'
-import { CONTRACT_TEMPLATES, type ContractTemplate, type ContractNiche } from '@/lib/contracts/templates'
+import { CONTRACT_TEMPLATES, PROFESSION_TO_TEMPLATE, type ContractTemplate } from '@/lib/contracts/templates'
 
 const ICON_MAP: Record<string, Icon> = {
   Globe,
@@ -24,15 +24,6 @@ const ICON_MAP: Record<string, Icon> = {
   VideoCamera,
   ChartBar,
   FileText,
-}
-
-// Maps Profession DB values → niche template IDs
-const PROFESSION_TO_TEMPLATE: Record<string, ContractNiche> = {
-  web_developer: 'web-designer',
-  photographer:  'photographer',
-  designer:      'graphic-designer',
-  copywriter:    'copywriter',
-  marketer:      'social-media-manager',
 }
 
 interface Props {

@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic'
 
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
-import { Plus, FileText } from '@phosphor-icons/react/dist/ssr'
+import { Plus, FileText, CheckCircle } from '@phosphor-icons/react/dist/ssr'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -26,6 +26,8 @@ export default async function ProposalsPage() {
   if (!user) redirect('/login')
 
   const proposals = await getProposals(user.id)
+  // Accepted proposals with no contract yet → nudge the next step.
+  const acceptedNeedingContract = proposals.filter((p) => p.status === 'accepted' && !p.contractId)
 
   return (
     <div>
@@ -51,6 +53,20 @@ export default async function ProposalsPage() {
           </Button>
         }
       />
+
+      {acceptedNeedingContract.map((p) => (
+        <div key={p.id} className="mb-4 flex items-center justify-between rounded-r-xl border-l-4 border-l-[#1DB954] bg-green-50 p-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <CheckCircle size={20} weight="fill" className="shrink-0 text-[#1DB954]" />
+            <p className="text-sm font-medium text-foreground truncate">
+              🎉 {p.clientName} accepted &ldquo;{p.title}&rdquo; — ready to create the contract?
+            </p>
+          </div>
+          <Button asChild size="sm" className="ml-4 shrink-0">
+            <Link href={`/contracts/new?proposalId=${p.id}`}>Create Contract →</Link>
+          </Button>
+        </div>
+      ))}
 
       {proposals.length === 0 ? (
         <Card>

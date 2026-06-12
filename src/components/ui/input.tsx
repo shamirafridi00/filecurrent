@@ -3,7 +3,7 @@ import * as React from "react"
 import { cn } from "@/lib/utils"
 
 const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
-  ({ className, type, ...props }, ref) => {
+  ({ className, type, onWheel, ...props }, ref) => {
     return (
       <input
         type={type}
@@ -12,6 +12,12 @@ const Input = React.forwardRef<HTMLInputElement, React.ComponentProps<"input">>(
           className
         )}
         ref={ref}
+        // Number inputs change value on mouse scroll by default — a frequent
+        // source of accidental amount edits. Blur on wheel to disable it.
+        onWheel={(e) => {
+          if (type === "number") e.currentTarget.blur()
+          onWheel?.(e)
+        }}
         {...props}
       />
     )

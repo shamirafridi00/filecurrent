@@ -32,7 +32,7 @@ import { TemplateSelector } from '@/components/contracts/TemplateSelector'
 import { toast } from 'sonner'
 import { formatDate } from '@/lib/utils'
 import type { ClientRow, ContractTemplateRow } from '@/lib/db/supabase'
-import type { ContractTemplate } from '@/lib/contracts/templates'
+import { templateForProfession, type ContractTemplate } from '@/lib/contracts/templates'
 
 interface ProposalDefaults {
   proposalId: string
@@ -123,9 +123,16 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
 
   const [saving, setSaving] = useState(false)
   const [showUpgrade, setShowUpgrade] = useState(false)
-  // Open selector when: coming from proposal (always pick template), OR first-ever visit (never chosen before and no draft/lastTemplate)
+  // First-ever visit with a known onboarding profession → auto-apply that
+  // profession's template instead of asking again (the user already chose
+  // their profession during onboarding).
+  const professionTemplate = templateForProfession(profession)
+  const isFirstVisit = !alreadyChosen && !draft && !lastTemplate
+  const autoApplyProfession = isFirstVisit && !proposalDefaults && !!professionTemplate
+  // Open selector when: coming from proposal (always pick template), OR
+  // first-ever visit with no profession match to fall back on.
   const [showTemplateSelector, setShowTemplateSelector] = useState(
-    !!proposalDefaults || (!alreadyChosen && !draft && !lastTemplate)
+    !!proposalDefaults || (isFirstVisit && !professionTemplate)
   )
   const [pendingTemplate, setPendingTemplate] = useState<ContractTemplate | null>(null)
   const [clientId, setClientId] = useState(draft?.clientId ?? proposalDefaults?.clientId ?? defaultClientId ?? '')
@@ -180,6 +187,15 @@ export function ContractForm({ clients, templates, defaultTemplateId, defaultCli
       })
     }
   }
+
+  // First visit with a known profession: apply its template immediately so the
+  // onboarding choice carries through (previously the chooser re-asked).
+  useEffect(() => {
+    if (autoApplyProfession && professionTemplate) {
+      applyTemplate(professionTemplate)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const handleTemplateSelect = (template: ContractTemplate) => {
     setShowTemplateSelector(false)

@@ -176,12 +176,12 @@ export function replacePlaceholders(
 // Removes headings (#), bold/italic (* _ **), inline code (`), and horizontal rules (---)
 export function stripMarkdown(text: string): string {
   return text
-    .replace(/^#{1,6}\s+/gm, '')          // headings
-    .replace(/\*\*(.+?)\*\*/g, '$1')       // bold **
-    .replace(/\*(.+?)\*/g, '$1')           // italic *
-    .replace(/__(.+?)__/g, '$1')           // bold __
-    .replace(/_(.+?)_/g, '$1')             // italic _
-    .replace(/`(.+?)`/g, '$1')             // inline code
+    .replace(/^#{1,6}\s+/gm, '')           // headings
+    .replace(/\*\*([^*]+)\*\*/g, '$1')     // bold ** (first, so single-* doesn't corrupt it)
+    .replace(/\*([^*]+)\*/g, '$1')         // italic *
+    .replace(/__([^_]+)__/g, '$1')         // bold __
+    .replace(/_([^_]+)_/g, '$1')           // italic _ (won't touch ____ signature lines)
+    .replace(/`([^`]+)`/g, '$1')           // inline code
     .replace(/^---+$/gm, '')               // horizontal rules
     .replace(/^\s*[-*]\s+/gm, '')          // unordered list markers
     .trim()

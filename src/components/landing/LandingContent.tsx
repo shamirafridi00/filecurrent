@@ -15,6 +15,7 @@ import {
   XLogo,
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
+import { TRIAL_DAYS } from '@/lib/constants'
 import { FaqItem } from '@/components/landing/FaqItem'
 import { NavBar } from '@/components/landing/NavBar'
 import { AnimatedFeatureCards } from '@/components/landing/AnimatedFeatureCards'
@@ -303,7 +304,7 @@ export function LandingContent() {
               <Button asChild className="w-full bg-[#635BFF] text-white hover:bg-[#5145E5]">
                 <Link href="/signup">Start Pro Trial</Link>
               </Button>
-              <p className="text-center text-xs text-gray-500">30-day free trial · No credit card required</p>
+              <p className="text-center text-xs text-gray-500">{TRIAL_DAYS}-day free trial · No credit card required</p>
             </div>
 
             {/* Annual */}

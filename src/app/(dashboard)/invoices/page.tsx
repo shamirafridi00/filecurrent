@@ -26,6 +26,8 @@ export default async function InvoicesPage() {
       <PageHeader
         title="Invoices"
         subtitle="Send invoices and track payments"
+        backHref="/dashboard"
+        backLabel="Dashboard"
         icon={<Receipt size={24} />}
         action={
           <Button asChild>

@@ -1,7 +1,8 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useRef, useState, useTransition } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import {
   ChartBar,
   Briefcase,
@@ -12,6 +13,9 @@ import {
   Palette,
   PenNib,
   Receipt,
+  UploadSimple,
+  X,
+  Gear,
 } from '@phosphor-icons/react'
 import type { Profession } from '@/types'
 import { TRIAL_DAYS } from '@/lib/constants'
@@ -56,7 +60,7 @@ const professions: Array<{
   { value: 'other', label: 'Other', icon: DotsThree },
 ]
 
-const TOTAL_STEPS = 3
+const TOTAL_STEPS = 4
 
 function StepDots({ step }: { step: number }) {
   return (
@@ -93,16 +97,40 @@ export function OnboardingModal({
   const [error, setError] = useState('')
   const [isPending, startTransition] = useTransition()
 
+  // Logo step
+  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [logoPreview, setLogoPreview] = useState<string | null>(null)
+  const [logoUploading, setLogoUploading] = useState(false)
+
+  // Skip closes the dialog instantly — the save runs in the background so the
+  // user never sees a loading state for "do nothing".
+  const [dismissed, setDismissed] = useState(false)
+
+  const saveSetup = async () => {
+    await onComplete({
+      profession: profession ?? 'other',
+      businessName: businessNameValue.trim() || fullNameValue.trim() || fullName,
+      fullName: fullNameValue.trim() || fullName,
+      phone: phoneValue,
+    })
+  }
+
   const complete = (destination?: string) => {
     startTransition(async () => {
       setError('')
       try {
-        await onComplete({
-          profession: profession ?? 'other',
-          businessName: businessNameValue.trim() || fullNameValue.trim() || fullName,
-          fullName: fullNameValue.trim() || fullName,
-          phone: phoneValue,
-        })
+        // Upload the logo first (if one was chosen) so it lands on the profile
+        if (logoFile) {
+          setLogoUploading(true)
+          try {
+            const fd = new FormData()
+            fd.append('file', logoFile)
+            await fetch('/api/profile/logo', { method: 'POST', body: fd })
+          } catch { /* logo is optional — never block setup */ }
+          setLogoUploading(false)
+        }
+        await saveSetup()
         if (destination) {
           router.push(destination)
         }
@@ -113,11 +141,24 @@ export function OnboardingModal({
     })
   }
 
+  const handleSkip = () => {
+    // Close immediately; persist the (partial) setup silently in the background
+    setDismissed(true)
+    void saveSetup().then(() => router.refresh()).catch(() => {})
+  }
+
+  const handleLogoChange = (file: File | null) => {
+    setLogoFile(file)
+    if (logoPreview) URL.revokeObjectURL(logoPreview)
+    setLogoPreview(file ? URL.createObjectURL(file) : null)
+  }
+
+  if (dismissed) return null
+
   const skipLink = (
     <button
       type="button"
-      disabled={isPending}
-      onClick={() => complete()}
+      onClick={handleSkip}
       className="text-xs text-muted-foreground transition-colors hover:text-foreground"
     >
       Skip for now →
@@ -190,6 +231,7 @@ export function OnboardingModal({
                   id="business-name"
                   value={businessNameValue}
                   onChange={(event) => setBusinessNameValue(event.target.value)}
+                  autoComplete="off"
                 />
               </div>
               <div className="space-y-2">
@@ -198,11 +240,21 @@ export function OnboardingModal({
                   id="full-name"
                   value={fullNameValue}
                   onChange={(event) => setFullNameValue(event.target.value)}
+                  autoComplete="off"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input id="email" value={email} readOnly />
+                <Label htmlFor="email">
+                  Email <span className="font-normal text-xs text-muted-foreground">(sign-in email — managed in account settings)</span>
+                </Label>
+                <Input id="email" value={email} readOnly className="bg-muted/40 text-muted-foreground" />
+                <p className="text-xs text-muted-foreground">
+                  This is the email you sign in with. To change it, visit{' '}
+                  <Link href="/settings" className="text-primary hover:underline" onClick={handleSkip}>
+                    Settings → Profile
+                  </Link>{' '}
+                  after setup.
+                </p>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone (optional)</Label>
@@ -210,6 +262,7 @@ export function OnboardingModal({
                   id="phone"
                   value={phoneValue}
                   onChange={(event) => setPhoneValue(event.target.value)}
+                  autoComplete="off"
                 />
               </div>
             </div>
@@ -232,6 +285,74 @@ export function OnboardingModal({
         )}
 
         {step === 3 && (
+          <>
+            <DialogHeader>
+              <DialogTitle>Add your logo</DialogTitle>
+              <DialogDescription id="forced-modal-description">
+                Your logo appears on contracts, invoices, and the client portal.
+                You can always add or change it later in Settings.
+              </DialogDescription>
+            </DialogHeader>
+
+            <div className="flex flex-col items-center gap-4 py-2">
+              {logoPreview ? (
+                <div className="relative">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={logoPreview}
+                    alt="Logo preview"
+                    className="h-24 w-auto max-w-[240px] rounded-lg border border-border object-contain p-2"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => handleLogoChange(null)}
+                    className="absolute -right-2 -top-2 flex h-6 w-6 items-center justify-center rounded-full bg-muted text-muted-foreground hover:bg-muted-foreground/20"
+                    aria-label="Remove logo"
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  className="flex w-full max-w-sm cursor-pointer flex-col items-center gap-2 rounded-xl border-2 border-dashed border-border px-6 py-8 text-muted-foreground transition-colors hover:border-primary/50 hover:bg-muted/30"
+                >
+                  <UploadSimple className="h-6 w-6" />
+                  <span className="text-sm font-medium">Click to upload your logo</span>
+                  <span className="text-xs">PNG, JPG, or GIF · max 2MB</span>
+                </button>
+              )}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => handleLogoChange(e.target.files?.[0] ?? null)}
+              />
+            </div>
+
+            <DialogFooter className="items-center gap-3 sm:justify-between">
+              <button
+                type="button"
+                onClick={() => setStep(4)}
+                className="text-xs text-muted-foreground transition-colors hover:text-foreground"
+              >
+                Skip this step →
+              </button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setStep(2)}>
+                  Back
+                </Button>
+                <Button onClick={() => setStep(4)}>
+                  {logoFile ? 'Next' : 'Continue Without Logo'}
+                </Button>
+              </div>
+            </DialogFooter>
+          </>
+        )}
+
+        {step === 4 && (
           <>
             <DialogHeader>
               <DialogTitle>Your first document</DialogTitle>
@@ -272,12 +393,24 @@ export function OnboardingModal({
               </button>
             </div>
 
+            {/* What's left to finish later */}
+            <div className="flex items-start gap-3 rounded-lg border border-border bg-muted/30 p-3">
+              <Gear className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+              <p className="text-xs leading-relaxed text-muted-foreground">
+                Finish your setup anytime in{' '}
+                <Link href="/settings" className="font-medium text-primary hover:underline" onClick={() => complete()}>
+                  Settings
+                </Link>
+                : default tax rate, payment instructions for invoices, and invoice branding.
+              </p>
+            </div>
+
             {error && <p className="text-sm text-destructive">{error}</p>}
 
             <DialogFooter className="items-center gap-3 sm:justify-between">
               {skipLink}
               <div className="flex gap-2">
-                <Button variant="outline" disabled={isPending} onClick={() => setStep(2)}>
+                <Button variant="outline" disabled={isPending} onClick={() => setStep(3)}>
                   Back
                 </Button>
                 <Button
@@ -285,7 +418,7 @@ export function OnboardingModal({
                   onClick={() => complete(firstDoc === 'contract' ? '/contracts/new' : '/invoices/new')}
                 >
                   {isPending
-                    ? 'Setting up…'
+                    ? logoUploading ? 'Uploading logo…' : 'Setting up…'
                     : firstDoc === 'contract'
                       ? 'Create My First Contract →'
                       : 'Create My First Invoice →'}

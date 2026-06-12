@@ -20,7 +20,7 @@ import { Button } from '@/components/ui/button'
 import { StatCard, InvoiceBadge, ContractBadge } from '@/components/ui'
 import { cn, formatCurrency, formatDate } from '@/lib/utils'
 import { createClient } from '@/lib/supabase/server'
-import { getCurrentProfile, getDashboardStats, getExpenseSummary, getTimeTrackingSummary } from '@/lib/db/supabase'
+import { getCurrentProfile, getDashboardStats, getExpenseSummary, getTimeTrackingSummary, getRecentProposalEvents } from '@/lib/db/supabase'
 import { UpgradeSuccessToast } from '@/components/upgrade/UpgradeSuccessToast'
 import { GettingStartedCard } from '@/components/onboarding/GettingStartedCard'
 import type { InvoiceStatus, ContractStatus } from '@/types'
@@ -30,11 +30,12 @@ export default async function DashboardPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [profile, stats, expenseSummary, timeSummary] = await Promise.all([
+  const [profile, stats, expenseSummary, timeSummary, proposalEvents] = await Promise.all([
     getCurrentProfile(user.id),
     getDashboardStats(user.id),
     getExpenseSummary(user.id),
     getTimeTrackingSummary(user.id),
+    getRecentProposalEvents(user.id),
   ])
 
   const netProfit = stats.totalPaid - expenseSummary.totalExpenses
@@ -67,6 +68,34 @@ export default async function DashboardPage() {
             hasInvoices={stats.recentInvoices.length > 0}
           />
         )}
+
+        {/* Proposal accept/decline banners (last 7 days) */}
+        {proposalEvents.map((ev) => (
+          <div
+            key={ev.id}
+            className={cn(
+              'flex items-center justify-between rounded-r-xl border-l-4 p-4',
+              ev.eventType === 'proposal_accepted'
+                ? 'border-l-[#1DB954] bg-green-50'
+                : 'border-l-destructive bg-red-50'
+            )}
+          >
+            <div className="flex items-center gap-3 min-w-0">
+              {ev.eventType === 'proposal_accepted'
+                ? <CheckCircle className="h-5 w-5 shrink-0 text-[#1DB954]" />
+                : <Warning className="h-5 w-5 shrink-0 text-destructive" />}
+              <p className="text-sm font-medium text-foreground truncate">
+                {ev.clientName} {ev.eventType === 'proposal_accepted' ? 'accepted' : 'declined'} your proposal
+                {' '}&ldquo;{ev.proposalTitle}&rdquo; · {formatDate(ev.createdAt)}
+              </p>
+            </div>
+            <Button asChild size="sm" variant={ev.eventType === 'proposal_accepted' ? 'default' : 'outline'} className="ml-4 shrink-0">
+              <Link href={ev.proposalId ? `/proposals/${ev.proposalId}` : '/proposals'}>
+                {ev.eventType === 'proposal_accepted' ? 'Create Contract →' : 'View →'}
+              </Link>
+            </Button>
+          </div>
+        ))}
 
         {isUrgent && (
           <div className="flex items-center justify-between rounded-r-xl border-l-4 border-l-[#E6A817] bg-[#FFF9ED] p-4">

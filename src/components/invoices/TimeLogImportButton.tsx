@@ -101,9 +101,19 @@ export function TimeLogImportButton({ clientId, currency, onImport }: TimeLogImp
           {loading ? (
             <p className="text-sm text-muted-foreground py-4 text-center">Loading...</p>
           ) : entries.length === 0 ? (
-            <p className="text-sm text-muted-foreground py-4 text-center">
-              No unbilled time entries for this client.
-            </p>
+            <div className="py-4 text-center">
+              <p className="text-sm text-muted-foreground">
+                No unbilled time entries for this client.
+              </p>
+              <a
+                href="/time-tracking"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-2 inline-block text-sm font-medium text-primary hover:underline"
+              >
+                Do you want to create a time log now? →
+              </a>
+            </div>
           ) : (
             <div className="space-y-3">
               <div className="flex items-center justify-between">

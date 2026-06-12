@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { declineProposal, getProposalByShareToken, getNotificationRecipient } from '@/lib/db/supabase'
+import { declineProposal, getProposalByShareToken, getNotificationRecipient, logClientActivity } from '@/lib/db/supabase'
 import { sendEmail, buildSenderName } from '@/lib/email'
 import { proposalDeclinedEmail } from '@/lib/email/templates/proposal-declined'
 import { APP_URL } from '@/lib/constants'
@@ -12,6 +12,17 @@ export async function POST(_req: NextRequest, { params }: { params: { id: string
   try {
     const proposal = await getProposalByShareToken(params.id)
     if (proposal) {
+      // Surface the decline in the activity feed (client tab + dashboard banner)
+      void logClientActivity({
+        userId: proposal.userId,
+        clientId: proposal.clientId ?? null,
+        clientName: proposal.clientName,
+        eventType: 'proposal_declined',
+        entityType: 'note',
+        entityId: proposal.id,
+        entityLabel: proposal.title,
+        amount: proposal.total,
+      })
       const recipient = await getNotificationRecipient(proposal.userId, 'proposal_declined')
       if (recipient) {
         sendEmail({

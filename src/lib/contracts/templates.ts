@@ -24,6 +24,24 @@ export interface ContractTemplate {
   content: string
 }
 
+// Maps Profession DB values → niche template IDs (single source of truth for
+// onboarding pre-selection and the template chooser).
+export const PROFESSION_TO_TEMPLATE: Record<string, ContractNiche> = {
+  web_developer: 'web-designer',
+  photographer:  'photographer',
+  designer:      'graphic-designer',
+  copywriter:    'copywriter',
+  marketer:      'social-media-manager',
+}
+
+/** The niche template matching a user's onboarding profession, if any. */
+export function templateForProfession(profession: string | null | undefined): ContractTemplate | null {
+  if (!profession) return null
+  const id = PROFESSION_TO_TEMPLATE[profession]
+  if (!id) return null
+  return CONTRACT_TEMPLATES.find((t) => t.id === id) ?? null
+}
+
 export const CONTRACT_TEMPLATES: ContractTemplate[] = [
 
   // ─────────────────────────────────────────────────────────────────────────

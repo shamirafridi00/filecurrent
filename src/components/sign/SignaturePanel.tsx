@@ -96,6 +96,7 @@ export function SignaturePanel({ token, signerEmail }: Props) {
                   value={signerName}
                   onChange={(e) => setSignerName(e.target.value)}
                   disabled={!agreed || signing}
+                  autoComplete="off"
                   className="bg-white"
                 />
               </div>

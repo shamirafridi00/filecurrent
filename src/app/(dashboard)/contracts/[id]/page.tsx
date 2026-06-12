@@ -207,18 +207,24 @@ function Row({ label, value }: { label: string; value: React.ReactNode }) {
   )
 }
 
+// Strip single-marker emphasis without touching `**` pairs or `____` signature
+// lines (content must contain at least one non-marker character).
+function cleanInline(text: string): string {
+  return text
+    .replace(/__([^_]+)__/g, '$1')  // bold __
+    .replace(/_([^_]+)_/g, '$1')    // italic _
+    .replace(/\*([^*]+)\*/g, '$1')  // italic *
+    .replace(/`([^`]+)`/g, '$1')    // inline code
+}
+
 function renderInlineParts(text: string) {
-  // Render **bold** as <strong>, strip *italic*, _italic_, `code` markers
-  const cleaned = text
-    .replace(/\*(.+?)\*/g, '$1')    // italic *
-    .replace(/__(.+?)__/g, '$1')    // bold __
-    .replace(/_(.+?)_/g, '$1')      // italic _
-    .replace(/`(.+?)`/g, '$1')      // inline code
-  const parts = cleaned.split(/(\*\*[^*]+\*\*)/)
+  // Handle **bold** FIRST — stripping single-`*` italics before this corrupted
+  // "**Client:**" into visible "*Client:*" asterisks.
+  const parts = text.split(/(\*\*[^*]+\*\*)/)
   return parts.map((part, j) =>
     part.startsWith('**') && part.endsWith('**')
-      ? <strong key={j}>{part.slice(2, -2)}</strong>
-      : part
+      ? <strong key={j}>{cleanInline(part.slice(2, -2))}</strong>
+      : cleanInline(part)
   )
 }
 

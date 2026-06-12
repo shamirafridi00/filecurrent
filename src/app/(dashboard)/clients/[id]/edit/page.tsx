@@ -20,7 +20,7 @@ export default async function EditClientPage({ params }: { params: { id: string 
       initial={{
         name: client.name,
         email: client.email ?? '',
-        phone: '',
+        phone: client.phone ?? '',
         company: client.company ?? '',
         address: client.address ?? '',
         notes: client.notes ?? '',

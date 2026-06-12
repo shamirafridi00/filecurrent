@@ -166,8 +166,13 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                   <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
                 </div>
                 <div className="space-y-1.5">
-                  <Label>Email</Label>
+                  <Label>Email <span className="font-normal text-xs text-muted-foreground">(sign-in email)</span></Label>
                   <Input value={initial.email} disabled className="opacity-60" />
+                  <p className="text-xs text-muted-foreground">
+                    Your email is your account login and can&apos;t be changed here. Contact{' '}
+                    <a href="mailto:support@filecurrent.com" className="text-primary hover:underline">support@filecurrent.com</a>{' '}
+                    to change it (we verify ownership of both addresses first).
+                  </p>
                 </div>
                 <div className="space-y-1.5">
                   <Label>Phone</Label>

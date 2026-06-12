@@ -174,13 +174,17 @@ export function ProposalForm({ clients, defaultClientId, defaultCurrency = 'USD'
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="valid-until">Valid Until</Label>
+              <Label htmlFor="valid-until">Offer Valid Until <span className="text-muted-foreground font-normal text-xs">(optional)</span></Label>
               <Input
                 id="valid-until"
                 type="date"
                 value={validUntil}
                 onChange={(e) => setValidUntil(e.target.value)}
               />
+              <p className="text-xs text-muted-foreground">
+                The date this proposal&apos;s pricing expires. This is separate from any project
+                or contract dates — those are set later on the contract itself.
+              </p>
             </div>
           </CardContent>
         </Card>

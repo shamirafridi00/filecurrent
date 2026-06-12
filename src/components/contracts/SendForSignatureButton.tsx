@@ -136,7 +136,7 @@ export function SendForSignatureButton({ contractId, clientEmail, clientName }: 
             <div className="flex flex-col gap-2">
               <Button type="button" className="w-full" onClick={handleSendEmail} disabled={!!loading}>
                 <Envelope className="mr-1.5 h-4 w-4" />
-                {loading === 'email' ? 'Sending…' : emailSent ? 'Resend Email' : 'Generate & Send Email'}
+                {loading === 'email' ? 'Sending…' : emailSent ? 'Resend Email' : 'Send Email'}
               </Button>
               <Button type="button" variant="outline" className="w-full" onClick={handleGenerateLink} disabled={!!loading}>
                 <Copy className="mr-1.5 h-4 w-4" />

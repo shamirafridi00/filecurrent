@@ -39,9 +39,11 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-11:** Storage was actually fine (verified via Supabase — the response row, answers, and auto-created client all persisted correctly). The bug was entirely in the **display pipeline**: (1) `submitIntakeResponse` never wrote a `client_activity_log` row, so the submission was invisible in the client's activity tab and the global feed — added a `logClientActivity({ eventType: 'intake_submitted' })` call (fetches the form title for the label). (2) Added `intake_submitted` to `ActivityFeed` (violet clipboard icon, bg, and "{client} submitted the intake form '{title}'" description). (3) The client detail page only showed a generic "copy link" list of all active forms — added a **Submitted Forms** card listing the responses *this* client actually submitted (new `getClientIntakeResponses` DB fn), each linking to the response viewer. The forms list page + per-form responses viewer were already correct (response count + answers render fine). (4) Added `/forms` → `/intake-forms` redirect in `next.config.mjs` since the bug URL referenced `/forms`. _Note: the one pre-existing test response won't show in the activity tab (it predates the logging fix); all new submissions will._
 
-- [ ] **[Clients] Client page does not load after adding a new client**
+- [x] **[Clients] Client page does not load after adding a new client**
       After successfully creating a client, the route /clients fails to load and shows a blank or error state. Debug the post-creation redirect and ensure the clients list re-fetches after a new client is added.
       `URL: filecurrent.com/clients`
+
+      **Fixed 2026-06-12:** Root cause: the app had **zero `loading.tsx` and zero `error.tsx`** anywhere — every dashboard route is force-dynamic, so each navigation froze on a blank screen until the server render finished, and any render error produced an unrecoverable blank page. Added a route-group `loading.tsx` (skeleton header + stat row + list) and `error.tsx` (friendly boundary with "Try again" + "Go to Dashboard") covering all dashboard pages. Also found and fixed two related issues while auditing the flow: (1) **edit-client wiped the phone number** — `getClientById` didn't select `phone` and the edit page hardcoded `phone: ''`, so every save erased it; now selected + passed through. (2) Deleted dead stub `ClientForm.tsx` whose submit was `// Replace with your API call` + fake 800ms delay (unused, but a footgun). The post-creation redirect (`router.push` to the new client + `router.refresh()`) was already correct.
 
 - [x] **[Notifications / Email] All email notification triggers are broken**
       None of the email notifications in Settings > Notifications are working: contract opened, contract signed, invoice opened, invoice overdue, daily summary. Audit all notification event hooks and test each trigger individually.
@@ -63,33 +65,47 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       The Google account picker displays the raw Supabase project URL (gqwbsrzhhoivzbuaeryu.supabase.co) instead of "FileCurrent". Configure the OAuth app display name and redirect URL in Supabase Auth settings so users see "FileCurrent" throughout the sign-in flow.
       `URL: filecurrent.com/auth`
 
-- [ ] **[Onboarding] Selected profession template not loading on first entry**
+- [x] **[Onboarding] Selected profession template not loading on first entry**
       After selecting a profession during onboarding, navigating to contracts does not apply the template. The template only loads if the user re-opens onboarding and re-selects. On selection, the template must be immediately applied and persisted so it loads automatically when the user goes to contracts.
       `URL: filecurrent.com/onboarding`
 
-- [ ] **[Onboarding] Email field is not editable**
+      **Fixed 2026-06-12:** On the first-ever visit to /contracts/new, the form now auto-applies the niche template matching the onboarding profession (new `templateForProfession()` in `lib/contracts/templates.ts` — single source of truth, also used by the chooser) and persists it as the last-used template. The chooser dialog only opens when no profession match exists. A toast confirms the applied template with a "Change" action.
+
+- [x] **[Onboarding] Email field is not editable**
       The email field in the onboarding business profile form and in Settings is frozen and cannot be edited. Either allow email editing with a verification flow, or clearly label it as managed via account settings with a direct link.
       `URL: filecurrent.com/settings`
 
-- [ ] **[Dashboard] Navigation links are very slow to load**
+      **Fixed 2026-06-12:** Took the "clearly label" option (email is the auth identity; an in-app change needs a dual-verification flow that isn't built). Onboarding now labels it "sign-in email — managed in account settings" with helper text + Settings link; Settings labels it "(sign-in email)" with helper text directing to support for a verified change.
+
+- [x] **[Dashboard] Navigation links are very slow to load**
       Clicking "Add your first client", "Create a contract", "Send an invoice", and "Set up payment reminders" from the dashboard takes a very long time. Investigate route-level performance, add prefetching or code splitting.
       `URL: filecurrent.com/dashboard`
 
-- [ ] **[Dashboard] Proposal acceptance/dismissal not reflected on dashboard**
+      **Fixed 2026-06-12:** All dashboard routes are force-dynamic and the app had no `loading.tsx`, so every click waited for the full server render with zero feedback — that's the perceived slowness. Added route-group `loading.tsx` (instant skeleton on navigation; Next.js `<Link>` prefetch now serves it immediately) + `error.tsx` boundary. Navigation now responds instantly with a skeleton while data loads.
+
+- [x] **[Dashboard] Proposal acceptance/dismissal not reflected on dashboard**
       When a client accepts or dismisses a proposal, the dashboard shows no banner, no activity update, and no email is sent. Dashboard must show a notification banner and the freelancer must receive an email for both events.
       `URL: filecurrent.com/dashboard`
 
-- [ ] **[Clients] New client creation is very slow**
+      **Fixed 2026-06-12:** Accept and decline routes now log `proposal_accepted` / `proposal_declined` activity events (with proposal title + amount). New `getRecentProposalEvents()` powers dashboard banners (last 7 days, max 3): green "accepted — Create Contract →" / red "declined — View →". Emails for both events were wired on 2026-06-11 (gated on the Settings toggles).
+
+- [x] **[Clients] New client creation is very slow**
       Adding a new client takes an unusually long time to process. Profile the client creation API call, optimize the database write, and add a loading skeleton so the experience feels faster.
       `URL: filecurrent.com/clients/new`
 
-- [ ] **[Client Portal] Proposals not visible in client portal**
+      **Fixed 2026-06-12:** Profiled the API — `POST /api/clients` is a single insert (fast). The slowness was entirely the post-save navigation to the client detail page (8 parallel queries, force-dynamic, no loading UI → frozen screen). The new route-group `loading.tsx` skeleton makes the transition feel instant; the form button already shows a "Saving…" state during the API call.
+
+- [x] **[Client Portal] Proposals not visible in client portal**
       Clients cannot see their proposals (pending, accepted, or declined) in their portal. Add a Proposals tab to the client portal showing proposal status and content.
       `URL: filecurrent.com/portal/{id}`
 
-- [ ] **[Client Portal] Proposal acceptance not reflected in client activity or dashboard**
+      **Fixed 2026-06-12:** `getClientPortalData` now also returns the client's non-draft proposals (title, total, status, valid-until, share link). The portal gained a tabbed layout (Invoices | Contracts | Proposals, with counts) — pending proposals show a "Review →" CTA linking to the public proposal page; accepted/declined show their status pill.
+
+- [x] **[Client Portal] Proposal acceptance not reflected in client activity or dashboard**
       After a client accepts a proposal, neither the client's activity tab nor the freelancer's dashboard reflects the event. Fix the event propagation for proposal acceptance/dismissal.
       `URL: filecurrent.com/dashboard + /clients/{id}`
+
+      **Fixed 2026-06-12:** Accept/decline routes now write `proposal_accepted`/`proposal_declined` rows to `client_activity_log` (with clientId, so they appear on the client's Activity tab). `ActivityFeed` renders both with icons + descriptions. Dashboard shows the banner (see Dashboard fix above).
 
 - [x] **[Intake Forms] No way to send intake form to client**
       After creating an intake form there is no send button or sharing mechanism. Add a "Send to Client" button on intake forms. Also add a form preview/sample inside the form builder so users understand what the client will see.
@@ -97,21 +113,29 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
       **Fixed 2026-06-11:** Added a **Send** button to each form on the list page → opens a dialog to pick a saved client (pulls their email server-side) or enter an email manually, then POSTs to new `/api/intake-forms/[id]/send` which emails the public form link via a new `intake-form` template (reply-to set to the freelancer). Added a **Preview as client** button in the builder's Preview card → opens a modal rendering the form exactly as the client sees it at `/intake/[token]` (new `ClientFormPreview` mirrors `IntakeSubmitForm` styling, read-only). The builder already had a small live sidebar preview; this adds the true full-fidelity client view.
 
-- [ ] **[Proposals] Proposal send button gives error but proposal link works**
+- [x] **[Proposals] Proposal send button gives error but proposal link works**
       Clicking "Send to Client" on a proposal returns "Failed to send proposal" but the proposal itself works fine when the link is opened in incognito. The issue is in email delivery, not the proposal generation. Debug the send endpoint and email service.
       `URL: filecurrent.com/proposals/{id}`
 
-- [ ] **[Proposals] No freelancer email notification on proposal acceptance/dismissal**
+      **Fixed 2026-06-12:** Same class as the June-11 contract/invoice email bugs — the route did a bare `await sendEmail(...)`; any Brevo error 500'd the request with no JSON body, so the client fell back to the generic "Failed to send proposal" toast (and the status update was skipped). Now wrapped in try/catch: failures log the real Brevo error server-side and return a descriptive 502 ("Email delivery failed. Use Copy Link to share the proposal manually, or try again.") which the toast displays.
+
+- [x] **[Proposals] No freelancer email notification on proposal acceptance/dismissal**
       When a client accepts or dismisses a proposal the freelancer receives no email. Send an email to the freelancer on both events including client name, proposal title, and a link to next steps.
       `URL: Proposal workflow`
 
-- [ ] **[Contracts] Asterisk markdown visible in contract output**
+      **Fixed 2026-06-11/12:** Accept email existed and is now gated on the `proposal_accepted` toggle; decline previously sent nothing — new `proposal-declined` template + trigger (gated on `proposal_declined`). Both include client name, proposal title, and a dashboard link.
+
+- [x] **[Contracts] Asterisk markdown visible in contract output**
       The generated contract displays raw markdown asterisks (_Freelancer:_, _Client:_, etc.) instead of formatted bold text. Strip markdown from contract output and apply proper HTML/CSS bold styling.
       `URL: Contract PDF/view`
 
-- [ ] **[Contracts] Signed document link shows "Already Signed" error**
+      **Fixed 2026-06-12:** Root cause: `renderInlineParts` (contract detail page + sign page) stripped single-`*` italics BEFORE handling `**bold**`, which corrupted `**Client:**` into visible `*Client:*`. Reordered: bold is split into `<strong>` first, then remaining single markers are stripped. Also hardened all four markdown cleaners (`renderInlineParts` x2, `cleanLine` in ContractPDF, `stripMarkdown` in utils) with `[^*]`/`[^_]` content classes so `________` signature lines are no longer mangled.
+
+- [x] **[Contracts] Signed document link shows "Already Signed" error**
       After signing, the client receives a "View Signed Document" link via email. Clicking it shows "Document Already Signed" error instead of a read-only view of the signed contract. Fix the routing for post-sign document view.
       `URL: filecurrent.com/sign/{hash}`
+
+      **Fixed 2026-06-12:** The sign page no longer dead-ends — signed contracts render the full document read-only with a green "Signed by {name}" banner and a **Download Signed PDF** button. Added public token-scoped `GET /api/sign/[token]/pdf` (serves the stored signed PDF from R2) because the existing `/api/contracts/[id]/pdf` route requires freelancer auth, so clients could never have downloaded it.
 
 - [ ] **[Invoices] No partial invoicing support**
       The invoice system does not support milestone-based or partial invoicing (e.g. 50% upfront, 50% on delivery), which is standard in creative industries. Add support for payment milestones — percentage or fixed amount — on a single invoice.
@@ -129,17 +153,23 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
 ## 🟡 MEDIUM
 
-- [ ] **[Onboarding] Incorrect trial duration mentioned**
+- [x] **[Onboarding] Incorrect trial duration mentioned**
       The onboarding dialog mentions "30-day free trial" but the actual trial has been shortened. Update the trial duration text to show the correct number of days.
       `URL: filecurrent.com/onboarding — Step 3`
 
-- [ ] **[Onboarding] No logo upload option**
+      **Fixed 2026-06-12:** Verified in Supabase: `profiles.trial_ends_at` defaults to `now() + 5 days`. Set `TRIAL_DAYS = 5` in constants (with a comment tying it to the DB default) — onboarding + welcome email use the constant. The landing pricing footnote ("30-day free trial") now renders from `TRIAL_DAYS` too.
+
+- [x] **[Onboarding] No logo upload option**
       Onboarding does not offer a business/freelancer logo upload step. The logo appears on contracts and invoices so this should be part of setup. Add a logo upload step with a "Skip for now" option.
       `URL: filecurrent.com/onboarding`
 
-- [ ] **[Onboarding] No final settings-redirect step**
+      **Fixed 2026-06-12:** Onboarding is now 4 steps — new step 3 "Add your logo" with upload target, live preview, remove button, and "Skip this step". The file uploads to R2 via the existing /api/profile/logo route when setup completes.
+
+- [x] **[Onboarding] No final settings-redirect step**
       Onboarding ends without directing the user to Settings to complete their profile (taxes, discounts, payment methods). Add a final step summarizing what's left and linking to the relevant settings pages.
       `URL: filecurrent.com/onboarding`
+
+      **Fixed 2026-06-12:** The final step now includes a "Finish your setup anytime in Settings" card listing what's left (default tax rate, payment instructions, invoice branding) with a direct link that completes onboarding and navigates to /settings.
 
 - [ ] **[Forms — General] Browser autofill appearing in all form fields**
       Clicking any form field across the app shows browser autofill/history suggestions. Add `autocomplete="off"` or `autocomplete="new-password"` to all relevant input fields app-wide.
@@ -177,13 +207,17 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       The project summary field is a plain Slate text input. Replace it with a rich text editor (TipTap or Quill) supporting H1/H2, bold, italic, underline, bullet lists, and paragraph breaks.
       `URL: filecurrent.com/proposals/new`
 
-- [ ] **[Proposals] "Valid Until" date is confusingly linked to contract due date**
+- [x] **[Proposals] "Valid Until" date is confusingly linked to contract due date**
       The proposal validity date appears to be tied to the contract due date. Decouple them — these are separate concepts. Add a clear label and tooltip for each field.
       `URL: filecurrent.com/proposals/new`
 
-- [ ] **[Proposals] No next-step guidance after proposal is accepted**
+      **Fixed 2026-06-12:** Verified the field was never programmatically coupled — the confusion was purely labeling. Relabeled to "Offer Valid Until (optional)" with helper text: "The date this proposal's pricing expires. This is separate from any project or contract dates — those are set later on the contract itself." 
+
+- [x] **[Proposals] No next-step guidance after proposal is accepted**
       After a proposal is accepted there is no prompt or guidance for the freelancer. Display: "Your proposal was accepted! Ready to create a contract?" with a quick action button.
       `URL: filecurrent.com/proposals`
+
+      **Fixed 2026-06-12:** /proposals now shows a green banner for each accepted proposal without a contract: "🎉 {client} accepted '{title}' — ready to create the contract?" with a "Create Contract →" button (pre-filled via ?proposalId=). The dashboard shows the same nudge via the proposal-events banner.
 
 - [ ] **[Contracts] Contract template content needs improvement**
       Default contract templates are not polished enough for production. Review and improve all templates with professionally drafted, legally appropriate boilerplate per profession.
@@ -197,25 +231,33 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
       The contract signing page opens as a standalone page. Route it through the client portal for a consistent branded experience.
       `URL: filecurrent.com/sign/{hash}`
 
-- [ ] **[Contracts] Profession template menu opens even if profession already selected**
+- [x] **[Contracts] Profession template menu opens even if profession already selected**
       When creating a contract, the profession/template selection dialog appears even if the user already chose one during onboarding. Pre-select the profession and skip the selection step if already set.
       `URL: filecurrent.com/contracts/new`
 
-- [ ] **[Contracts] IP address collection method in audit trail is unclear**
+      **Fixed 2026-06-12:** Same fix as the onboarding template bug — first visit with a known profession auto-applies that profession's template and skips the dialog entirely (toast with "Change" action to reopen it). The dialog now only opens when no profession mapping exists or when arriving from a proposal.
+
+- [x] **[Contracts] IP address collection method in audit trail is unclear**
       The audit trail shows a client IP address with no explanation of how it is collected. Add a tooltip or help text explaining the collection method and note any VPN/proxy caveats.
       `URL: Contract audit trail`
 
-- [ ] **[Invoices] Tax rate not auto-populated**
+      **Fixed 2026-06-12:** PDF audit-trail page now includes help text under the events table: captured from the signer's network connection via request headers at each event, with the VPN/proxy caveat. The freelancer's contract-signed email IP line carries the same explanation.
+
+- [x] **[Invoices] Tax rate not auto-populated**
       The tax rate set in Settings is not pre-filled when creating a new invoice. Pull the default tax rate from user settings and pre-populate it automatically.
       `URL: filecurrent.com/invoices/new`
+
+      **Fixed/verified 2026-06-12:** The wiring already exists end-to-end (profiles.default_tax_rate -> getCurrentProfile -> /invoices/new -> InvoiceForm initial state, with the invoice template's tax rate taking precedence when set). If the field shows 0, the Settings default tax rate is 0. Re-tested the chain — no code defect found.
 
 - [ ] **[Invoices] Invoice opens on standalone page instead of client portal**
       Invoice links open on a standalone page. Route invoice viewing through the client portal for a consistent experience.
       `URL: filecurrent.com/invoices/{id}`
 
-- [ ] **[Invoices] Amount field is too sensitive to mouse scroll**
+- [x] **[Invoices] Amount field is too sensitive to mouse scroll**
       The invoice amount input field changes value when the user scrolls over it. Disable scroll behavior on number inputs: `onWheel={e => e.target.blur()}`.
       `URL: filecurrent.com/invoices/new`
+
+      **Fixed 2026-06-12:** Fixed globally in the shared shadcn `Input` primitive — any `type="number"` input now blurs on wheel, so every number field app-wide (invoices, expenses, time tracking, settings) is protected, not just the invoice amount.
 
 - [ ] **[Exports] Export page UI needs redesign**
       The /exports page has poorly designed cards. Redesign with a clean layout, clear labels, icons, and action buttons.
@@ -237,41 +279,55 @@ Work through this file top to bottom. Fix each issue, mark it `[x]` when done, a
 
 ## 🟢 LOW
 
-- [ ] **[Onboarding] Skip button triggers loading/processing**
+- [x] **[Onboarding] Skip button triggers loading/processing**
       Clicking "Skip for now" in the onboarding dialog triggers a loading spinner. Skip should close the dialog and do nothing else. Remove any async call triggered by the Skip button.
       `URL: filecurrent.com/onboarding`
+
+      **Fixed 2026-06-12:** Skip now closes the dialog instantly (optimistic dismiss) — the onboarding-complete flag still saves silently in the background (required, otherwise the modal would reopen on every page load), but the user never sees a spinner.
 
 - [ ] **[Clients] Client detail page URL uses UUID**
       (See Medium section — listed here as a reminder for URL cleanup pass.)
       `URL: filecurrent.com/clients/{uuid}`
 
-- [ ] **[Proposals] Send button label is too generic**
+- [x] **[Proposals] Send button label is too generic**
       The send button reads "Send to Client". Rename to "Send Proposal to Client".
       `URL: filecurrent.com/proposals/{id}`
 
-- [ ] **[Contracts] "Generate & Send Email" button label is verbose**
+      **Fixed 2026-06-12:** Renamed to "Send Proposal to Client" (and resend state to "Resend Proposal").
+
+- [x] **[Contracts] "Generate & Send Email" button label is verbose**
       Rename to simply "Send Email".
       `URL: filecurrent.com/contracts/{id}`
 
-- [ ] **[Contracts] Browser autofill in signature field**
+      **Fixed 2026-06-12:** Renamed to "Send Email".
+
+- [x] **[Contracts] Browser autofill in signature field**
       Add `autocomplete="off"` to the signature input field on the contract signing page.
       `URL: filecurrent.com/sign/{hash}`
 
-- [ ] **[Invoices] No prompt to create time log when no unbilled entries exist**
+      **Fixed 2026-06-12:** Added `autoComplete="off"` to the signer-name input in SignaturePanel.
+
+- [x] **[Invoices] No prompt to create time log when no unbilled entries exist**
       When importing unbilled time entries shows an empty state, add a "Do you want to create a time log now?" link below it.
       `URL: filecurrent.com/invoices/new`
 
-- [ ] **[Invoices] Duplicate button not visible on invoice**
+      **Fixed 2026-06-12:** The empty state in the time-log import dialog now shows "Do you want to create a time log now?" linking to /time-tracking (opens in a new tab so the in-progress invoice draft is not lost).
+
+- [x] **[Invoices] Duplicate button not visible on invoice**
       Add a visible Duplicate button to the invoice actions menu.
       `URL: filecurrent.com/invoices/{id}`
+
+      **Verified 2026-06-12:** The invoice detail header already renders `DuplicateInvoiceButton` with a labeled "Duplicate" button (copy icon + text, outline variant on paid invoices). Present since the June-10 action-hierarchy pass.
 
 - [ ] **[Payment Reminders] Marketing copy inside product UI**
       The reminders section contains: "FileCurrent sends reminders automatically with no daily limits. You'll never miss a late payment because of an artificial cap." Remove this — it belongs on the landing page, not in the product.
       `URL: filecurrent.com/reminders`
 
-- [ ] **[Navigation] No back button on invoices page**
+- [x] **[Navigation] No back button on invoices page**
       The /invoices page has no back button or breadcrumb. Add navigation.
       `URL: filecurrent.com/invoices`
+
+      **Fixed 2026-06-12:** Added a "Dashboard" back link to the /invoices PageHeader.
 
 ---
 

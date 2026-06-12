@@ -27,7 +27,8 @@ export const APP_TAGLINE = 'Contracts. Invoices. Signatures. Done.'
 
 export const APP_URL = 'https://filecurrent.com'
 
-export const TRIAL_DAYS = 30
+// Must match the `profiles.trial_ends_at` DB default (now() + 5 days).
+export const TRIAL_DAYS = 5
 
 export const LIFETIME_PRICE = 49
 
