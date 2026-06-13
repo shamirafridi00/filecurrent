@@ -9,7 +9,7 @@ import {
 } from '@/components/ui/accordion'
 
 export const metadata: Metadata = {
-  title: 'Help & FAQ — FileCurrent',
+  title: 'Help & FAQ | FileCurrent',
   description: 'Find answers to common questions about FileCurrent contracts, invoices, e-signatures, and payment reminders.',
 }
 
@@ -17,7 +17,7 @@ const FAQ_SECTIONS = [
   {
     title: 'Getting Started',
     items: [
-      { q: 'Is FileCurrent free?', a: 'Yes. FileCurrent has a free plan that lets you create up to 3 documents per month (contracts and invoices combined) — forever. No credit card required. Paid plans start at $9/month for unlimited documents.' },
+      { q: 'Is there a free trial?', a: 'Yes. Every new account gets a 5-day free trial with full access to every feature, and no credit card is required to start. When the trial ends, you can upgrade to keep going.' },
       { q: 'How do I get started?', a: "Sign up at filecurrent.com, complete the quick onboarding (select your profession, add your business details), and you're ready to create your first contract or invoice." },
       { q: 'What professions does FileCurrent support?', a: 'FileCurrent has profession-specific templates for web developers, photographers, consultants, designers, copywriters, and marketers. Each template includes the clauses and line items most relevant to your type of work.' },
       { q: 'Can I import my clients from HoneyBook or Bonsai?', a: 'Yes. Go to Import Clients in your dashboard and upload a CSV file. FileCurrent accepts standard CSV exports from most tools.' },
@@ -28,7 +28,7 @@ const FAQ_SECTIONS = [
     items: [
       { q: 'Are the e-signatures legally binding?', a: "Yes. FileCurrent's e-signatures comply with the ESIGN Act (15 U.S.C. § 7001) and UETA. Each signature captures the signer's name, email, IP address, browser, and exact timestamp. A SHA-256 hash of the document proves it hasn't been altered after signing. Both parties receive a signed PDF with a full audit trail." },
       { q: 'What happens after a client signs?', a: 'Both you and your client receive an email with the signed contract PDF and a separate audit trail PDF attached. The contract status in your dashboard updates to Signed immediately.' },
-      { q: 'Can clients sign on mobile?', a: 'Yes. The signing page is fully mobile-responsive. Clients can sign from any device — no app download required.' },
+      { q: 'Can clients sign on mobile?', a: 'Yes. The signing page is fully mobile-responsive. Clients can sign from any device, with no app download required.' },
       { q: 'Can I edit a contract after sending it?', a: 'No. Once a contract is sent for signature, it is locked to preserve the document integrity required for legal compliance. Create a new contract if changes are needed.' },
     ],
   },
@@ -44,7 +44,7 @@ const FAQ_SECTIONS = [
   {
     title: 'Billing',
     items: [
-      { q: "What's the difference between monthly, annual, and lifetime?", a: 'Monthly ($9/month) is the most flexible. Annual ($79/year) saves 27% compared to monthly. The Lifetime deal ($49 one-time) is available for a limited time — pay once, use forever.' },
+      { q: "What's the difference between the monthly and annual plans?", a: 'Both plans include every feature. Monthly is $15/month and is the most flexible. Annual is $129/year (about $10.75/month), which saves 28% compared to paying monthly.' },
       { q: 'How do I cancel my subscription?', a: 'Go to Settings → Plan & Billing and click Cancel Subscription. Your access continues until the end of your current billing period. No cancellation fees.' },
       { q: 'Do you offer refunds?', a: 'Yes. We offer a 30-day money-back guarantee on all paid plans. Email billing@filecurrent.com within 30 days of purchase.' },
     ],

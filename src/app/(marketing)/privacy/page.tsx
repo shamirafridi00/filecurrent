@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { ShieldCheck, Database, ShareNetwork, Lock, CalendarBlank, UserCircle, Envelope } from '@/components/icons'
 
 export const metadata: Metadata = {
-  title: 'Privacy Policy — FileCurrent',
+  title: 'Privacy Policy | FileCurrent',
   description: 'Learn how FileCurrent collects, uses, and protects your personal data.',
 }
 
@@ -10,7 +10,7 @@ const sections = [
   {
     icon: <Database className="h-5 w-5 text-primary" />,
     title: '1. Information We Collect',
-    content: `We collect information you provide directly: your name, email address, business details, and the content of documents you create (contracts and invoices). We also collect usage data such as pages visited and features used. Payment processing is handled entirely by Lemon Squeezy — we never see or store your credit card details.`,
+    content: `We collect information you provide directly: your name, email address, business details, and the content of documents you create (contracts and invoices). We also collect usage data such as pages visited and features used. Payment processing is handled entirely by Lemon Squeezy, so we never see or store your credit card details.`,
   },
   {
     icon: <ShieldCheck className="h-5 w-5 text-primary" />,
@@ -25,7 +25,7 @@ const sections = [
   {
     icon: <Lock className="h-5 w-5 text-primary" />,
     title: '4. Data Security',
-    content: `All data is transmitted over HTTPS/TLS encryption. Our database uses row-level security — each user can only access their own data. Access to production systems is restricted to authorized personnel only.`,
+    content: `All data is transmitted over HTTPS/TLS encryption. Our database uses row-level security, so each user can only access their own data. Access to production systems is restricted to authorized personnel only.`,
   },
   {
     icon: <CalendarBlank className="h-5 w-5 text-primary" />,

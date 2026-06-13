@@ -119,8 +119,8 @@ export default function ContactPage() {
                 title: 'Support Hours',
                 content: (
                   <div className="text-sm text-muted-foreground space-y-1">
-                    <p>Mon – Fri: 9AM – 6PM EST</p>
-                    <p>Saturday: 10AM – 4PM EST</p>
+                    <p>Mon to Fri: 9AM to 6PM EST</p>
+                    <p>Saturday: 10AM to 4PM EST</p>
                     <p>Sunday: Closed</p>
                     <p className="text-muted-foreground mt-2">Email support available 24/7. We respond within 24 hours.</p>
                   </div>

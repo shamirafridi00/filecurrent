@@ -18,7 +18,14 @@ import {
   ArrowRight,
 } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
-import { TRIAL_DAYS } from '@/lib/constants'
+import {
+  TRIAL_DAYS,
+  PRICE_MONTHLY,
+  PRICE_ANNUAL,
+  PRICE_ANNUAL_EFFECTIVE,
+  PRICE_ANNUAL_SAVING_PCT,
+  PRICE_ANNUAL_SAVING_USD,
+} from '@/lib/constants'
 import { FaqItem } from '@/components/landing/FaqItem'
 import { NavBar } from '@/components/landing/NavBar'
 import { AnimatedFeatureCards } from '@/components/landing/AnimatedFeatureCards'
@@ -30,7 +37,7 @@ const FEATURES = [
   {
     icon: <FileText className="h-6 w-6 text-primary" weight="duotone" />,
     title: 'Contracts that protect you',
-    desc: 'Profession-specific templates with legally binding e-signatures. Clients sign in the browser — no DocuSign account, no printing, no scanning.',
+    desc: 'Profession-specific templates with legally binding e-signatures. Your client signs right in the browser, with no DocuSign account, no printing, and no scanning.',
     stat: '7 profession templates · ESIGN compliant',
   },
   {
@@ -42,7 +49,7 @@ const FEATURES = [
   {
     icon: <Bell className="h-6 w-6 text-primary" weight="duotone" />,
     title: 'Reminders with no cap',
-    desc: 'Escalating tone, auto-stops the moment an invoice is paid, and no daily sending limit. Set the schedule once and stop chasing clients.',
+    desc: 'The tone escalates over time, reminders stop the moment an invoice is paid, and there is no daily sending limit. Set the schedule once and stop chasing clients.',
     stat: 'Get paid up to 11 days faster',
   },
 ]
@@ -66,7 +73,7 @@ const HOW_IT_WORKS = [
   {
     icon: CurrencyDollar,
     title: 'Get paid',
-    desc: 'Automated reminders chase the client until they pay — then stop on their own.',
+    desc: 'Automated reminders chase the client until they pay, then stop on their own.',
   },
 ]
 
@@ -76,33 +83,29 @@ const MARQUEE_ITEMS = [
 ]
 
 const COMPARISON = [
-  { feature: 'Price', fc: '$9/mo', bonsai: '$21/mo', honeybook: '$36/mo †' },
-  { feature: 'Contracts', fc: true, bonsai: true, honeybook: true },
-  { feature: 'E-Signatures', fc: true, bonsai: true, honeybook: true },
-  { feature: 'Auto Reminders', fc: '✓ no cap', bonsai: '✓', honeybook: '✓' },
-  { feature: 'No Daily Email Cap', fc: true, bonsai: true, honeybook: false },
-  { feature: 'Profession Templates', fc: true, bonsai: 'Partial', honeybook: false },
-  { feature: 'Time Tracking', fc: true, bonsai: true, honeybook: false },
-  { feature: 'Instant Setup', fc: '5 minutes', bonsai: 'Hours', honeybook: '15–25 hrs*' },
-  { feature: 'Free Tier', fc: '✓ 3/mo', bonsai: false, honeybook: 'Trial only' },
+  { feature: 'Price', fc: `$${PRICE_MONTHLY}/mo`, indy: '$12+/mo', bonsai: '$21/mo', honeybook: '$29/mo †' },
+  { feature: 'Contracts', fc: true, indy: true, bonsai: true, honeybook: true },
+  { feature: 'E-Signatures', fc: true, indy: true, bonsai: true, honeybook: true },
+  { feature: 'Auto Reminders', fc: 'No cap', indy: '✓', bonsai: '✓', honeybook: '✓' },
+  { feature: 'No Daily Email Cap', fc: true, indy: true, bonsai: true, honeybook: false },
+  { feature: 'Profession Templates', fc: true, indy: false, bonsai: 'Partial', honeybook: false },
+  { feature: 'Time Tracking', fc: true, indy: true, bonsai: true, honeybook: false },
+  { feature: 'Instant Setup', fc: '5 minutes', indy: 'Hours', bonsai: 'Hours', honeybook: '15 to 25 hrs*' },
+  { feature: 'Free Trial', fc: `${TRIAL_DAYS} days, no card`, indy: 'Limited free', bonsai: '7 days', honeybook: '7 days' },
 ]
 
-const FREE_FEATURES = [
-  '3 documents/month',
-  'All contract & invoice templates',
-  'E-signatures',
-  'FileCurrent branding on docs',
-]
-
+// Everything is included in the trial and in Pro. No tier juggling.
 const PRO_FEATURES = [
-  'Unlimited documents',
-  'No FileCurrent branding',
-  'Automated payment reminders',
-  'Invoice share links',
+  'Unlimited contracts, invoices & proposals',
+  'Legally binding e-signatures',
+  'Automated payment reminders, no daily cap',
+  'Client portal, intake forms & time tracking',
+  'Invoice share links & PDF export',
+  'No FileCurrent branding on your documents',
   'Priority support',
 ]
 
-const ANNUAL_FEATURES = [...PRO_FEATURES, 'Save $29/year vs monthly']
+const ANNUAL_FEATURES = [...PRO_FEATURES, `Save $${PRICE_ANNUAL_SAVING_USD}/year vs monthly`]
 
 const TESTIMONIALS = [
   {
@@ -113,23 +116,24 @@ const TESTIMONIALS = [
   },
   {
     before: 'Sending contracts meant exporting PDFs and praying clients printed and scanned them.',
-    after: 'Clients sign in the browser in under a minute — signed copy lands in both inboxes.',
+    after: 'Clients sign in the browser in under a minute, and the signed copy lands in both inboxes.',
     name: 'James T.',
     role: 'Photographer',
   },
   {
-    before: 'I paid $21/month for features I never opened.',
-    after: "Switched and I'm paying 57% less for the parts I actually use every week.",
+    before: 'I paid for a bloated suite full of features I never opened.',
+    after: 'Now I only pay for the contract and invoice tools I actually use every week.',
     name: 'Maria L.',
     role: 'Copywriter',
   },
 ]
 
 const FAQS = [
-  { q: 'Is FileCurrent free?', a: 'Yes — the Free plan lets you create 3 documents per month (contracts + invoices combined) with no credit card required.' },
-  { q: 'Are the e-signatures legally binding?', a: 'Yes. FileCurrent follows the ESIGN Act (15 U.S.C. § 7001) standard. Each signature is logged with IP address, timestamp, and a document hash for tamper detection.' },
-  { q: 'What happens if I go over 3 documents on the free plan?', a: "You'll see an upgrade prompt. Your existing documents are never deleted — you just need to upgrade to create new ones that month." },
-  { q: 'Can I import clients from HoneyBook or Bonsai?', a: 'Yes — use the Import Clients feature (CSV format) to bring your existing client list into FileCurrent.' },
+  { q: 'Is there a free trial?', a: `Yes. Every new account gets a ${TRIAL_DAYS}-day free trial with full access to everything, and no credit card is required to start. When the trial ends you can upgrade to keep going.` },
+  { q: 'How much does FileCurrent cost after the trial?', a: `Pro is $${PRICE_MONTHLY} per month, or $${PRICE_ANNUAL} per year (about $${PRICE_ANNUAL_EFFECTIVE} per month, a saving of ${PRICE_ANNUAL_SAVING_PCT}%). One plan, every feature included. No hidden tiers and no feature locks.` },
+  { q: 'Are the e-signatures legally binding?', a: 'Yes. FileCurrent follows the ESIGN Act (15 U.S.C. § 7001) standard. Each signature is logged with the signer’s IP address, a timestamp, and a document hash for tamper detection.' },
+  { q: 'Can I cancel anytime?', a: 'Yes. You can cancel from Settings at any time and keep access until the end of your billing period. We also offer a 30-day money-back guarantee on paid plans.' },
+  { q: 'Can I import clients from HoneyBook or Bonsai?', a: 'Yes. Use the Import Clients feature with a standard CSV file to bring your existing client list into FileCurrent in one step.' },
   { q: 'Do you have profession-specific contract templates?', a: 'Yes. FileCurrent pre-filters templates based on your profession (web developer, photographer, consultant, designer, copywriter, or marketer) so you always see the most relevant ones first.' },
   { q: 'Is there a daily limit on payment reminders?', a: 'No. Unlike some competitors, FileCurrent has no daily email cap. Reminders are sent on your configured schedule until the invoice is paid.' },
 ]
@@ -137,7 +141,7 @@ const FAQS = [
 const STATS = [
   { value: '500+', label: 'Freelancers' },
   { value: '11 days', label: 'Paid faster' },
-  { value: '$9/mo', label: 'Flat price' },
+  { value: `$${PRICE_MONTHLY}/mo`, label: 'Flat price' },
   { value: '5 min', label: 'To set up' },
 ]
 
@@ -154,7 +158,7 @@ export function LandingContent() {
 
       {/* ───────── Hero ───────── */}
       <section className="hero-grid-bg relative overflow-hidden px-4 pt-32 pb-20">
-        <div className="mx-auto max-w-3xl text-center">
+        <div className="relative z-10 mx-auto max-w-3xl text-center">
           <motion.div
             initial={{ opacity: 0, y: 16 }}
             animate={{ opacity: 1, y: 0 }}
@@ -162,7 +166,7 @@ export function LandingContent() {
             className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/20 bg-accent px-4 py-1.5 text-xs font-medium text-primary"
           >
             <Lightning size={13} weight="fill" />
-            Built for US freelancers · $9/month
+            Built for US freelancers · ${PRICE_MONTHLY}/month
           </motion.div>
 
           <motion.h1
@@ -182,8 +186,8 @@ export function LandingContent() {
             className="mx-auto mb-9 max-w-xl text-lg leading-relaxed text-muted-foreground"
           >
             Contracts, e-signatures, invoices, and reminders that chase your clients
-            so you don&apos;t have to. Everything a freelancer needs to get paid —
-            nothing you don&apos;t.
+            so you don&apos;t have to. Everything a freelancer needs to get paid,
+            and nothing you don&apos;t.
           </motion.p>
 
           <motion.div
@@ -193,7 +197,7 @@ export function LandingContent() {
             className="flex flex-wrap items-center justify-center gap-3"
           >
             <Button asChild className="h-auto rounded-lg bg-primary px-7 py-3 text-base font-semibold text-white shadow-sm transition-colors hover:bg-[#5145E5]">
-              <Link href="/signup">Start free — no card needed</Link>
+              <Link href="/signup">Start free, no card needed</Link>
             </Button>
             <Button asChild variant="outline" className="h-auto rounded-lg border-border bg-white px-7 py-3 text-base font-medium text-foreground hover:bg-muted">
               <a href="#how">See how it works</a>
@@ -215,7 +219,7 @@ export function LandingContent() {
         </div>
 
         {/* Animated product window */}
-        <div className="mt-16 px-2">
+        <div className="relative z-10 mt-16 px-2">
           <ProductMockup />
         </div>
       </section>
@@ -315,7 +319,7 @@ export function LandingContent() {
 
       {/* ───────── Comparison ───────── */}
       <section className="dot-grid-bg px-4 py-24">
-        <div className="mx-auto max-w-3xl">
+        <div className="mx-auto max-w-4xl">
           <Reveal className="mb-12 text-center">
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.12em] text-primary">Comparison</p>
             <h2 className="mb-3 text-3xl font-bold tracking-[-0.02em] text-foreground md:text-4xl">
@@ -324,12 +328,13 @@ export function LandingContent() {
             <p className="text-base text-muted-foreground">See how we stack up against the leading alternatives.</p>
           </Reveal>
           <Reveal>
-            <div className="card-elevated overflow-hidden rounded-2xl border border-border bg-card">
-              <table className="w-full text-sm">
+            <div className="card-elevated overflow-x-auto rounded-2xl border border-border bg-card">
+              <table className="w-full min-w-[560px] text-sm">
                 <thead>
                   <tr className="border-b border-border bg-[#F6F9FC]">
                     <th className="p-4 text-left font-semibold text-muted-foreground">Feature</th>
                     <th className="bg-accent p-4 text-center font-bold text-primary">FileCurrent</th>
+                    <th className="p-4 text-center font-medium text-muted-foreground">Indy</th>
                     <th className="p-4 text-center font-medium text-muted-foreground">Bonsai</th>
                     <th className="p-4 text-center font-medium text-muted-foreground">HoneyBook</th>
                   </tr>
@@ -340,6 +345,9 @@ export function LandingContent() {
                       <td className="p-4 font-medium text-foreground">{row.feature}</td>
                       <td className="bg-accent/60 p-4 text-center font-semibold">
                         <span className="flex justify-center"><CellValue val={row.fc} /></span>
+                      </td>
+                      <td className="p-4 text-center text-muted-foreground">
+                        <span className="flex justify-center"><CellValue val={row.indy} /></span>
                       </td>
                       <td className="p-4 text-center text-muted-foreground">
                         <span className="flex justify-center"><CellValue val={row.bonsai} /></span>
@@ -354,98 +362,83 @@ export function LandingContent() {
             </div>
           </Reveal>
           <p className="mt-4 text-xs leading-relaxed text-muted-foreground">
-            † HoneyBook Starter was $19/mo, raised to $36/mo in 2024 — an 89% price increase.
-            &nbsp;* Based on reported Dubsado/HoneyBook setup times from user reviews.
+            Competitor pricing reflects entry plans as of mid-2026 and may change.
+            &nbsp;* Based on reported Dubsado and HoneyBook setup times from user reviews.
           </p>
         </div>
       </section>
 
       {/* ───────── Pricing ───────── */}
       <section id="pricing" className="bg-white px-4 py-24">
-        <div className="mx-auto max-w-5xl">
-          <Reveal className="mb-14 text-center">
+        <div className="mx-auto max-w-3xl">
+          <Reveal className="mb-12 text-center">
             <p className="mb-3 text-sm font-semibold uppercase tracking-[0.12em] text-primary">Pricing</p>
             <h2 className="mb-3 text-3xl font-bold tracking-[-0.02em] text-foreground md:text-4xl">
-              Simple, honest pricing
+              One plan. Every feature.
             </h2>
-            <p className="text-base text-muted-foreground">No hidden fees. No feature locks. Cancel anytime.</p>
+            <p className="text-base text-muted-foreground">
+              Start with a {TRIAL_DAYS}-day free trial of everything. No credit card to begin, and you can cancel anytime.
+            </p>
           </Reveal>
 
-          <Stagger className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-3" gap={0.12}>
-            {/* Free */}
+          <Stagger className="grid grid-cols-1 items-stretch gap-5 md:grid-cols-2" gap={0.12}>
+            {/* Pro Monthly */}
             <Item className="h-full">
               <div className="card-elevated-hover flex h-full flex-col rounded-2xl border border-border bg-card p-7">
-                <p className="text-base font-semibold text-foreground">Free</p>
+                <p className="text-base font-semibold text-foreground">Monthly</p>
                 <p className="mt-2 text-4xl font-bold tracking-tight text-foreground">
-                  $0<span className="text-base font-normal text-muted-foreground">/mo</span>
+                  ${PRICE_MONTHLY}<span className="text-base font-normal text-muted-foreground">/mo</span>
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">Forever</p>
+                <p className="mt-1 text-sm text-muted-foreground">Billed monthly. Cancel anytime.</p>
                 <ul className="mt-6 flex-1 space-y-3">
-                  {FREE_FEATURES.map((f) => (
+                  {PRO_FEATURES.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-foreground">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1DB954]" weight="bold" /> {f}
                     </li>
                   ))}
                 </ul>
                 <Button asChild variant="outline" className="mt-7 w-full border-border hover:bg-muted">
-                  <Link href="/signup">Get started free</Link>
+                  <Link href="/signup">Start free trial</Link>
                 </Button>
               </div>
             </Item>
 
-            {/* Pro Monthly — featured */}
+            {/* Pro Annual — featured */}
             <Item className="h-full">
               <div className="relative flex h-full flex-col rounded-2xl border-2 border-primary bg-card p-7 shadow-[0_20px_50px_-20px_rgba(99,91,255,0.4)]">
                 <span className="absolute -top-3 left-1/2 -translate-x-1/2 rounded-full bg-primary px-3 py-1 text-xs font-semibold text-white shadow-sm">
-                  Most popular
+                  Best value · save {PRICE_ANNUAL_SAVING_PCT}%
                 </span>
-                <p className="text-base font-semibold text-foreground">Pro</p>
+                <p className="text-base font-semibold text-foreground">Annual</p>
                 <p className="mt-2 text-4xl font-bold tracking-tight text-foreground">
-                  $9<span className="text-base font-normal text-muted-foreground">/mo</span>
+                  ${PRICE_ANNUAL}<span className="text-base font-normal text-muted-foreground">/yr</span>
                 </p>
-                <p className="mt-1 text-sm text-muted-foreground">Billed monthly</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  ${PRICE_ANNUAL_EFFECTIVE}/mo effective ·{' '}
+                  <span className="font-medium text-[#1DB954]">save ${PRICE_ANNUAL_SAVING_USD}/yr</span>
+                </p>
                 <ul className="mt-6 flex-1 space-y-3">
-                  {PRO_FEATURES.map((f) => (
+                  {ANNUAL_FEATURES.map((f) => (
                     <li key={f} className="flex items-start gap-2.5 text-sm text-foreground">
                       <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" weight="bold" /> {f}
                     </li>
                   ))}
                 </ul>
                 <Button asChild className="mt-7 w-full bg-primary text-white hover:bg-[#5145E5]">
-                  <Link href="/signup">Start Pro trial</Link>
+                  <Link href="/signup">Start free trial</Link>
                 </Button>
                 <p className="mt-3 text-center text-xs text-muted-foreground">
                   {TRIAL_DAYS}-day free trial · No credit card required
                 </p>
               </div>
             </Item>
-
-            {/* Annual */}
-            <Item className="h-full">
-              <div className="card-elevated-hover flex h-full flex-col rounded-2xl border border-border bg-card p-7">
-                <p className="mb-1 inline-flex w-fit items-center gap-1 rounded-full bg-[#FFF9ED] px-2 py-0.5 text-xs font-semibold text-[#E6A817]">
-                  ★ Best value
-                </p>
-                <p className="text-base font-semibold text-foreground">Pro Annual</p>
-                <p className="mt-2 text-4xl font-bold tracking-tight text-foreground">
-                  $79<span className="text-base font-normal text-muted-foreground">/yr</span>
-                </p>
-                <p className="mt-1 text-sm text-muted-foreground">
-                  $6.58/mo · <span className="font-medium text-[#1DB954]">save 27%</span>
-                </p>
-                <ul className="mt-6 flex-1 space-y-3">
-                  {ANNUAL_FEATURES.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-foreground">
-                      <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#1DB954]" weight="bold" /> {f}
-                    </li>
-                  ))}
-                </ul>
-                <Button asChild variant="outline" className="mt-7 w-full border-border hover:bg-muted">
-                  <Link href="/signup">Get annual</Link>
-                </Button>
-              </div>
-            </Item>
           </Stagger>
+
+          <Reveal delay={0.1} className="mt-6 text-center">
+            <p className="text-sm text-muted-foreground">
+              Both plans include every feature. 30-day money-back guarantee on all paid plans.
+            </p>
+          </Reveal>
         </div>
       </section>
 
@@ -515,7 +508,7 @@ export function LandingContent() {
               Stop chasing invoices. Start getting paid.
             </h2>
             <p className="mx-auto mb-8 max-w-md text-base text-white/70">
-              Set up your first contract and invoice in five minutes — free, no credit card required.
+              Set up your first contract and invoice in five minutes. Free to start, no credit card required.
             </p>
             <div className="flex flex-wrap items-center justify-center gap-3">
               <Button asChild className="h-auto rounded-lg bg-white px-7 py-3 text-base font-semibold text-[#0A2540] hover:bg-white/90">
@@ -614,7 +607,7 @@ export function Footer() {
         </div>
         <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs text-muted-foreground md:flex-row">
           <span>© {new Date().getFullYear()} FileCurrent. All rights reserved.</span>
-          <span>Made for freelancers worldwide.</span>
+          <span>Built for US freelancers.</span>
         </div>
       </div>
     </footer>

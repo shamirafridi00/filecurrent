@@ -28,7 +28,7 @@ export function UpgradePrompt({ open, onClose }: Props) {
             Your free trial has ended
           </DialogTitle>
           <DialogDescription>
-            Upgrade to Pro to continue using FileCurrent — unlimited documents,
+            Upgrade to Pro to continue using FileCurrent, with unlimited documents,
             no branding, and automated payment reminders.
           </DialogDescription>
         </DialogHeader>
@@ -36,7 +36,7 @@ export function UpgradePrompt({ open, onClose }: Props) {
         <div className="grid grid-cols-2 gap-3 py-2">
           <div className="rounded-lg border p-4 space-y-3">
             <div>
-              <p className="font-semibold">$9 / month</p>
+              <p className="font-semibold">$15 / month</p>
               <p className="text-xs text-muted-foreground">Monthly Pro</p>
             </div>
             <ul className="space-y-1 text-xs text-muted-foreground">
@@ -61,12 +61,12 @@ export function UpgradePrompt({ open, onClose }: Props) {
                 <Star className="h-3.5 w-3.5 text-primary" />
                 <span className="text-xs font-medium text-primary">Best Value</span>
               </div>
-              <p className="font-semibold">$79 / year</p>
-              <p className="text-xs text-muted-foreground">Annual Pro · Save 27%</p>
+              <p className="font-semibold">$129 / year</p>
+              <p className="text-xs text-muted-foreground">Annual Pro · Save 28%</p>
             </div>
             <ul className="space-y-1 text-xs text-muted-foreground">
               <li>✓ Everything in Monthly</li>
-              <li>✓ Save $29/year</li>
+              <li>✓ Save $51/year</li>
               <li>✓ Invoice analytics</li>
             </ul>
             <Button

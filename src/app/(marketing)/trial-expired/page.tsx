@@ -5,12 +5,19 @@ import { useCheckout } from '@/hooks/useCheckout'
 import { Button } from '@/components/ui/button'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import {
+  TRIAL_DAYS,
+  PRICE_MONTHLY,
+  PRICE_ANNUAL,
+  PRICE_ANNUAL_SAVING_PCT,
+  PRICE_ANNUAL_SAVING_USD,
+} from '@/lib/constants'
 
 const PRO_FEATURES = [
-  'Unlimited documents',
+  'Unlimited contracts, invoices & proposals',
   'No FileCurrent branding',
   'Automated payment reminders',
-  'Invoice share links',
+  'Invoice share links & PDF export',
   'Priority support',
 ]
 
@@ -32,7 +39,7 @@ export default function TrialExpiredPage() {
             Your free trial has ended
           </h1>
           <p className="text-[#8898AA] text-lg max-w-md mx-auto">
-            You had 5 days of full access. Upgrade to Pro to continue using FileCurrent.
+            You had {TRIAL_DAYS} days of full access. Upgrade to Pro to continue using FileCurrent.
           </p>
         </div>
 
@@ -40,7 +47,7 @@ export default function TrialExpiredPage() {
           {/* Monthly */}
           <div className="bg-white border border-[#E6EBF1] rounded-2xl p-6 shadow-sm space-y-4">
             <div>
-              <p className="text-2xl font-bold text-[#0A2540]">$9</p>
+              <p className="text-2xl font-bold text-[#0A2540]">${PRICE_MONTHLY}</p>
               <p className="text-[#8898AA] text-sm">per month</p>
             </div>
             <p className="font-semibold text-[#0A2540]">Pro Monthly</p>
@@ -69,12 +76,12 @@ export default function TrialExpiredPage() {
               </span>
             </div>
             <div>
-              <p className="text-2xl font-bold text-[#0A2540]">$79</p>
-              <p className="text-[#8898AA] text-sm">per year · save 27%</p>
+              <p className="text-2xl font-bold text-[#0A2540]">${PRICE_ANNUAL}</p>
+              <p className="text-[#8898AA] text-sm">per year · save {PRICE_ANNUAL_SAVING_PCT}%</p>
             </div>
             <p className="font-semibold text-[#0A2540]">Pro Annual</p>
             <ul className="space-y-2">
-              {[...PRO_FEATURES, 'Save $29/year vs monthly'].map((f) => (
+              {[...PRO_FEATURES, `Save $${PRICE_ANNUAL_SAVING_USD}/year vs monthly`].map((f) => (
                 <li key={f} className="flex items-center gap-2 text-sm text-[#425466]">
                   <Check className="h-4 w-4 text-[#635BFF] shrink-0" weight="bold" /> {f}
                 </li>

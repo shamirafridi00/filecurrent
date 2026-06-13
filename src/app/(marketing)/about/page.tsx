@@ -4,8 +4,8 @@ import { Check, ShieldCheck, Lightning, Users, FileText } from '@/components/ico
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
-  title: 'About FileCurrent — Built for Freelancers',
-  description: 'FileCurrent is a simple, affordable contract and invoice tool for freelancers. No bloat, no complexity — just the document workflow every freelancer needs.',
+  title: 'About FileCurrent | Built for US Freelancers',
+  description: 'FileCurrent is a simple, affordable contract and invoice tool for freelancers. No bloat and no complexity, just the document workflow every freelancer needs.',
 }
 
 export default function AboutPage() {
@@ -18,7 +18,7 @@ export default function AboutPage() {
             Built for freelancers, by someone who gets it.
           </h1>
           <p className="text-muted-foreground text-lg max-w-2xl mx-auto">
-            Professional contracts, invoices, and e-signatures — without the enterprise price tag.
+            Professional contracts, invoices, and e-signatures, without the enterprise price tag.
           </p>
         </div>
 
@@ -28,7 +28,7 @@ export default function AboutPage() {
           <div className="space-y-4 text-muted-foreground leading-relaxed">
             <p>
               FileCurrent was born from a simple frustration: freelancers were paying $36 to $60 per month
-              for tools packed with features they&apos;d never use — just to send a contract and get paid.
+              for tools packed with features they&apos;d never use, just to send a contract and get paid.
             </p>
             <p>
               We built FileCurrent to do exactly four things extremely well: generate professional contracts,
@@ -51,8 +51,8 @@ export default function AboutPage() {
               without the enterprise price tag.
             </p>
             <p className="text-primary font-medium">
-              Your success should depend on your skills and hard work — not your ability to afford a
-              $432/year software subscription.
+              Your success should depend on your skills and hard work, not on whether you can afford a
+              $350-a-year software subscription.
             </p>
           </div>
         </div>
@@ -65,12 +65,12 @@ export default function AboutPage() {
               {
                 icon: <Lightning className="h-5 w-5 text-primary" weight="duotone" />,
                 title: 'One price, full access',
-                desc: '$9/month or $79/year. No hidden tiers. No feature locks except unlimited volume.',
+                desc: '$15/month or $129/year. Every feature included. No hidden tiers and no feature locks.',
               },
               {
                 icon: <Users className="h-5 w-5 text-primary" weight="duotone" />,
                 title: 'Built for all freelancers',
-                desc: 'Web developers, photographers, consultants, designers, copywriters, marketers — profession-specific templates for all of them.',
+                desc: 'Web developers, photographers, consultants, designers, copywriters, and marketers all get profession-specific templates.',
               },
               {
                 icon: <ShieldCheck className="h-5 w-5 text-primary" weight="duotone" />,

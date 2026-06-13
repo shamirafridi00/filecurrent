@@ -3,8 +3,8 @@ import { APP_NAME } from '@/lib/constants'
 import { LandingContent } from '@/components/landing/LandingContent'
 
 export const metadata: Metadata = {
-  title: 'FileCurrent — Freelance Contract & Invoice Software | $9/month',
-  description: 'Create professional freelance contracts, invoices, and e-signatures. Automated payment reminders with no daily cap. Cheaper than HoneyBook and Bonsai. Free plan available.',
+  title: 'FileCurrent: Freelance Contract & Invoice Software for US Freelancers',
+  description: 'Create professional freelance contracts, invoices, and e-signatures. Automated payment reminders with no daily cap. Simpler than HoneyBook and Bonsai. Start with a 5-day free trial, no card required.',
   keywords: [
     'freelance contract software',
     'freelance invoice software',
@@ -15,16 +15,16 @@ export const metadata: Metadata = {
     'freelance invoice generator',
   ],
   openGraph: {
-    title: 'FileCurrent — Freelance Contracts, Invoices & E-Signatures',
-    description: "The freelance document tool that does exactly what you need and nothing you don't. $9/month or free forever.",
+    title: 'FileCurrent: Freelance Contracts, Invoices & E-Signatures',
+    description: 'The freelance document tool that does exactly what you need and nothing you don’t. $15/month. Start free for 5 days, no card required.',
     url: 'https://filecurrent.com',
     siteName: APP_NAME,
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'FileCurrent — Freelance Contracts & Invoices',
-    description: 'Cheaper than HoneyBook. Simpler than Bonsai. $9/month.',
+    title: 'FileCurrent: Freelance Contracts & Invoices',
+    description: 'Simpler than HoneyBook. Leaner than Bonsai. $15/month with a 5-day free trial.',
   },
   alternates: { canonical: 'https://filecurrent.com' },
   icons: {

@@ -30,6 +30,15 @@ export const APP_URL = 'https://filecurrent.com'
 // Must match the `profiles.trial_ends_at` DB default (now() + 5 days).
 export const TRIAL_DAYS = 5
 
+// ── Pricing (display only — actual charge amounts live in Lemon Squeezy) ──
+// Positioned in the focused-tool tier (Indy $12 / Plutio $19), above the
+// "hobby" sub-$10 range and below the HoneyBook/Bonsai CRM tier.
+export const PRICE_MONTHLY = 15 // $/month
+export const PRICE_ANNUAL = 129 // $/year
+export const PRICE_ANNUAL_EFFECTIVE = '10.75' // $129 / 12, for "/mo effective" copy
+export const PRICE_ANNUAL_SAVING_PCT = 28 // (180 - 129) / 180
+export const PRICE_ANNUAL_SAVING_USD = 51 // 15*12 - 129
+
 export const LIFETIME_PRICE = 49
 
 export const DAILY_EMAIL_LIMIT = Number.POSITIVE_INFINITY

@@ -4,7 +4,7 @@ import { Check } from '@/components/icons'
 import { Button } from '@/components/ui/button'
 
 export const metadata: Metadata = {
-  title: 'Refund Policy — FileCurrent',
+  title: 'Refund Policy | FileCurrent',
   description: '30-day money-back guarantee on all FileCurrent paid plans. No questions asked.',
 }
 
@@ -26,7 +26,7 @@ export default function RefundPage() {
               <h2 className="text-[#0A2540] font-bold text-lg mb-1">30-Day Money-Back Guarantee</h2>
               <p className="text-[#1DB954] text-sm leading-relaxed">
                 We stand behind FileCurrent. If it&apos;s not right for you, we&apos;ll refund your payment
-                in full — no questions asked.
+                in full, with no questions asked.
               </p>
             </div>
           </div>
@@ -39,9 +39,9 @@ export default function RefundPage() {
             <ul className="space-y-3">
               {[
                 ['30-Day Window', 'Request a refund within 30 days of purchase'],
-                ['Full Refund', '100% of your payment back — no partial refunds'],
+                ['Full Refund', '100% of your payment back, with no partial refunds'],
                 ['No Questions Asked', 'No lengthy explanations required'],
-                ['Fast Processing', 'Processed within 5–7 business days'],
+                ['Fast Processing', 'Processed within 5 to 7 business days'],
               ].map(([title, desc]) => (
                 <li key={title} className="flex items-start gap-3">
                   <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" weight="bold" />
@@ -60,7 +60,7 @@ export default function RefundPage() {
               {[
                 ['Contact Us', 'Email billing@filecurrent.com'],
                 ['Include Details', 'Your account email + "Refund Request" in the subject line'],
-                ['Confirmation', 'We confirm within 1–2 business days'],
+                ['Confirmation', 'We confirm within 1 to 2 business days'],
                 ['Processing', 'Refund processed to your original payment method'],
               ].map(([step, desc], i) => (
                 <li key={step} className="flex items-start gap-4">
@@ -82,14 +82,14 @@ export default function RefundPage() {
               <li>• Refunds are available within 30 days of purchase date only</li>
               <li>• Account access ends upon refund processing</li>
               <li>• One refund per customer</li>
-              <li>• The free tier is free — no refund needed</li>
+              <li>• The 5-day trial is free, so no refund is needed before you pay</li>
             </ul>
           </div>
 
           <div className="rounded-xl border border-primary/20 bg-accent p-6">
             <p className="text-primary text-sm font-semibold mb-1">Try before you buy</p>
             <p className="text-muted-foreground text-sm mb-4">
-              FileCurrent is free for up to 3 documents per month, forever. No credit card required.
+              Every account starts with a 5-day free trial of every feature. No credit card required.
             </p>
             <Button asChild className="bg-primary hover:bg-[#5145E5] text-white">
               <Link href="/signup">Start free →</Link>
@@ -100,7 +100,7 @@ export default function RefundPage() {
             <h3 className="text-foreground font-semibold mb-2">Our Promise</h3>
             <p className="text-muted-foreground text-sm leading-relaxed max-w-xl mx-auto">
               We built FileCurrent to help freelancers succeed. If it&apos;s not the right fit for your business,
-              we want you to get your money back — no hassle, no hard feelings.
+              we want you to get your money back, with no hassle and no hard feelings.
             </p>
             <p className="text-primary text-sm mt-3">billing@filecurrent.com</p>
           </div>

@@ -375,7 +375,7 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div className="rounded-lg border bg-card p-4 space-y-3">
                     <div>
-                      <p className="text-xl font-bold">$9 <span className="text-sm font-normal text-muted-foreground">/ month</span></p>
+                      <p className="text-xl font-bold">$15 <span className="text-sm font-normal text-muted-foreground">/ month</span></p>
                       <p className="text-xs text-muted-foreground mt-0.5">Billed monthly, cancel anytime</p>
                     </div>
                     <Button
@@ -390,10 +390,10 @@ export function SettingsTabs({ profile: initial, notificationPrefs: initialPrefs
                   <div className="rounded-lg border-2 border-primary bg-card p-4 space-y-3">
                     <div>
                       <div className="flex items-center gap-2 mb-0.5">
-                        <p className="text-xl font-bold">$79 <span className="text-sm font-normal text-muted-foreground">/ year</span></p>
+                        <p className="text-xl font-bold">$129 <span className="text-sm font-normal text-muted-foreground">/ year</span></p>
                         <Badge className="bg-primary text-primary-foreground text-xs">Best Value</Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground">Save 27% — just $6.58/month</p>
+                      <p className="text-xs text-muted-foreground">Save 28%, just $10.75/month</p>
                     </div>
                     <Button
                       className="w-full"

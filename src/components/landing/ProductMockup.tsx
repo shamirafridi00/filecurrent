@@ -16,9 +16,9 @@ import {
 const EASE = [0.22, 1, 0.36, 1] as const
 
 const rows = [
-  { name: 'Website redesign — Acme Co.', amount: '$4,200', status: 'Paid', tone: 'paid' },
-  { name: 'Brand photography — Lumen', amount: '$1,850', status: 'Sent', tone: 'sent' },
-  { name: 'Consulting retainer — Vela', amount: '$3,000', status: 'Overdue', tone: 'overdue' },
+  { name: 'Website redesign · Acme Co.', amount: '$4,200', status: 'Paid', tone: 'paid' },
+  { name: 'Brand photography · Lumen', amount: '$1,850', status: 'Sent', tone: 'sent' },
+  { name: 'Consulting retainer · Vela', amount: '$3,000', status: 'Overdue', tone: 'overdue' },
 ]
 
 const toneClass: Record<string, string> = {
@@ -52,7 +52,7 @@ export function ProductMockup() {
           <span className="h-3 w-3 rounded-full bg-[#FEBC2E]" />
           <span className="h-3 w-3 rounded-full bg-[#28C840]" />
           <div className="ml-3 flex items-center gap-1.5 rounded-md bg-white px-3 py-1 text-xs text-muted-foreground ring-1 ring-border">
-            <span className="text-[#1DB954]">●</span> app.filecurrent.com/invoices
+            <span className="text-[#1DB954]">●</span> filecurrent.com/invoices
           </div>
         </div>
 
@@ -140,7 +140,7 @@ export function ProductMockup() {
                 <CheckCircle size={18} weight="fill" />
               </span>
               <p className="text-xs font-medium text-[#0A2540]">
-                Acme Co. just paid <span className="font-bold">$4,200</span> — reminder auto-stopped.
+                Acme Co. just paid <span className="font-bold">$4,200</span>. Reminders stopped automatically.
               </p>
             </motion.div>
           </div>
