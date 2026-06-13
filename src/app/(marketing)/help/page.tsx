@@ -53,17 +53,17 @@ const FAQ_SECTIONS = [
 
 export default function HelpPage() {
   return (
-    <div className="pt-24 pb-20">
+    <div className="pt-32 pb-24">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-3">Help Center</h1>
-          <p className="text-gray-400">Find answers to common questions about FileCurrent.</p>
+          <h1 className="text-4xl font-bold tracking-[-0.02em] text-foreground mb-3">Help Center</h1>
+          <p className="text-muted-foreground">Find answers to common questions about FileCurrent.</p>
         </div>
 
         <div className="space-y-10">
           {FAQ_SECTIONS.map((section) => (
             <div key={section.title}>
-              <h2 className="text-lg font-semibold text-white mb-4 pb-2 border-b border-[#1A3A5C]">
+              <h2 className="text-lg font-semibold text-foreground mb-4 pb-2 border-b border-border">
                 {section.title}
               </h2>
               <Accordion type="single" collapsible className="space-y-2">
@@ -71,12 +71,12 @@ export default function HelpPage() {
                   <AccordionItem
                     key={i}
                     value={`${section.title}-${i}`}
-                    className="rounded-lg border border-[#1A3A5C] bg-[#071929] px-4"
+                    className="rounded-xl border border-border bg-card px-4"
                   >
-                    <AccordionTrigger className="text-white text-sm font-medium hover:no-underline py-4">
+                    <AccordionTrigger className="text-foreground text-sm font-semibold hover:no-underline py-4">
                       {item.q}
                     </AccordionTrigger>
-                    <AccordionContent className="text-gray-400 text-sm leading-relaxed pb-4">
+                    <AccordionContent className="text-muted-foreground text-sm leading-relaxed pb-4">
                       {item.a}
                     </AccordionContent>
                   </AccordionItem>
@@ -86,11 +86,11 @@ export default function HelpPage() {
           ))}
         </div>
 
-        <div className="mt-16 text-center rounded-xl border border-[#1A3A5C] bg-[#071929] p-8">
-          <h3 className="text-white font-semibold text-lg mb-2">Still have questions?</h3>
-          <p className="text-gray-400 text-sm mb-5">Our support team is here to help.</p>
-          <Button asChild className="bg-[#635BFF] hover:bg-[#635BFF] text-white">
-            <Link href="/contact">Email Support →</Link>
+        <div className="mt-16 text-center rounded-2xl border border-border bg-[#F6F9FC] p-8">
+          <h3 className="text-foreground font-semibold text-lg mb-2">Still have questions?</h3>
+          <p className="text-muted-foreground text-sm mb-5">Our support team is here to help.</p>
+          <Button asChild className="bg-primary hover:bg-[#5145E5] text-white">
+            <Link href="/contact">Email support →</Link>
           </Button>
         </div>
       </div>

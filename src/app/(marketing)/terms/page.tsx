@@ -22,17 +22,17 @@ const sections = [
 
 export default function TermsPage() {
   return (
-    <div className="pt-24 pb-20">
+    <div className="pt-32 pb-24">
       <div className="max-w-3xl mx-auto px-6">
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-bold text-white mb-3">Terms of Service</h1>
-          <p className="text-gray-500 text-sm">Last updated: June 2026</p>
+          <h1 className="text-4xl font-bold tracking-[-0.02em] text-foreground mb-3">Terms of Service</h1>
+          <p className="text-muted-foreground text-sm">Last updated: June 2026</p>
         </div>
         <div className="space-y-8">
           {sections.map((section) => (
-            <div key={section.title} className="border-b border-[#1A3A5C] pb-8 last:border-0">
-              <h2 className="text-lg font-semibold text-white mb-3">{section.title}</h2>
-              <p className="text-gray-400 leading-relaxed text-sm">{section.content}</p>
+            <div key={section.title} className="border-b border-border pb-8 last:border-0">
+              <h2 className="text-lg font-semibold text-foreground mb-3">{section.title}</h2>
+              <p className="text-muted-foreground leading-relaxed text-sm">{section.content}</p>
             </div>
           ))}
         </div>

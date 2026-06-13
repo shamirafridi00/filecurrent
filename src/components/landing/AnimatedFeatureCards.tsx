@@ -1,5 +1,6 @@
 'use client'
-import { useEffect, useRef, useState } from 'react'
+
+import { motion, useReducedMotion } from 'framer-motion'
 
 interface Feature {
   icon: React.ReactNode
@@ -8,54 +9,43 @@ interface Feature {
   stat?: string
 }
 
-function AnimatedCard({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const [visible, setVisible] = useState(false)
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true) },
-      { threshold: 0.1 }
-    )
-    if (ref.current) observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [])
-
-  return (
-    <div
-      ref={ref}
-      className="h-full"
-      style={{
-        transitionDelay: `${delay}ms`,
-        opacity: visible ? 1 : 0,
-        transform: visible ? 'translateY(0)' : 'translateY(24px)',
-        transition: 'opacity 0.5s ease, transform 0.5s ease',
-      }}
-    >
-      {children}
-    </div>
-  )
-}
+const EASE = [0.22, 1, 0.36, 1] as const
 
 export function AnimatedFeatureCards({ features }: { features: Feature[] }) {
+  const reduce = useReducedMotion()
+
   return (
-    <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+    <motion.div
+      className="grid grid-cols-1 gap-5 md:grid-cols-3"
+      initial="hidden"
+      whileInView="show"
+      viewport={{ once: true, margin: '-80px' }}
+      variants={{ show: { transition: { staggerChildren: 0.12 } } }}
+    >
       {features.map((feature, i) => (
-        <AnimatedCard key={i} delay={i * 120}>
-          <div className="flex h-full flex-col rounded-xl border border-[#1A3A5C] bg-[#0A2540] p-6 transition-colors hover:border-[#635BFF]/50">
-            <div className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#635BFF]/10">
-              {feature.icon}
-            </div>
-            <h3 className="mb-2 text-lg font-semibold text-white">{feature.title}</h3>
-            <p className="flex-1 text-sm leading-relaxed text-gray-400">{feature.desc}</p>
-            {feature.stat && (
-              <p className="mt-4 inline-flex items-center rounded-full border border-[#635BFF]/30 bg-[#635BFF]/10 px-3 py-1 text-xs font-medium text-[#A5B4FC]">
-                {feature.stat}
-              </p>
-            )}
+        <motion.div
+          key={i}
+          variants={{
+            hidden: { opacity: 0, y: reduce ? 0 : 28 },
+            show: { opacity: 1, y: 0, transition: { duration: 0.55, ease: EASE } },
+          }}
+          whileHover={reduce ? undefined : { y: -4 }}
+          className="card-elevated-hover group flex h-full flex-col rounded-2xl border border-border bg-card p-6"
+        >
+          <div className="mb-5 inline-flex h-12 w-12 items-center justify-center rounded-xl bg-accent transition-transform duration-300 group-hover:scale-110">
+            {feature.icon}
           </div>
-        </AnimatedCard>
+          <h3 className="mb-2 text-lg font-semibold tracking-tight text-foreground">
+            {feature.title}
+          </h3>
+          <p className="flex-1 text-sm leading-relaxed text-muted-foreground">{feature.desc}</p>
+          {feature.stat && (
+            <p className="mt-5 inline-flex w-fit items-center rounded-full border border-primary/20 bg-accent px-3 py-1 text-xs font-medium text-primary">
+              {feature.stat}
+            </p>
+          )}
+        </motion.div>
       ))}
-    </div>
+    </motion.div>
   )
 }

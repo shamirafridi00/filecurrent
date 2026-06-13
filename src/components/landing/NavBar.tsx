@@ -3,61 +3,108 @@
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
 import { List, X } from '@phosphor-icons/react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import { LogoFullInverse } from '@/components/logo/LogoMark'
+import { LogoFull } from '@/components/logo/LogoMark'
+
+const LINKS = [
+  { label: 'Features', href: '/#features' },
+  { label: 'How it works', href: '/#how' },
+  { label: 'Pricing', href: '/#pricing' },
+  { label: 'FAQ', href: '/#faq' },
+  { label: 'Blog', href: '/blog' },
+]
 
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
 
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 10)
+    const handler = () => setScrolled(window.scrollY > 8)
+    handler()
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
 
   return (
-    <nav className={cn(
-      'fixed inset-x-0 top-0 z-50 transition-all',
-      scrolled ? 'bg-[#0A2540]/95 backdrop-blur-sm border-b border-[#1A3A5C]' : 'bg-transparent'
-    )}>
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-        <Link href="/">
-          <LogoFullInverse size={28} />
+    <motion.nav
+      initial={{ y: -24, opacity: 0 }}
+      animate={{ y: 0, opacity: 1 }}
+      transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      className={cn(
+        'fixed inset-x-0 top-0 z-50 transition-all duration-300',
+        scrolled
+          ? 'border-b border-border bg-white/80 backdrop-blur-md shadow-[0_1px_0_rgba(10,37,64,0.04)]'
+          : 'border-b border-transparent bg-transparent'
+      )}
+    >
+      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3.5">
+        <Link href="/" className="transition-opacity hover:opacity-80">
+          <LogoFull size={30} />
         </Link>
 
-        <div className="hidden md:flex items-center gap-6 text-sm text-gray-400">
-          <a href="/#features" className="hover:text-white transition-colors">Features</a>
-          <a href="/#pricing" className="hover:text-white transition-colors">Pricing</a>
-          <Link href="/blog" className="hover:text-white transition-colors">Blog</Link>
-          <Link href="/help" className="hover:text-white transition-colors">Help</Link>
-          <Link href="/login" className="hover:text-white transition-colors">Login</Link>
-          <Button asChild size="sm" className="bg-[#635BFF] hover:bg-[#5145E5] text-white">
-            <Link href="/signup">Start Free →</Link>
+        <div className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
+          {LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="relative transition-colors hover:text-foreground"
+            >
+              {l.label}
+            </a>
+          ))}
+          <Link href="/login" className="transition-colors hover:text-foreground">
+            Login
+          </Link>
+          <Button asChild size="sm" className="bg-primary text-white shadow-sm hover:bg-[#5145E5]">
+            <Link href="/signup">Start free →</Link>
           </Button>
         </div>
 
         <button
-          className="md:hidden p-1 text-gray-400"
+          className="rounded-md p-1.5 text-foreground transition-colors hover:bg-muted md:hidden"
           onClick={() => setMobileOpen((o) => !o)}
+          aria-label="Toggle menu"
         >
-          {mobileOpen ? <X size={20} /> : <List size={20} />}
+          {mobileOpen ? <X size={22} /> : <List size={22} />}
         </button>
       </div>
 
-      {mobileOpen && (
-        <div className="md:hidden border-t border-[#1A3A5C] bg-[#0A2540] px-4 py-4 space-y-3">
-          <a href="/#features" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Features</a>
-          <a href="/#pricing" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Pricing</a>
-          <Link href="/blog" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Blog</Link>
-          <Link href="/help" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Help</Link>
-          <Link href="/login" className="block text-sm text-gray-400" onClick={() => setMobileOpen(false)}>Login</Link>
-          <Button asChild size="sm" className="w-full bg-[#635BFF] hover:bg-[#5145E5] text-white">
-            <Link href="/signup">Start Free →</Link>
-          </Button>
-        </div>
-      )}
-    </nav>
+      <AnimatePresence>
+        {mobileOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.25 }}
+            className="overflow-hidden border-t border-border bg-white md:hidden"
+          >
+            <div className="space-y-1 px-4 py-4">
+              {LINKS.map((l) => (
+                <a
+                  key={l.href}
+                  href={l.href}
+                  className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {l.label}
+                </a>
+              ))}
+              <Link
+                href="/login"
+                className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                onClick={() => setMobileOpen(false)}
+              >
+                Login
+              </Link>
+              <Button asChild size="sm" className="mt-2 w-full bg-primary text-white hover:bg-[#5145E5]">
+                <Link href="/signup">Start free →</Link>
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.nav>
   )
 }

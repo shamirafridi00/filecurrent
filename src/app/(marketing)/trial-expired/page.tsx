@@ -1,7 +1,5 @@
 'use client'
 
-import Link from 'next/link'
-import { LogoFull } from '@/components/logo/LogoMark'
 import { Star, Check } from '@phosphor-icons/react'
 import { useCheckout } from '@/hooks/useCheckout'
 import { Button } from '@/components/ui/button'
@@ -27,14 +25,10 @@ export default function TrialExpiredPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#F6F9FC] flex flex-col items-center justify-center p-6">
+    <div className="flex flex-col items-center justify-center px-6 pt-36 pb-24">
       <div className="w-full max-w-2xl">
-        <div className="flex justify-center mb-10">
-          <LogoFull size={36} />
-        </div>
-
         <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold text-[#0A2540] mb-3">
+          <h1 className="text-3xl font-bold tracking-[-0.02em] text-[#0A2540] mb-3">
             Your free trial has ended
           </h1>
           <p className="text-[#8898AA] text-lg max-w-md mx-auto">

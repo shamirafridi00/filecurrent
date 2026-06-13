@@ -40,42 +40,42 @@ export default function ContactPage() {
   }
 
   return (
-    <div className="pt-24 pb-20">
+    <div className="pt-32 pb-24">
       <div className="max-w-5xl mx-auto px-6">
         <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-white mb-3">Get in Touch</h1>
-          <p className="text-gray-400">Have a question? Need help? We&apos;ll get back to you within 24 hours.</p>
+          <h1 className="text-4xl font-bold tracking-[-0.02em] text-foreground mb-3">Get in touch</h1>
+          <p className="text-muted-foreground">Have a question? Need help? We&apos;ll get back to you within 24 hours.</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8">
           {/* Form */}
           <div className="md:col-span-3">
-            <Card className="bg-[#071929] border-[#1A3A5C]">
+            <Card className="card-elevated border-border">
               <CardContent className="p-6">
                 {status === 'success' ? (
                   <div className="text-center py-8">
-                    <div className="w-12 h-12 rounded-full bg-[#635BFF]/20 flex items-center justify-center mx-auto mb-4">
-                      <PaperPlaneTilt className="h-5 w-5 text-[#635BFF]" />
+                    <div className="w-12 h-12 rounded-full bg-accent flex items-center justify-center mx-auto mb-4">
+                      <PaperPlaneTilt className="h-5 w-5 text-primary" weight="fill" />
                     </div>
-                    <h3 className="text-white font-semibold text-lg mb-2">Message sent!</h3>
-                    <p className="text-gray-400 text-sm">Thanks! We&apos;ll be in touch within 24 hours.</p>
+                    <h3 className="text-foreground font-semibold text-lg mb-2">Message sent!</h3>
+                    <p className="text-muted-foreground text-sm">Thanks! We&apos;ll be in touch within 24 hours.</p>
                   </div>
                 ) : (
                   <form onSubmit={handleSubmit} className="space-y-4">
                     <div className="space-y-1.5">
-                      <Label htmlFor="name" className="text-gray-300">Your Name</Label>
+                      <Label htmlFor="name">Your name</Label>
                       <Input id="name" value={name} onChange={e => setName(e.target.value)}
-                        placeholder="Jane Smith" required className="bg-[#071929] border-[#1A3A5C] text-white" />
+                        placeholder="Jane Smith" required />
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="email" className="text-gray-300">Email Address</Label>
-                      <Input id="email" type="email" value={email} onChange={e => setEmail(e.target.value)}
-                        placeholder="you@example.com" required className="bg-[#071929] border-[#1A3A5C] text-white" />
+                      <Label htmlFor="email">Email address</Label>
+                      <Input id="email" type="email" autoComplete="email" value={email} onChange={e => setEmail(e.target.value)}
+                        placeholder="you@example.com" required />
                     </div>
                     <div className="space-y-1.5">
-                      <Label className="text-gray-300">Subject</Label>
+                      <Label>Subject</Label>
                       <Select onValueChange={setSubject}>
-                        <SelectTrigger className="bg-[#071929] border-[#1A3A5C] text-white">
+                        <SelectTrigger>
                           <SelectValue placeholder="Select a subject" />
                         </SelectTrigger>
                         <SelectContent>
@@ -89,17 +89,16 @@ export default function ContactPage() {
                       </Select>
                     </div>
                     <div className="space-y-1.5">
-                      <Label htmlFor="message" className="text-gray-300">Message</Label>
+                      <Label htmlFor="message">Message</Label>
                       <Textarea id="message" value={message} onChange={e => setMessage(e.target.value)}
-                        placeholder="Tell us how we can help..." rows={5} required
-                        className="bg-[#071929] border-[#1A3A5C] text-white" />
+                        placeholder="Tell us how we can help..." rows={5} required />
                     </div>
                     {status === 'error' && (
-                      <p className="text-red-400 text-sm">Something went wrong. Email us at support@filecurrent.com</p>
+                      <p className="text-destructive text-sm">Something went wrong. Email us at support@filecurrent.com</p>
                     )}
-                    <Button type="submit" className="w-full bg-[#635BFF] hover:bg-[#635BFF] text-white"
+                    <Button type="submit" className="w-full bg-primary hover:bg-[#5145E5] text-white"
                       disabled={status === 'loading' || message.length < 20}>
-                      {status === 'loading' ? 'Sending…' : 'Send Message'}
+                      {status === 'loading' ? 'Sending…' : 'Send message'}
                     </Button>
                   </form>
                 )}
@@ -111,39 +110,39 @@ export default function ContactPage() {
           <div className="md:col-span-2 space-y-4">
             {[
               {
-                icon: <Envelope className="h-5 w-5 text-[#635BFF]" />,
+                icon: <Envelope className="h-5 w-5 text-primary" weight="duotone" />,
                 title: 'Email Support',
-                content: <><p className="text-[#635BFF] font-medium">support@filecurrent.com</p><p className="text-gray-500 text-sm mt-1">For general questions and help</p></>,
+                content: <><p className="text-primary font-medium">support@filecurrent.com</p><p className="text-muted-foreground text-sm mt-1">For general questions and help</p></>,
               },
               {
-                icon: <Clock className="h-5 w-5 text-[#635BFF]" />,
+                icon: <Clock className="h-5 w-5 text-primary" weight="duotone" />,
                 title: 'Support Hours',
                 content: (
-                  <div className="text-sm text-gray-400 space-y-1">
+                  <div className="text-sm text-muted-foreground space-y-1">
                     <p>Mon – Fri: 9AM – 6PM EST</p>
                     <p>Saturday: 10AM – 4PM EST</p>
                     <p>Sunday: Closed</p>
-                    <p className="text-gray-500 mt-2">Email support available 24/7. We respond within 24 hours.</p>
+                    <p className="text-muted-foreground mt-2">Email support available 24/7. We respond within 24 hours.</p>
                   </div>
                 ),
               },
               {
-                icon: <Question className="h-5 w-5 text-[#635BFF]" />,
+                icon: <Question className="h-5 w-5 text-primary" weight="duotone" />,
                 title: 'Helpful Links',
                 content: (
                   <div className="text-sm space-y-2">
-                    <Link href="/help" className="block text-[#635BFF] hover:text-[#A5B4FC]">Help & FAQ →</Link>
-                    <Link href="/pricing" className="block text-[#635BFF] hover:text-[#A5B4FC]">Pricing →</Link>
-                    <Link href="/refund" className="block text-[#635BFF] hover:text-[#A5B4FC]">Refund Policy →</Link>
+                    <Link href="/help" className="block text-primary hover:underline">Help & FAQ →</Link>
+                    <Link href="/#pricing" className="block text-primary hover:underline">Pricing →</Link>
+                    <Link href="/refund" className="block text-primary hover:underline">Refund Policy →</Link>
                   </div>
                 ),
               },
             ].map((card) => (
-              <Card key={card.title} className="bg-[#071929] border-[#1A3A5C]">
+              <Card key={card.title} className="border-border">
                 <CardContent className="p-5">
                   <div className="flex items-center gap-2 mb-3">
                     {card.icon}
-                    <h3 className="font-semibold text-white text-sm">{card.title}</h3>
+                    <h3 className="font-semibold text-foreground text-sm">{card.title}</h3>
                   </div>
                   {card.content}
                 </CardContent>
