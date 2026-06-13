@@ -26,7 +26,7 @@ export function HowItWorks() {
   const reduce = useReducedMotion()
 
   return (
-    <section className="bg-white px-4 py-24">
+    <section id="how" className="bg-white px-4 py-24">
       <div className="mx-auto max-w-5xl">
         <h2 className="mb-16 text-center text-3xl font-bold tracking-[-0.02em] text-[#0A2540] md:text-4xl">
           One trail, from &ldquo;interested&rdquo; to &ldquo;paid in full.&rdquo;
