@@ -2,7 +2,8 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { Envelope, Clock, Question, PaperPlaneTilt } from '@/components/icons'
+import { Envelope, Clock, Question, PaperPlaneTilt, MapPin, CreditCard } from '@/components/icons'
+import { SUPPORT_EMAIL, LEGAL_ENTITY, BUSINESS_ADDRESS } from '@/lib/constants'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -112,7 +113,28 @@ export default function ContactPage() {
               {
                 icon: <Envelope className="h-5 w-5 text-primary" weight="duotone" />,
                 title: 'Email Support',
-                content: <><p className="text-primary font-medium">support@filecurrent.com</p><p className="text-muted-foreground text-sm mt-1">For general questions and help</p></>,
+                content: <><p className="text-primary font-medium">{SUPPORT_EMAIL}</p><p className="text-muted-foreground text-sm mt-1">For general questions, account help, and refund requests</p></>,
+              },
+              {
+                icon: <CreditCard className="h-5 w-5 text-primary" weight="duotone" />,
+                title: 'Billing & Payments',
+                content: (
+                  <p className="text-sm text-muted-foreground">
+                    Payments are handled by <span className="text-foreground font-medium">Paddle</span>, our Merchant of Record.
+                    For any order or billing question you can reply to your Paddle receipt, or email us and we&apos;ll help.
+                  </p>
+                ),
+              },
+              {
+                icon: <MapPin className="h-5 w-5 text-primary" weight="duotone" />,
+                title: 'Business Details',
+                content: (
+                  <div className="text-sm text-muted-foreground space-y-0.5">
+                    <p className="text-foreground font-medium">{LEGAL_ENTITY}</p>
+                    <p>Trading as FileCurrent</p>
+                    <p>{BUSINESS_ADDRESS}</p>
+                  </div>
+                ),
               },
               {
                 icon: <Clock className="h-5 w-5 text-primary" weight="duotone" />,

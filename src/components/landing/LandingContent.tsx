@@ -25,6 +25,8 @@ import {
   PRICE_ANNUAL_EFFECTIVE,
   PRICE_ANNUAL_SAVING_PCT,
   PRICE_ANNUAL_SAVING_USD,
+  LEGAL_ENTITY,
+  MOR_DISCLOSURE,
 } from '@/lib/constants'
 import { FaqItem } from '@/components/landing/FaqItem'
 import { NavBar } from '@/components/landing/NavBar'
@@ -605,9 +607,12 @@ export function Footer() {
             </div>
           ))}
         </div>
-        <div className="mt-12 flex flex-col items-center justify-between gap-4 border-t border-border pt-8 text-xs text-muted-foreground md:flex-row">
-          <span>© {new Date().getFullYear()} FileCurrent. All rights reserved.</span>
-          <span>Built for US freelancers.</span>
+        <div className="mt-12 space-y-3 border-t border-border pt-8 text-xs text-muted-foreground">
+          <p className="text-center md:text-left">{MOR_DISCLOSURE}</p>
+          <div className="flex flex-col items-center justify-between gap-2 md:flex-row">
+            <span>© {new Date().getFullYear()} {LEGAL_ENTITY}, trading as FileCurrent. All rights reserved.</span>
+            <span>Built for US freelancers.</span>
+          </div>
         </div>
       </div>
     </footer>

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import { Check } from '@/components/icons'
 import { Button } from '@/components/ui/button'
+import { SUPPORT_EMAIL, MOR_DISCLOSURE } from '@/lib/constants'
 
 export const metadata: Metadata = {
   title: 'Refund Policy | FileCurrent',
@@ -38,10 +39,10 @@ export default function RefundPage() {
             <h2 className="text-lg font-semibold text-foreground mb-4">Our Refund Policy</h2>
             <ul className="space-y-3">
               {[
-                ['30-Day Window', 'Request a refund within 30 days of purchase'],
-                ['Full Refund', '100% of your payment back, with no partial refunds'],
-                ['No Questions Asked', 'No lengthy explanations required'],
-                ['Fast Processing', 'Processed within 5 to 7 business days'],
+                ['30-Day Window', 'Request a refund within 30 days of your purchase'],
+                ['Full Refund', 'You receive 100% of what you paid'],
+                ['No Questions Asked', 'No explanation or justification required'],
+                ['Fast Processing', 'Typically processed within 5 to 7 business days'],
               ].map(([title, desc]) => (
                 <li key={title} className="flex items-start gap-3">
                   <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" weight="bold" />
@@ -58,10 +59,9 @@ export default function RefundPage() {
             <h2 className="text-lg font-semibold text-foreground mb-4">How to Request a Refund</h2>
             <ol className="space-y-4">
               {[
-                ['Contact Us', 'Email billing@filecurrent.com'],
-                ['Include Details', 'Your account email + "Refund Request" in the subject line'],
-                ['Confirmation', 'We confirm within 1 to 2 business days'],
-                ['Processing', 'Refund processed to your original payment method'],
+                ['Contact us', `Email ${SUPPORT_EMAIL} with the email address on your account.`],
+                ['That’s it', 'No forms and no justification needed. Just let us know you’d like a refund.'],
+                ['We process it', 'Your refund is issued by Paddle to your original payment method.'],
               ].map(([step, desc], i) => (
                 <li key={step} className="flex items-start gap-4">
                   <div className="w-7 h-7 rounded-full bg-accent border border-primary/30 flex items-center justify-center shrink-0 text-primary text-xs font-bold">
@@ -77,13 +77,13 @@ export default function RefundPage() {
           </div>
 
           <div className="border-b border-border pb-8">
-            <h2 className="text-lg font-semibold text-foreground mb-4">Important Notes</h2>
-            <ul className="space-y-2 text-sm text-muted-foreground">
-              <li>• Refunds are available within 30 days of purchase date only</li>
-              <li>• Account access ends upon refund processing</li>
-              <li>• One refund per customer</li>
-              <li>• The 5-day trial is free, so no refund is needed before you pay</li>
-            </ul>
+            <h2 className="text-lg font-semibold text-foreground mb-4">Payments &amp; Refunds Are Handled by Paddle</h2>
+            <p className="text-sm leading-relaxed text-muted-foreground">
+              {MOR_DISCLOSURE} Your refund is processed by Paddle and returned to your original
+              payment method. You can request a refund either by contacting us at{' '}
+              <a href={`mailto:${SUPPORT_EMAIL}`} className="text-primary hover:underline">{SUPPORT_EMAIL}</a>{' '}
+              or by contacting Paddle directly using the receipt they email you after purchase.
+            </p>
           </div>
 
           <div className="rounded-xl border border-primary/20 bg-accent p-6">
@@ -102,7 +102,7 @@ export default function RefundPage() {
               We built FileCurrent to help freelancers succeed. If it&apos;s not the right fit for your business,
               we want you to get your money back, with no hassle and no hard feelings.
             </p>
-            <p className="text-primary text-sm mt-3">billing@filecurrent.com</p>
+            <p className="text-primary text-sm mt-3">{SUPPORT_EMAIL}</p>
           </div>
         </div>
       </div>

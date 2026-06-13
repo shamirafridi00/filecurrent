@@ -40,6 +40,17 @@ const ITEMS = [
     ),
   },
   {
+    q: 'How does billing for my FileCurrent subscription work?',
+    a: (
+      <>
+        Your subscription is billed securely through Paddle, our Merchant of Record. Paddle handles
+        payment, tax, and your receipt. (This is separate from how your own clients pay you for
+        invoices, which always goes directly to you.) Plans renew automatically until you cancel,
+        and you can cancel anytime from Settings.
+      </>
+    ),
+  },
+  {
     q: 'Is there a refund policy?',
     a: (
       <>

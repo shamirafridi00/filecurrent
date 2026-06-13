@@ -27,6 +27,19 @@ export const APP_TAGLINE = 'Contracts. Invoices. Signatures. Done.'
 
 export const APP_URL = 'https://filecurrent.com'
 
+// ── Company / legal (used across legal pages + footer) ──
+// LEGAL_ENTITY must EXACTLY match the entity registered on the Paddle account.
+export const LEGAL_ENTITY = 'Shamir Afridi' // sole proprietor, trading as FileCurrent
+export const SUPPORT_EMAIL = 'support@filecurrent.com'
+export const BILLING_EMAIL = 'support@filecurrent.com'
+export const PRIVACY_EMAIL = 'privacy@filecurrent.com'
+// TODO before applying to Paddle: replace with a real mailing address.
+export const BUSINESS_ADDRESS = '[BUSINESS ADDRESS — replace before applying to Paddle]'
+
+// Paddle is the Merchant of Record. This exact disclosure is required on the site.
+export const MOR_DISCLOSURE =
+  'Paddle.com is the Merchant of Record for all our orders. Paddle handles all payment processing, order-related inquiries, returns, and refunds.'
+
 // Must match the `profiles.trial_ends_at` DB default (now() + 5 days).
 export const TRIAL_DAYS = 5
 

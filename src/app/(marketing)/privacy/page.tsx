@@ -10,7 +10,7 @@ const sections = [
   {
     icon: <Database className="h-5 w-5 text-primary" />,
     title: '1. Information We Collect',
-    content: `We collect information you provide directly: your name, email address, business details, and the content of documents you create (contracts and invoices). We also collect usage data such as pages visited and features used. Payment processing is handled entirely by Lemon Squeezy, so we never see or store your credit card details.`,
+    content: `We collect information you provide directly: your name, email address, business details, and the content of documents you create (contracts, invoices, and proposals). We also collect usage data such as pages visited and features used. Payment processing is handled entirely by Paddle, our Merchant of Record, so we never see or store your full card or bank details.`,
   },
   {
     icon: <ShieldCheck className="h-5 w-5 text-primary" />,
@@ -20,7 +20,7 @@ const sections = [
   {
     icon: <ShareNetwork className="h-5 w-5 text-primary" />,
     title: '3. Information Sharing',
-    content: `We share data only with the services required to operate FileCurrent: Supabase (database and authentication), Resend (transactional email delivery), Lemon Squeezy (payment processing), and Vercel (hosting). We do not sell, rent, or trade your personal data to any third party.`,
+    content: `We share data only with the services required to operate FileCurrent: Supabase (database and authentication), Brevo (transactional email delivery), Cloudflare R2 (file and logo storage), Paddle (our Merchant of Record, which processes payments, calculates and remits tax, and handles billing inquiries and refunds), and Vercel (hosting). Each receives only the data needed for its function. We do not sell, rent, or trade your personal data to any third party.`,
   },
   {
     icon: <Lock className="h-5 w-5 text-primary" />,

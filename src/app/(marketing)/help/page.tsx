@@ -44,9 +44,10 @@ const FAQ_SECTIONS = [
   {
     title: 'Billing',
     items: [
+      { q: 'Who processes my payment?', a: 'Paddle.com is our Merchant of Record. Paddle securely processes your payment, calculates and remits any applicable tax, and handles billing inquiries, returns, and refunds. Your purchase receipt will come from Paddle.' },
       { q: "What's the difference between the monthly and annual plans?", a: 'Both plans include every feature. Monthly is $15/month and is the most flexible. Annual is $129/year (about $10.75/month), which saves 28% compared to paying monthly.' },
-      { q: 'How do I cancel my subscription?', a: 'Go to Settings → Plan & Billing and click Cancel Subscription. Your access continues until the end of your current billing period. No cancellation fees.' },
-      { q: 'Do you offer refunds?', a: 'Yes. We offer a 30-day money-back guarantee on all paid plans. Email billing@filecurrent.com within 30 days of purchase.' },
+      { q: 'How do I cancel my subscription?', a: 'Go to Settings, then Plan & Billing, and click Cancel Subscription. Your access continues until the end of your current billing period, and there are no cancellation fees.' },
+      { q: 'Do you offer refunds?', a: 'Yes. We offer an unconditional 30-day money-back guarantee on all paid plans. Email support@filecurrent.com within 30 days of your purchase and Paddle will refund you to your original payment method, no questions asked.' },
     ],
   },
 ]
