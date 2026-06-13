@@ -2,23 +2,28 @@
 
 import Link from 'next/link'
 import { useState, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { List, X } from '@phosphor-icons/react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { LogoFull } from '@/components/logo/LogoMark'
 
-const LINKS = [
-  { label: 'Features', href: '/#features' },
-  { label: 'How it works', href: '/#how' },
-  { label: 'Pricing', href: '/#pricing' },
-  { label: 'FAQ', href: '/#faq' },
+// Each link is either a section anchor (hash, on the home page) or a route.
+type NavLink = { label: string; hash?: string; href?: string }
+const LINKS: NavLink[] = [
+  { label: 'Features', hash: 'features' },
+  { label: 'How it works', hash: 'how' },
+  { label: 'Pricing', hash: 'pricing' },
+  { label: 'FAQ', hash: 'faq' },
   { label: 'Blog', href: '/blog' },
 ]
 
 export function NavBar() {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 8)
@@ -26,6 +31,21 @@ export function NavBar() {
     window.addEventListener('scroll', handler)
     return () => window.removeEventListener('scroll', handler)
   }, [])
+
+  // Scroll to a section reliably. On the home page, scroll directly (works even
+  // while the mobile menu is closing). Elsewhere, navigate to /#hash.
+  const goToSection = (hash?: string) => {
+    if (!hash) return
+    setMobileOpen(false)
+    if (pathname === '/') {
+      // Wait a frame so the closing menu doesn't fight the scroll on mobile.
+      requestAnimationFrame(() => {
+        document.getElementById(hash)?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+      })
+    } else {
+      router.push(`/#${hash}`)
+    }
+  }
 
   return (
     <motion.nav
@@ -45,15 +65,21 @@ export function NavBar() {
         </Link>
 
         <div className="hidden items-center gap-7 text-sm font-medium text-muted-foreground md:flex">
-          {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="relative transition-colors hover:text-foreground"
-            >
-              {l.label}
-            </a>
-          ))}
+          {LINKS.map((l) =>
+            l.hash ? (
+              <button
+                key={l.label}
+                onClick={() => goToSection(l.hash)}
+                className="relative transition-colors hover:text-foreground"
+              >
+                {l.label}
+              </button>
+            ) : (
+              <Link key={l.label} href={l.href ?? '#'} className="transition-colors hover:text-foreground">
+                {l.label}
+              </Link>
+            )
+          )}
           <Link href="/login" className="transition-colors hover:text-foreground">
             Login
           </Link>
@@ -81,16 +107,26 @@ export function NavBar() {
             className="overflow-hidden border-t border-border bg-white md:hidden"
           >
             <div className="space-y-1 px-4 py-4">
-              {LINKS.map((l) => (
-                <a
-                  key={l.href}
-                  href={l.href}
-                  className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-                  onClick={() => setMobileOpen(false)}
-                >
-                  {l.label}
-                </a>
-              ))}
+              {LINKS.map((l) =>
+                l.hash ? (
+                  <button
+                    key={l.label}
+                    onClick={() => goToSection(l.hash)}
+                    className="block w-full rounded-md px-3 py-2 text-left text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                  >
+                    {l.label}
+                  </button>
+                ) : (
+                  <Link
+                    key={l.label}
+                    href={l.href ?? '#'}
+                    className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                    onClick={() => setMobileOpen(false)}
+                  >
+                    {l.label}
+                  </Link>
+                )
+              )}
               <Link
                 href="/login"
                 className="block rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"

@@ -8,7 +8,7 @@ import { HowItWorks } from '@/components/landing/HowItWorks'
 import { NoCutSection } from '@/components/landing/NoCutSection'
 import { FeatureBento } from '@/components/landing/FeatureBento'
 import { ComparisonTable } from '@/components/landing/ComparisonTable'
-import { Testimonials } from '@/components/landing/Testimonials'
+import { WhyFileCurrent } from '@/components/landing/WhyFileCurrent'
 import { Pricing } from '@/components/landing/Pricing'
 import { FAQ } from '@/components/landing/FAQ'
 import { FinalCTA } from '@/components/landing/FinalCTA'
@@ -51,7 +51,7 @@ export default function LandingPage() {
       <NoCutSection />
       <FeatureBento />
       <ComparisonTable />
-      <Testimonials />
+      <WhyFileCurrent />
       <Pricing />
       <FAQ />
       <FinalCTA />

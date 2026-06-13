@@ -535,7 +535,7 @@ export function Footer() {
           <div className="col-span-2 md:col-span-1">
             <LogoFull size={30} className="mb-4" />
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Helping freelancers get paid since 2024.
+              The all-in-one document tool that helps US freelancers get paid.
             </p>
             <a
               href="https://x.com/filecurrent"
