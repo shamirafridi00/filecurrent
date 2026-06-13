@@ -26,30 +26,67 @@
 
 ## 1. Product Overview
 
-FileCurrent is a freelancer business tool targeting the US market. Core value: send contracts for e-signature, generate professional invoices, track payments, automate payment reminders.
+FileCurrent is a freelancer business tool targeting the US market. Core value: send proposals and contracts for e-signature, generate professional invoices, track time and expenses, give clients a branded portal, and automate payment reminders.
 
 **Feature set:**
+
+### Clients
 | Feature | Status |
 |---|---|
-| Client management (CRUD) | ✅ Live |
-| Contract creation from templates | ✅ Live |
-| E-signatures (sign via public link) | ✅ Live |
-| Invoice creation with 5 themes | ✅ Live |
-| Invoice PDF download | ✅ Pro only |
-| Invoice public share link | ✅ Live |
-| Payment recording | ✅ Live |
+| Client management (CRUD), tabbed detail page | ✅ Live |
+| Client import (CSV/Excel) | ✅ Live |
+| Client activity tracking (timeline log) | ✅ Live |
+| Client portal (branded public link per client: invoices, contracts, proposals, balance) | ✅ Live |
+| Per-client reminder pause | ✅ Live |
+
+### Contracts & E-Signatures
+| Feature | Status |
+|---|---|
+| Contracts from 7 profession-specific templates (auto-applied by profession) | ✅ Live |
+| E-signatures via public link (ESIGN Act: IP + timestamp + SHA-256 hash + audit trail) | ✅ Live |
+| Readable signing URLs (`/sign/{title-slug}--{token}`) | ✅ Live |
+| Contract PDF + audit-trail PDF | ✅ Live |
+| Contract-opened tracking | ✅ Live |
+
+### Proposals
+| Feature | Status |
+|---|---|
+| Proposals (rich-text summary, public accept/decline page) | ✅ Live |
+| Auto contract draft on acceptance + freelancer email notification | ✅ Live |
+
+### Invoices & Payments
+| Feature | Status |
+|---|---|
+| Invoice creation with 5 themes + live preview | ✅ Live |
+| Structured payment methods (bank/PayPal/payment link/Venmo/Zelle/check/other) | ✅ Live |
+| Milestone billing (% or fixed, deposit support) | ✅ Live |
+| Invoice public share link + client pay panel (report payment, receipt upload) | ✅ Live |
+| Payment recording + history (auto status/balance) | ✅ Live |
 | Recurring invoices | ✅ Live |
 | Invoice duplicate | ✅ Live |
 | Overdue auto-mark (on page load) | ✅ Live |
 | Invoice filters (status/client/date) | ✅ Live |
-| Payment reminders (automated email) | ✅ Live |
-| Data export (Excel/PDF) | ✅ Live |
-| Client import (CSV/Excel) | ✅ Live |
-| Client activity tracking | ✅ Live |
-| Dashboard analytics | ✅ Live |
-| Business logo upload (R2) | ✅ Live |
-| Subscription billing (Lemon Squeezy) | ✅ Live |
-| Payment processing (direct) | ❌ Not planned yet |
+| Invoice PDF download | ✅ Pro only |
+
+### Time, Expenses & Forms
+| Feature | Status |
+|---|---|
+| Time tracking (billable hours → invoice line items) | ✅ Live |
+| Expense tracking (billable → invoice line items) | ✅ Live |
+| Intake forms (drag-and-add builder, public link, auto-creates client) | ✅ Live |
+
+### Reminders, Account & Platform
+| Feature | Status |
+|---|---|
+| Payment reminders (automated email, escalating, no daily cap, auto-stop on paid) | ✅ Live |
+| Dashboard analytics (revenue, outstanding, YTD, net profit, unbilled hours) | ✅ Live |
+| Data export (Excel/PDF/CSV) | ✅ Live |
+| Business logo upload (R2) → invoices/contracts/portal | ✅ Live |
+| In-app guided tours (driver.js) | ✅ Live |
+| Email + Google auth (Supabase) | ✅ Live |
+| Subscription billing (Lemon Squeezy) + 5-day full-access trial | ✅ Live |
+| Email notifications (contract opened/signed, invoice opened/overdue, payment, proposal accept/decline, intake, daily summary) | ✅ Live |
+| Payment processing (direct, in-platform) | ❌ Not planned yet |
 
 ---
 
